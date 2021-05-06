@@ -3,7 +3,10 @@
         "cmath": "cpp",
         "qobject": "cpp",
         "qtcore": "cpp",
-        "qtcoredepends": "cpp"
+        "qtcoredepends": "cpp",
+        "qgridlayout": "cpp",
+        "qapplication": "cpp",
+        "vector": "cpp"
     },
     "editor.tabSize": 4,
     "editor.detectIndentation": false,

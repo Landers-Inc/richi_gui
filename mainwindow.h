@@ -5,7 +5,7 @@
 #include <QThread>
 #include <QDebug>
 #include "qcustomplot.h"
-#include "myobject.h"
+#include "dataprocessor.h"
 
 static int N_size = 44100;
 

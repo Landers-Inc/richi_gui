@@ -13,7 +13,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "myobject.h"
+#include "dataprocessor.h"
 
 void MainWindow::plotData(QVector<double> const &xSeries,QVector<double> const &ySeries){
     QCustomPlot *leftPlot = ui->leftPlot;
@@ -42,13 +42,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) , ui(new Ui::MainW
     ui->rightPlot->addGraph();
     ui->leftPlot->addGraph();
 
-    MyObject *cObject = new MyObject;
+    DataProcessor *cObject = new DataProcessor;
     cObject->moveToThread(&cThread);
     connect(&cThread, &QThread::finished, cObject, &QThread::deleteLater);
-    connect(this, &MainWindow::operate, cObject, &MyObject::doData);
-    connect(cObject, &MyObject::dataReady, this, &MainWindow::plotData);
-    connect(cObject, &MyObject::fftReady, this, &MainWindow::plotFFT);
-    connect(ui->select_disp_freq, &QPushButton::clicked, cObject, &MyObject::doData);
+    connect(this, &MainWindow::operate, cObject, &DataProcessor::doData);
+    connect(cObject, &DataProcessor::dataReady, this, &MainWindow::plotData);
+    connect(cObject, &DataProcessor::fftReady, this, &MainWindow::plotFFT);
+    connect(ui->select_disp_freq, &QPushButton::clicked, cObject, &DataProcessor::doData);
     cThread.start();
 }
 

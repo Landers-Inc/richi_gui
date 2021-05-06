@@ -14,7 +14,7 @@
                 },
                 "command": "windeployqt.exe",
                 "args": [
-                    "${workspaceFolder}/build/release/disp_port.exe"
+                    "${workspaceFolder}/build/release/richi_gui.exe"
                 ]
             },
             "options": {
@@ -33,7 +33,7 @@
                 },
                 "command": "windeployqt.exe",
                 "args": [
-                    "${workspaceFolder}/build/debug/disp_port.exe"
+                    "${workspaceFolder}/build/debug/richi_gui.exe"
                 ]
             },
             "options": {
@@ -53,7 +53,7 @@
                 "command": "jom.exe",
                 "args": [
                     "-f",
-                    "${workspaceFolder}/build/Makefile.Release",
+                    "${workspaceFolder}/build/Makefile.Release"
                 ]
             },
             "dependsOn": [
@@ -76,7 +76,7 @@
                 "command": "jom.exe",
                 "args": [
                     "-f",
-                    "${workspaceFolder}/build/Makefile.Debug",
+                    "${workspaceFolder}/build/Makefile.Debug"
                 ]
             },
             "dependsOn": [
@@ -98,7 +98,7 @@
                 },
                 "command": "qmake.exe",
                 "args": [
-                    "${workspaceFolder}/disp_port.pro",
+                    "${workspaceFolder}/richi_gui.pro",
                     "-spec",
                     "win32-msvc"
                 ]
@@ -106,10 +106,10 @@
             "linux": {
                 "command": "qmake",
                 "args": [
-                    "${workspaceFolder}/disp_port.pro",
+                    "${workspaceFolder}/richi_gui.pro",
                     "-spec",
                     "linux-g++"
-                ],
+                ]
             },
             "options": {
                 "cwd": "${workspaceFolder}/build"
@@ -126,7 +126,7 @@
                 },
                 "command": "qmake.exe",
                 "args": [
-                    "${workspaceFolder}/disp_port.pro",
+                    "${workspaceFolder}/richi_gui.pro",
                     "-spec",
                     "win32-msvc",
                     "CONFIG+=debug",
@@ -137,12 +137,12 @@
             "linux": {
                 "command": "qmake",
                 "args": [
-                    "${workspaceFolder}/disp_port.pro",
+                    "${workspaceFolder}/richi_gui.pro",
                     "-spec",
                     "linux-g++",
                     "CONFIG+=debug",
                     "CONFIG+=qml_debug"
-                ],
+                ]
             },
             "options": {
                 "cwd": "${workspaceFolder}/build"
@@ -159,13 +159,14 @@
                 },
                 "command": "jom.exe",
                 "args": [
-                    "clean",
+                    "clean"
                 ]
             },
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
-            "group": "build"
-        },
+            "group": "build",
+            "problemMatcher": []
+        }
     ]
 }

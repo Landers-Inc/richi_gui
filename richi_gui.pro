@@ -63,13 +63,13 @@ DEFINES += PA_USE_OSS=0
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    myobject.cpp \
+    dataprocessor.cpp \
     src/qcustomplot.cpp
 
 HEADERS += \
     inc/qcustomplot.h \
     mainwindow.h \
-    myobject.h
+    dataprocessor.h
 
 FORMS += \
     mainwindow.ui

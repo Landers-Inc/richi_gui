@@ -26,14 +26,19 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QPushButton {
+   <string notr="true">QWidget#centralwidget{
+	background: #aaa;
+}
+
+QLabel{
+	color: #fff;
+}
+
+QPushButton {
     color: #111;
     border-radius: 10px;
     border-style: outset;
-    background: qradialgradient(
-        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
-        radius: 1.35, stop: 0 #fff, stop: 1 #aaa
-        );
+    background: blue;
     padding: 5px;
     }
 
