@@ -1,0 +1,171 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Windows deploy release",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "env": {
+                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
+                    }
+                },
+                "command": "windeployqt.exe",
+                "args": [
+                    "${workspaceFolder}/build/release/disp_port.exe"
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Windows deploy debug",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "env": {
+                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
+                    }
+                },
+                "command": "windeployqt.exe",
+                "args": [
+                    "${workspaceFolder}/build/debug/disp_port.exe"
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Build release",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "env": {
+                        "Path": "C:/Qt/Tools/QtCreator/bin/;${env:Path}"
+                    }
+                },
+                "command": "jom.exe",
+                "args": [
+                    "-f",
+                    "${workspaceFolder}/build/Makefile.Release",
+                ]
+            },
+            "dependsOn": [
+                "Run qmake release"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Build debug",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "env": {
+                        "Path": "C:/Qt/Tools/QtCreator/bin/;${env:Path}"
+                    }
+                },
+                "command": "jom.exe",
+                "args": [
+                    "-f",
+                    "${workspaceFolder}/build/Makefile.Debug",
+                ]
+            },
+            "dependsOn": [
+                "Run qmake debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Run qmake release",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "env": {
+                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
+                    }
+                },
+                "command": "qmake.exe",
+                "args": [
+                    "${workspaceFolder}/disp_port.pro",
+                    "-spec",
+                    "win32-msvc"
+                ]
+            },
+            "linux": {
+                "command": "qmake",
+                "args": [
+                    "${workspaceFolder}/disp_port.pro",
+                    "-spec",
+                    "linux-g++"
+                ],
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            }
+        },
+        {
+            "label": "Run qmake debug",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "env": {
+                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
+                    }
+                },
+                "command": "qmake.exe",
+                "args": [
+                    "${workspaceFolder}/disp_port.pro",
+                    "-spec",
+                    "win32-msvc",
+                    "CONFIG+=debug",
+                    "CONFIG+=qml_debug",
+                    "CONFIG-=separate_debug_info"
+                ]
+            },
+            "linux": {
+                "command": "qmake",
+                "args": [
+                    "${workspaceFolder}/disp_port.pro",
+                    "-spec",
+                    "linux-g++",
+                    "CONFIG+=debug",
+                    "CONFIG+=qml_debug"
+                ],
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "windows": {
+                "options": {
+                    "env": {
+                        "Path": "C:/Qt/Tools/QtCreator/bin/;${env:Path}"
+                    }
+                },
+                "command": "jom.exe",
+                "args": [
+                    "clean",
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build"
+        },
+    ]
+}

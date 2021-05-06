@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "cmath": "cpp",
+        "qobject": "cpp",
+        "qtcore": "cpp",
+        "qtcoredepends": "cpp"
+    },
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "terminal.integrated.env.windows": {
+        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/:${env:Path}"
+    }
+}
