@@ -62,39 +62,22 @@ DEFINES += PA_USE_OSS=0
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    dataprocessor.cpp \
+    src/mainwindow.cpp \
+    src/dataprocessor.cpp \
+    src/usbadc.cpp \
     src/qcustomplot.cpp
 
 HEADERS += \
-    inc/qcustomplot.h \
-    mainwindow.h \
-    dataprocessor.h
+    inc/mainwindow.h \
+    inc/dataprocessor.h \
+    inc/usbadc.h \
+    inc/dataacquisition.h \
+    inc/qcustomplot.h
 
 FORMS += \
     mainwindow.ui
 
-# Default rules for deployment.
-win32{
-LIBS += -luser32 -ladvapi32
-}
-
-unix{
-LIBS+= -lasound -lhpi -ljack -lfftw3 -lpthread
-SOURCES += \
-    src/hostapi/alsa/pa_linux_alsa.c \
-    src/hostapi/asihpi/pa_linux_asihpi.c \
-    src/hostapi/jack/pa_jack.c \
-    src/os/unix/pa_unix_hostapis.c \
-    src/os/unix/pa_unix_util.c
-}
-
-win32-msvc*{
-LIBS += -L$$PWD/fftw libfftw3-3.lib
-}
-win32-g++{
-LIBS+= -lole32 -lwinmm -lsetupapi -lhid -L$$PWD/fftw -llibfftw3-3
-}
+LIBS+= -lfftw3 -lpthread -lportaudio
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

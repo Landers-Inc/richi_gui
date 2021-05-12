@@ -4,38 +4,88 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Windows deploy release",
-            "type": "shell",
-            "windows": {
-                "options": {
-                    "env": {
-                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
+            "label": "Launch on RPi4",
+            "type": "process",
+            "command": "plink",
+            "args": [
+                "-ssh",
+                "-batch",
+                "pi@10.199.203.180",
+                "export DISPLAY=:0;",
+                "export QT_QPA_EGLFS_HIDECURSOR=1;",
+                "export QT_QPA_EGLFS_WIDTH=1280;",
+                "export QT_QPA_EGLFS_HEIGHT=800;",
+                "export QT_QPA_EGLFS_PHYSICAL_HEIGHT=126;",
+                "export QT_QPA_EGLFS_PHYSICAL_WIDTH=224;",
+                "startx;"
+            ],
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                  "pattern": [
+                    {
+                      "regexp": ".",
+                      "file": 1,
+                      "location": 2,
+                      "message": 3
                     }
-                },
-                "command": "windeployqt.exe",
-                "args": [
-                    "${workspaceFolder}/build/release/richi_gui.exe"
-                ]
-            },
-            "options": {
-                "cwd": "${workspaceFolder}/build"
-            },
-            "group": "build"
+                  ],
+                  "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": ".",
+                  }
+                }
+              ]
         },
         {
-            "label": "Windows deploy debug",
+            "label": "Launch GDB Server for debugging",
+            "type": "process",
+            "command": "plink",
+            "args": [
+                "-X",
+                "-ssh",
+                "-batch",
+                "pi@10.199.203.180",
+                "export DISPLAY=localhost:10.0;",
+                "export QT_QPA_EGLFS_HIDECURSOR=1;",
+                "export QT_QPA_EGLFS_WIDTH=1280;",
+                "export QT_QPA_EGLFS_HEIGHT=800;",
+                "export QT_QPA_EGLFS_PHYSICAL_HEIGHT=126;",
+                "export QT_QPA_EGLFS_PHYSICAL_WIDTH=224;",
+                "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform xcb;"
+            ],
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                  "pattern": [
+                    {
+                      "regexp": ".",
+                      "file": 1,
+                      "location": 2,
+                      "message": 3
+                    }
+                  ],
+                  "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": ".",
+                    "endsPattern": ".",
+                  }
+                }
+              ]
+        },
+        {
+            "label": "Build release executable",
             "type": "shell",
             "windows": {
-                "options": {
-                    "env": {
-                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
-                    }
-                },
-                "command": "windeployqt.exe",
+                "command": "C:/SysGCC/raspberry4/bin/make.exe",
                 "args": [
-                    "${workspaceFolder}/build/debug/richi_gui.exe"
+                    "-j8",
                 ]
             },
+            "dependsOn": [
+                "Build release"
+            ],
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -45,15 +95,11 @@
             "label": "Build release",
             "type": "shell",
             "windows": {
-                "options": {
-                    "env": {
-                        "Path": "C:/Qt/Tools/QtCreator/bin/;${env:Path}"
-                    }
-                },
-                "command": "jom.exe",
+                "command": "C:/SysGCC/raspberry4/bin/make.exe",
                 "args": [
                     "-f",
-                    "${workspaceFolder}/build/Makefile.Release"
+                    "Makefile",
+                    "qmake_all"
                 ]
             },
             "dependsOn": [
@@ -65,18 +111,31 @@
             "group": "build"
         },
         {
+            "label": "Build debug executable",
+            "type": "shell",
+            "windows": {
+                "command": "C:/SysGCC/raspberry4/bin/make.exe",
+                "args": [
+                    "-j8",
+                ]
+            },
+            "dependsOn": [
+                "Build debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build"
+        },
+        {
             "label": "Build debug",
             "type": "shell",
             "windows": {
-                "options": {
-                    "env": {
-                        "Path": "C:/Qt/Tools/QtCreator/bin/;${env:Path}"
-                    }
-                },
-                "command": "jom.exe",
+                "command": "C:/SysGCC/raspberry4/bin/make.exe",
                 "args": [
                     "-f",
-                    "${workspaceFolder}/build/Makefile.Debug"
+                    "Makefile",
+                    "qmake_all"
                 ]
             },
             "dependsOn": [
@@ -91,16 +150,11 @@
             "label": "Run qmake release",
             "type": "shell",
             "windows": {
-                "options": {
-                    "env": {
-                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
-                    }
-                },
-                "command": "qmake.exe",
+                "command": "C:/SysGCC/raspberry4/arm-linux-gnueabihf/sysroot/usr/local/qt5pi/bin/qmake.exe",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
-                    "win32-msvc"
+                    "devices/linux-rasp-pi4-v3d-g++"
                 ]
             },
             "linux": {
@@ -119,16 +173,11 @@
             "label": "Run qmake debug",
             "type": "shell",
             "windows": {
-                "options": {
-                    "env": {
-                        "Path": "C:/Qt/5.15.2/msvc2019_64/bin/;${env:Path}"
-                    }
-                },
-                "command": "qmake.exe",
+                "command": "C:/SysGCC/raspberry4/arm-linux-gnueabihf/sysroot/usr/local/qt5pi/bin/qmake.exe",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
-                    "win32-msvc",
+                    "devices/linux-rasp-pi4-v3d-g++",
                     "CONFIG+=debug",
                     "CONFIG+=qml_debug",
                     "CONFIG-=separate_debug_info"
@@ -152,14 +201,10 @@
             "label": "Clean",
             "type": "shell",
             "windows": {
-                "options": {
-                    "env": {
-                        "Path": "C:/Qt/Tools/QtCreator/bin/;${env:Path}"
-                    }
-                },
-                "command": "jom.exe",
+                "command": "C:/SysGCC/raspberry4/bin/make.exe",
                 "args": [
-                    "clean"
+                    "distclean",
+                    "-j8"
                 ]
             },
             "options": {
@@ -167,6 +212,44 @@
             },
             "group": "build",
             "problemMatcher": []
-        }
+        },
+        {
+            "label": "Build and deploy release",
+            "type": "shell",
+            "windows": {
+                "command": "scp",
+                "args": [
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn": [
+                "Build release executable"
+            ]
+        },
+        {
+            "label": "Build and deploy debug",
+            "type": "shell",
+            "windows": {
+                "command": "scp",
+                "args": [
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn": [
+                "Build debug executable"
+            ]
+        },
     ]
 }

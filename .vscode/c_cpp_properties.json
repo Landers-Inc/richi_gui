@@ -16,14 +16,16 @@
             "name": "Windows",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:/Qt/5.15.2/msvc2019_64/include/**"
+                "${workspaceFolder}/inc/**",
+                "C:/SysGCC/raspberry4/arm-linux-gnueabihf/sysroot/usr/local/qt5pi/**",
+                "C:/SysGCC/raspberry4/arm-linux-gnueabihf/sysroot/**"
             ],
             "defines": [],
-            "compilerPath": "cl.exe",
+            "compilerPath": "C:/SysGCC/raspberry4/bin/arm-linux-gnueabihf-g++.exe",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "windows-msvc-x64"
-        },
+            "intelliSenseMode": "linux-gcc-arm64"
+        }
     ],
     "version": 4
 }

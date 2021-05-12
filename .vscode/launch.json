@@ -5,20 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch release",
-            "type": "cppvsdbg",
+            "name": "(gdb) Attach",
+            "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/release/richi_gui.exe",
-            "args": [],
+            "MIMode" : "gdb",
+            "program": "${workspaceFolder}/build/richi_gui",
+            "miDebuggerServerAddress": "10.199.203.180:10000",
             "cwd": "${workspaceFolder}",
-        },
-        {
-            "name": "Launch debug",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}/build/debug/richi_gui.exe",
-            "args": [],
-            "cwd": "${workspaceFolder}",
+            "miDebuggerPath": "C:/SysGCC/raspberry4/bin/arm-linux-gnueabihf-gdb.exe",
+            "preLaunchTask": "Launch GDB Server for debugging"
         }
     ]
 }

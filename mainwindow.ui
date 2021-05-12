@@ -26,42 +26,49 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#centralwidget{
-	background: #aaa;
+   <string notr="true">QWidget#centralWidget {
+	background: #ddd;
 }
 
-QLabel{
-	color: #fff;
+QLabel {
+	color: #333;
 }
 
 QPushButton {
     color: #111;
     border-radius: 10px;
     border-style: outset;
-    background: blue;
-    padding: 5px;
-    }
+    background: #888;
+	font: 24px 'Ubuntu';
+	font-weight: bold;
+}
 
 QPushButton:hover {
     background: qradialgradient(
-        cx: 0.3, cy: -0.4, fx: 0.3, fy: -0.4,
+        cx: 0.3, cy: -0.4, fx: 0.3, fy: 0.4,
         radius: 1.35, stop: 0 #fff, stop: 1 #bbb
-        );
-    }
+    );
+}
 
 QPushButton:pressed {
     border-style: inset;
     background: qradialgradient(
-        cx: 0.4, cy: -0.1, fx: 0.4, fy: -0.1,
+        cx: 0.4, cy: -0.1, fx: 0.4, fy: 0.1,
         radius: 1.35, stop: 0 #fff, stop: 1 #ddd
-        );
-    }
+    );
+}
 
 QLabel {
 	border: 1px solid #000;
+	font: 24px 'Ubuntu';
+	font-weight: bold;
+}
+
+QLabel#peaksTitle {
+	font-size: 30px;
 }</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
      <horstretch>0</horstretch>
@@ -88,7 +95,7 @@ QLabel {
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,2">
+      <layout class="QHBoxLayout" name="plotsLayout" stretch="3,2">
        <property name="spacing">
         <number>10</number>
        </property>
@@ -163,7 +170,7 @@ QLabel {
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="4,1">
+      <layout class="QHBoxLayout" name="panelLayout" stretch="4,1">
        <property name="spacing">
         <number>10</number>
        </property>
@@ -183,11 +190,11 @@ QLabel {
         <number>10</number>
        </property>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="3,1">
+        <layout class="QVBoxLayout" name="dataLayout" stretch="3,1">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="2,1,1">
+          <layout class="QHBoxLayout" name="miscLayout" stretch="2,1,1">
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_36" stretch="1,2">
+            <layout class="QVBoxLayout" name="peaksLayout" stretch="1,2">
              <property name="spacing">
               <number>0</number>
              </property>
@@ -207,11 +214,13 @@ QLabel {
               <number>10</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_60">
+              <widget class="QLabel" name="peaksTitle">
                <property name="font">
                 <font>
-                 <pointsize>20</pointsize>
+                 <family>Ubuntu</family>
+                 <pointsize>-1</pointsize>
                  <weight>75</weight>
+                 <italic>false</italic>
                  <bold>true</bold>
                 </font>
                </property>
@@ -224,7 +233,7 @@ QLabel {
               </widget>
              </item>
              <item>
-              <layout class="QGridLayout" name="gridLayout_18" rowstretch="1,1,1" columnstretch="1,1">
+              <layout class="QGridLayout" name="peaksData" rowstretch="1,1,1" columnstretch="1,1">
                <property name="sizeConstraint">
                 <enum>QLayout::SetDefaultConstraint</enum>
                </property>
@@ -244,7 +253,7 @@ QLabel {
                 <number>0</number>
                </property>
                <item row="0" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="2,1">
+                <layout class="QHBoxLayout" name="peakOneFreq" stretch="2,1">
                  <property name="spacing">
                   <number>0</number>
                  </property>
@@ -261,11 +270,18 @@ QLabel {
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="label_67">
+                  <widget class="QLabel" name="peakOneFreqValue">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="text">
                     <string>11</string>
@@ -276,13 +292,22 @@ QLabel {
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">
+                     QLabel {background-color: white}
+                    </string>
+                   </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_88">
+                  <widget class="QLabel" name="peakOneFreqUnit">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
                    </property>
                    <property name="text">
@@ -299,7 +324,7 @@ QLabel {
                 </layout>
                </item>
                <item row="1" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="2,1">
+                <layout class="QHBoxLayout" name="peakTwoFreq" stretch="2,1">
                  <property name="spacing">
                   <number>0</number>
                  </property>
@@ -316,11 +341,18 @@ QLabel {
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="label_89">
+                  <widget class="QLabel" name="peakTwoFreqValue">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="text">
                     <string>12</string>
@@ -331,13 +363,22 @@ QLabel {
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">
+                     QLabel {background-color: white}
+                    </string>
+                   </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_90">
+                  <widget class="QLabel" name="peakTwoFreqUnit">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
                    </property>
                    <property name="text">
@@ -354,7 +395,7 @@ QLabel {
                 </layout>
                </item>
                <item row="2" column="0">
-                <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="2,1">
+                <layout class="QHBoxLayout" name="peakThreeFreq" stretch="2,1">
                  <property name="spacing">
                   <number>0</number>
                  </property>
@@ -371,11 +412,18 @@ QLabel {
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="label_91">
+                  <widget class="QLabel" name="peakThreeFreqValue">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="text">
                     <string>13</string>
@@ -386,13 +434,22 @@ QLabel {
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">
+                     QLabel {background-color: white}
+                    </string>
+                   </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_92">
+                  <widget class="QLabel" name="peakThreeFreqUnit">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
                    </property>
                    <property name="text">
@@ -409,7 +466,7 @@ QLabel {
                 </layout>
                </item>
                <item row="0" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="2,1">
+                <layout class="QHBoxLayout" name="peakOnePower" stretch="2,1">
                  <property name="spacing">
                   <number>0</number>
                  </property>
@@ -426,11 +483,18 @@ QLabel {
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="label_93">
+                  <widget class="QLabel" name="peakOnePowerValue">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="text">
                     <string>-88</string>
@@ -441,13 +505,22 @@ QLabel {
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">
+                     QLabel {background-color: white}
+                    </string>
+                   </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_94">
+                  <widget class="QLabel" name="peakOnePowerUnit">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
                    </property>
                    <property name="text">
@@ -464,7 +537,7 @@ QLabel {
                 </layout>
                </item>
                <item row="1" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_22" stretch="2,1">
+                <layout class="QHBoxLayout" name="peakTwoPower" stretch="2,1">
                  <property name="spacing">
                   <number>0</number>
                  </property>
@@ -481,11 +554,18 @@ QLabel {
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="label_95">
+                  <widget class="QLabel" name="peakTwoPowerValue">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="text">
                     <string>-100</string>
@@ -496,13 +576,22 @@ QLabel {
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">
+                     QLabel {background-color: white}
+                    </string>
+                   </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_96">
+                  <widget class="QLabel" name="peakTwoPowerUnit">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
                    </property>
                    <property name="text">
@@ -519,7 +608,7 @@ QLabel {
                 </layout>
                </item>
                <item row="2" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="2,1">
+                <layout class="QHBoxLayout" name="peakThreePower" stretch="2,1">
                  <property name="spacing">
                   <number>0</number>
                  </property>
@@ -536,11 +625,18 @@ QLabel {
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QLabel" name="label_97">
+                  <widget class="QLabel" name="peakThreePowerValue">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="text">
                     <string>-110</string>
@@ -551,13 +647,22 @@ QLabel {
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">
+                     QLabel {background-color: white}
+                    </string>
+                   </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_98">
+                  <widget class="QLabel" name="peakThreePowerUnit">
                    <property name="font">
                     <font>
-                     <pointsize>18</pointsize>
+                     <family>Ubuntu</family>
+                     <pointsize>-1</pointsize>
+                     <weight>75</weight>
+                     <italic>false</italic>
+                     <bold>true</bold>
                     </font>
                    </property>
                    <property name="text">
@@ -578,7 +683,7 @@ QLabel {
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_35" stretch="1,1">
+            <layout class="QVBoxLayout" name="beaconLayout" stretch="1,1">
              <property name="sizeConstraint">
               <enum>QLayout::SetDefaultConstraint</enum>
              </property>
@@ -595,7 +700,7 @@ QLabel {
               <number>10</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_60">
+              <widget class="QPushButton" name="selectBeacon">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -604,7 +709,11 @@ QLabel {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>20</pointsize>
+                 <family>Ubuntu</family>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
                 </font>
                </property>
                <property name="text">
@@ -613,7 +722,7 @@ QLabel {
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_61">
+              <widget class="QPushButton" name="beaconFound">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -622,7 +731,11 @@ QLabel {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>20</pointsize>
+                 <family>Ubuntu</family>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
                 </font>
                </property>
                <property name="text">
@@ -633,7 +746,7 @@ QLabel {
             </layout>
            </item>
            <item>
-            <layout class="QVBoxLayout" name="verticalLayout_34" stretch="1,1">
+            <layout class="QVBoxLayout" name="logLayout" stretch="1,1">
              <property name="sizeConstraint">
               <enum>QLayout::SetDefaultConstraint</enum>
              </property>
@@ -650,7 +763,7 @@ QLabel {
               <number>10</number>
              </property>
              <item>
-              <widget class="QPushButton" name="pushButton_58">
+              <widget class="QPushButton" name="preblastLog">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -659,7 +772,11 @@ QLabel {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>20</pointsize>
+                 <family>Ubuntu</family>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
                 </font>
                </property>
                <property name="text">
@@ -668,7 +785,7 @@ QLabel {
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_59">
+              <widget class="QPushButton" name="postblastLog">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -677,7 +794,11 @@ QLabel {
                </property>
                <property name="font">
                 <font>
-                 <pointsize>20</pointsize>
+                 <family>Ubuntu</family>
+                 <pointsize>-1</pointsize>
+                 <weight>75</weight>
+                 <italic>false</italic>
+                 <bold>true</bold>
                 </font>
                </property>
                <property name="text">
@@ -690,7 +811,7 @@ QLabel {
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_24">
+          <layout class="QHBoxLayout" name="saveLayout">
            <property name="leftMargin">
             <number>10</number>
            </property>
@@ -704,7 +825,7 @@ QLabel {
             <number>10</number>
            </property>
            <item>
-            <widget class="QPushButton" name="pushButton_48">
+            <widget class="QPushButton" name="startLog">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -713,7 +834,11 @@ QLabel {
              </property>
              <property name="font">
               <font>
-               <pointsize>20</pointsize>
+               <family>Ubuntu</family>
+               <pointsize>-1</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
               </font>
              </property>
              <property name="text">
@@ -725,7 +850,7 @@ QLabel {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_47">
+            <widget class="QPushButton" name="saveLog">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -734,7 +859,11 @@ QLabel {
              </property>
              <property name="font">
               <font>
-               <pointsize>20</pointsize>
+               <family>Ubuntu</family>
+               <pointsize>-1</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
               </font>
              </property>
              <property name="text">
@@ -743,7 +872,7 @@ QLabel {
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_46">
+            <widget class="QPushButton" name="closeShutdown">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
@@ -752,7 +881,11 @@ QLabel {
              </property>
              <property name="font">
               <font>
-               <pointsize>20</pointsize>
+               <family>Ubuntu</family>
+               <pointsize>-1</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
               </font>
              </property>
              <property name="text">
@@ -765,7 +898,7 @@ QLabel {
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_30">
+        <layout class="QVBoxLayout" name="selectLayout">
          <property name="spacing">
           <number>10</number>
          </property>
@@ -785,7 +918,7 @@ QLabel {
           <number>10</number>
          </property>
          <item>
-          <widget class="QPushButton" name="select_disp_freq">
+          <widget class="QPushButton" name="selectDisplayFreq">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -794,14 +927,19 @@ QLabel {
            </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <family>Ubuntu</family>
+             <pointsize>-1</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
             </font>
            </property>
            <property name="styleSheet">
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Select Display Frequency</string>
+            <string>Select Display
+Frequency</string>
            </property>
            <property name="flat">
             <bool>false</bool>
@@ -809,7 +947,7 @@ QLabel {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_52">
+          <widget class="QPushButton" name="selectOneFreq">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -818,7 +956,11 @@ QLabel {
            </property>
            <property name="font">
             <font>
-             <pointsize>20</pointsize>
+             <family>Ubuntu</family>
+             <pointsize>-1</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
@@ -827,7 +969,7 @@ QLabel {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_53">
+          <widget class="QPushButton" name="selectTwoFreq">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -836,7 +978,11 @@ QLabel {
            </property>
            <property name="font">
             <font>
-             <pointsize>20</pointsize>
+             <family>Ubuntu</family>
+             <pointsize>-1</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
@@ -845,7 +991,7 @@ QLabel {
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_54">
+          <widget class="QPushButton" name="selectThreeFreq">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -854,7 +1000,11 @@ QLabel {
            </property>
            <property name="font">
             <font>
-             <pointsize>20</pointsize>
+             <family>Ubuntu</family>
+             <pointsize>-1</pointsize>
+             <weight>75</weight>
+             <italic>false</italic>
+             <bold>true</bold>
             </font>
            </property>
            <property name="text">
