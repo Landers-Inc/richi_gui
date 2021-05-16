@@ -41,19 +41,14 @@
         {
             "label": "Launch GDB Server for debugging",
             "type": "process",
-            "command": "plink",
+            "command": "ssh",
             "args": [
                 "-X",
-                "-ssh",
-                "-batch",
+                //"-ssh",
+                //"-batch",
                 "pi@10.199.203.180",
                 "export DISPLAY=localhost:10.0;",
-                "export QT_QPA_EGLFS_HIDECURSOR=1;",
-                "export QT_QPA_EGLFS_WIDTH=1280;",
-                "export QT_QPA_EGLFS_HEIGHT=800;",
-                "export QT_QPA_EGLFS_PHYSICAL_HEIGHT=126;",
-                "export QT_QPA_EGLFS_PHYSICAL_WIDTH=224;",
-                "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform xcb;"
+                "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
             "isBackground": true,
             "problemMatcher": [

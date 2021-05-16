@@ -78,7 +78,17 @@
         "array": "cpp",
         "memory_resource": "cpp",
         "string_view": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "qvariant": "cpp",
+        "qquickwidget": "cpp",
+        "qtwidgets": "cpp",
+        "qwidget": "cpp",
+        "qvboxlayout": "cpp",
+        "qlabel": "cpp",
+        "qhboxlayout": "cpp",
+        "qqmlengine": "cpp",
+        "qqmlapplicationengine": "cpp",
+        "qquickview": "cpp"
     },
     "editor.tabSize": 4,
     "editor.detectIndentation": false,

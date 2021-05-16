@@ -1,5 +1,9 @@
-#ifndef DATAPROCESSOR_H
-#define DATAPROCESSOR_H
+/** author Christopher Muñoz
+ * date 07-05-2021
+*/
+
+
+#pragma once
 
 #include <QObject>
 #include <QThread>
@@ -9,53 +13,58 @@
 
 #include "fftw3.h"
 #include "qcustomplot.h"
+#include "datawindow.h"
 
-extern int N_size;
-extern double sampleFrequency;
-
+// Struct to save peaks data
 typedef struct Peak {
     double frequency;
     double value;
     int index;
 } Peak;
 
+// Struct to set frequency bins to search for peaks
 typedef struct FrequencyIndex {
     int begin;
     int end;
 } FrequencyIndex;
 
+// Class dedicated to process incoming data
 class DataProcessor : public QObject {
     Q_OBJECT
 public:
-    explicit DataProcessor(QObject *parent = 0) : QObject(parent), hannWindow(N_size, 0), frequencyBins(3){
-        for(int i = 0; i < N_size; i++) {
-            //hannWindow[i] = 0.5 * (1 - cos(2*M_PI*i/N_size));
-            hannWindow[i] = 0.355768 - 0.487396*cos(2*M_PI*i/N_size) + 0.144232*cos(4*M_PI*i/N_size) - 0.012604*cos(6*M_PI*i/N_size);
-            //hannWindow[i] = 1.0;
-        }
-        frequencyBins[0] = {(int)floor(2048*10500.0/44100.0), (int)ceil(2048*11500.0/44100.0)};
-        frequencyBins[1] = {(int)floor(2048*11500.0/44100.0), (int)ceil(2048*12500.0/44100.0)};
-        frequencyBins[2] = {(int)floor(2048*12500.0/44100.0), (int)ceil(2048*13500.0/44100.0)};
+    explicit DataProcessor(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent){
+        dataSize = dataSizeArg;
+        sampleFrequency = sampleFrequencyArg;
+        initialize();
     };
 private:
     double processGain = -2.997;
+    int accumulatorPointer = 0;
+
+    int accumulatorSize = 10;
+
+    int dataSize = 0;
+    double sampleFrequency = 0.0;
     std::vector<double> hannWindow;
+    std::vector<double> timeDomain;
+    std::vector<double> frequencyDomain;
     std::vector<FrequencyIndex> frequencyBins;
+    std::vector<std::vector<double>> fftAccumulator;
+
     std::vector<std::vector<double>> fftCalculation(std::vector<double> data);
+    std::vector<double> fftAverage(std::vector<std::vector<double>> data);
     std::vector<Peak> getPeaks(std::vector<std::vector<double>> fft);
     Peak getWeightedFrequency(std::vector<std::vector<double>> fft, int index);
     double calculateEntropy(std::vector<std::vector<double>> data);
+    void initialize();
 signals:
     void fftReady(QVector<double> const &xSeries,QVector<double> const &ySeries);
-    void fftOldReady(QVector<double> const &xSeries,QVector<double> const &ySeries);
     void dataReady(QVector<double> const &xSeries,QVector<double> const &ySeries);
-    void dataOldReady(QVector<double> const &xSeries,QVector<double> const &ySeries);
+    void plotData();
 
     void peakOneReady(double freq, double power);
     void peakTwoReady(double freq, double power);
     void peakThreeReady(double freq, double power);
 public slots:
-    void processData(std::vector<double> timeData, std::vector<double> amplitudeData);
+    void processData(std::vector<double> amplitudeData);
 };
-
-#endif // DATAPROCESSOR_H

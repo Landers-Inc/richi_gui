@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Attach",
+            "name": "(gdb) Attach to remote",
             "type": "cppdbg",
             "request": "launch",
             "MIMode" : "gdb",

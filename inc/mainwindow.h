@@ -1,5 +1,4 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
 #include <QThread>
@@ -21,6 +20,8 @@ class MainWindow : public QMainWindow{
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void setupGUI();
 private:
     void connectButtons();
     Ui::MainWindow *ui;
@@ -33,11 +34,11 @@ private:
 signals:
     void peripheralsReady(double freq, double power);
 public slots:
-    void updateData(QVector<double> const &xSeries,QVector<double> const &ySeries);
-    void updateFFT(QVector<double> const &xSeries,QVector<double> const &ySeries);
+    void updateData(QVector<double> const &xSeries, QVector<double> const &ySeries);
+    void updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries);
     void updateOnePeak(double freq, double power);
     void updateTwoPeak(double freq, double power);
     void updateThreePeak(double freq, double power);
+    void updatePlots();
+    void openBeaconInput();
 };
-
-#endif // MAINWINDOW_H

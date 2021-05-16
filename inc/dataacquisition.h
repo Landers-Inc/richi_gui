@@ -1,5 +1,8 @@
-#ifndef DATAACQUISITION_H
-#define DATAACQUISITION_H
+/** author Christopher Muñoz
+ * date 07-05-2021
+*/
+
+#pragma once
 
 #include <QObject>
 #include <random>
@@ -16,11 +19,8 @@ public:
     std::vector<double> timeData; /**< Vector to store time data */
     std::vector<double> amplitudeData; /**< Vector to store converted data */
 
-    explicit DataAcquisition(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent){
-        dataSize = dataSizeArg;
-        sampleFrequency = sampleFrequencyArg;
-        amplitudeData = std::vector<double>(dataSize);
-        timeData = std::vector<double>(dataSize);
+    explicit DataAcquisition(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) :
+        QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg), amplitudeData(dataSize), timeData(dataSize){
     }; /**< Class constructor */
 
     virtual ~DataAcquisition() {}; /**< Class destructor */
@@ -30,9 +30,7 @@ public:
     void setSampleFrequency(double newFrequency){sampleFrequency = newFrequency;}; /**< Sample frequency setter */
     double getSampleFrequency(){return sampleFrequency;}; /**< Sample frequency getter */
 signals:
-    virtual void dataReady(std::vector<double> const &timeData, std::vector<double> const &amplitudeData); /**< Qt Signal signal to transfer data to processor thread */
+    virtual void dataReady(std::vector<double> const &amplitudeData); /**< Qt Signal signal to transfer data to processor thread */
 public slots:
     virtual void getData() = 0; /**< Qt Object slot function to acquire data from converter */
 };
-
-#endif // DATAACQUISITION_H

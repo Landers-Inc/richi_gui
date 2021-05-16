@@ -112,10 +112,7 @@ int USBADC::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
     (void) statusFlags;
     (void) inputBuffer;
 
-    for(i = 0; i < framesPerBuffer; i++) {
-        timeData[i] = (double)i/(double)sampleFrequency;
-        amplitudeData[i] = *in++;
-    }
+    for(i = 0; i < framesPerBuffer; i++) amplitudeData[i] = *in++;
 
     this->getData();
 
@@ -143,5 +140,5 @@ void USBADC::paStreamFinished(void* userData){
 
 void USBADC::getData() {
     // Let's generate a cosine wave with white gaussian noise and a small frequency variation
-    emit dataReady(timeData, amplitudeData);
+    emit dataReady(amplitudeData);
 }
