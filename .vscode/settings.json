@@ -88,7 +88,9 @@
         "qhboxlayout": "cpp",
         "qqmlengine": "cpp",
         "qqmlapplicationengine": "cpp",
-        "qquickview": "cpp"
+        "qquickview": "cpp",
+        "cwctype": "cpp",
+        "deque": "cpp"
     },
     "editor.tabSize": 4,
     "editor.detectIndentation": false,

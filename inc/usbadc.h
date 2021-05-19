@@ -1,21 +1,18 @@
-//
-// Created by lander on 08-01-20.
-//
-
 #pragma once
+
+#include <portaudio.h>
 
 #include <iostream>
 #include <random>
 
-#include <portaudio.h>
-#include "dataacquisition.h"
+#include "datareader.h"
 
-class USBADC : public DataAcquisition{
+class USBADC : public DataReader {
     Q_OBJECT
-private:
+   private:
     std::default_random_engine generator_amp_noise;
     std::default_random_engine generator_freq_noise;
-    PaStream * stream;
+    PaStream *stream;
 
     bool open();
     bool close();
@@ -23,21 +20,22 @@ private:
     bool stop();
 
     int paCallbackMethod(const void *inputBuffer, void *outputBuffer,
-        unsigned long framesPerBuffer,
-        const PaStreamCallbackTimeInfo* timeInfo,
-        PaStreamCallbackFlags statusFlags);
+                         unsigned long framesPerBuffer,
+                         const PaStreamCallbackTimeInfo *timeInfo,
+                         PaStreamCallbackFlags statusFlags);
     void paStreamFinishedMethod();
-public:
+
+   public:
     USBADC(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0);
     ~USBADC();
 
-    static int paCallback( const void *inputBuffer, void *outputBuffer,
-        unsigned long framesPerBuffer,
-        const PaStreamCallbackTimeInfo* timeInfo,
-        PaStreamCallbackFlags statusFlags,
-        void *userData );
+    static int paCallback(const void *inputBuffer, void *outputBuffer,
+                          unsigned long framesPerBuffer,
+                          const PaStreamCallbackTimeInfo *timeInfo,
+                          PaStreamCallbackFlags statusFlags,
+                          void *userData);
 
-    static void paStreamFinished(void* userData);
-public slots:
+    static void paStreamFinished(void *userData);
+   public slots:
     void getData() Q_DECL_OVERRIDE;
 };

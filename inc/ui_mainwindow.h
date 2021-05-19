@@ -1,7 +1,7 @@
 #pragma once
 
-#include <QQuickWidget>
 #include <QQmlApplicationEngine>
+#include <QQuickWidget>
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QGridLayout>
@@ -11,12 +11,14 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+
+#include "keyboard.h"
 #include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow {
-public:
+   public:
     QCPItemText *textLabel;
     QQuickWidget *keyboardWidget;
 
@@ -75,8 +77,7 @@ public:
     QPushButton *selectTwoFreq;
     QPushButton *selectThreeFreq;
 
-    void setupUi(QMainWindow *MainWindow)
-    {
+    void setupUi(QMainWindow *MainWindow) {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(1280, 800);
@@ -86,56 +87,57 @@ public:
         sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
         MainWindow->setSizePolicy(sizePolicy);
         MainWindow->setMinimumSize(QSize(1280, 800));
-        MainWindow->setStyleSheet(QString::fromUtf8("QWidget#centralWidget {\n"
-"	background: #ddd;\n"
-"}\n"
-"QWidget#inputBeaconWidget {\n"
-"   background: #ddd;\n"
-"   border-radius: 10px;\n"
-"   border-style: solid;\n"
-"   border-width: 2px;\n"
-"   border-radius: 7px;\n"
-"   border-color: black;\n"
-"}\n"
-"\n"
-"QLabel {\n"
-"	color: #333;\n"
-"}\n"
-"\n"
-"QPushButton {\n"
-"    color: #111;\n"
-"    border-radius: 10px;\n"
-"    border-style: outset;\n"
-"    border-color: black;\n"
-"    background: #888;\n"
-"   font: 24px 'Ubuntu';\n"
-"   font-weight: bold;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background: qradialgradient(\n"
-"        cx: 0.3, cy: -0.4, fx: 0.3, fy: 0.4,\n"
-"        radius: 1.35, stop: 0 #fff, stop: 1 #bbb\n"
-"    );\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    border-style: inset;\n"
-"    background: qradialgradient(\n"
-"        cx: 0.4, cy: -0.1, fx: 0.4, fy: 0.1,\n"
-"        radius: 1.35, stop: 0 #fff, stop: 1 #ddd\n"
-"    );\n"
-"}\n"
-"\n"
-"QLabel {\n"
-"	border: 1px solid #000;\n"
-"	font: 24px 'Ubuntu';\n"
-"	font-weight: bold;\n"
-"}\n"
-"\n"
-"QLabel#peaksTitle {\n"
-"	font-size: 30px;\n"
-"}"));
+        MainWindow->setStyleSheet(QString::fromUtf8(
+            "QWidget#centralWidget {\n"
+            "	background: #ddd;\n"
+            "}\n"
+            "QWidget#inputBeaconWidget {\n"
+            "   background: #ddd;\n"
+            "   border-radius: 10px;\n"
+            "   border-style: solid;\n"
+            "   border-width: 2px;\n"
+            "   border-radius: 7px;\n"
+            "   border-color: black;\n"
+            "}\n"
+            "\n"
+            "QLabel {\n"
+            "	color: #333;\n"
+            "}\n"
+            "\n"
+            "QPushButton {\n"
+            "    color: #111;\n"
+            "    border-radius: 10px;\n"
+            "    border-style: outset;\n"
+            "    border-color: black;\n"
+            "    background: #888;\n"
+            "   font: 24px 'Ubuntu';\n"
+            "   font-weight: bold;\n"
+            "}\n"
+            "\n"
+            "QPushButton:hover {\n"
+            "    background: qradialgradient(\n"
+            "        cx: 0.3, cy: -0.4, fx: 0.3, fy: 0.4,\n"
+            "        radius: 1.35, stop: 0 #fff, stop: 1 #bbb\n"
+            "    );\n"
+            "}\n"
+            "\n"
+            "QPushButton:pressed {\n"
+            "    border-style: inset;\n"
+            "    background: qradialgradient(\n"
+            "        cx: 0.4, cy: -0.1, fx: 0.4, fy: 0.1,\n"
+            "        radius: 1.35, stop: 0 #fff, stop: 1 #ddd\n"
+            "    );\n"
+            "}\n"
+            "\n"
+            "QLabel {\n"
+            "	border: 1px solid #000;\n"
+            "	font: 24px 'Ubuntu';\n"
+            "	font-weight: bold;\n"
+            "}\n"
+            "\n"
+            "QLabel#peaksTitle {\n"
+            "	font-size: 30px;\n"
+            "}"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
@@ -416,7 +418,7 @@ public:
         inputBeaconTopLabel->setObjectName(QString::fromUtf8("inputBeaconTopLabel"));
         inputBeaconTopLabel->setContentsMargins(10, 10, 10, 10);
 
-        keyboardWidget = new QQuickWidget(QUrl("qrc:/main.qml"), centralWidget);
+        keyboardWidget = new Keyboard(QUrl("qrc:/main.qml"), centralWidget);
         keyboardWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         keyboardWidget->move(200, 300);
         keyboardWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
@@ -424,7 +426,7 @@ public:
         keyboardWidget->setClearColor(Qt::transparent);
         keyboardWidget->setMinimumSize(880, 500);
         keyboardWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-        keyboardWidget->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+        // keyboardWidget->setFocusPolicy(Qt::FocusPolicy::NoFocus);
         keyboardWidget->setVisible(false);
 
         inputBeaconLayout->addWidget(inputBeaconTopLabel);
@@ -541,7 +543,6 @@ public:
 
         saveLayout->addWidget(closeShutdown);
 
-
         dataLayout->addLayout(saveLayout);
 
         dataLayout->setStretch(0, 3);
@@ -588,7 +589,6 @@ public:
 
         selectLayout->addWidget(selectThreeFreq);
 
-
         panelLayout->addLayout(selectLayout);
 
         panelLayout->setStretch(0, 4);
@@ -603,10 +603,9 @@ public:
         retranslateUi(MainWindow);
 
         QMetaObject::connectSlotsByName(MainWindow);
-    } // setupUi
+    }  // setupUi
 
-    void retranslateUi(QMainWindow *MainWindow)
-    {
+    void retranslateUi(QMainWindow *MainWindow) {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         peaksTitle->setText(QCoreApplication::translate("MainWindow", "Peaks detected", nullptr));
         peakOneFreqValue->setText(QCoreApplication::translate("MainWindow", "11", nullptr));
@@ -635,12 +634,12 @@ public:
         inputBeaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Input beacon data", nullptr));
         inputBeaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Beacon number", nullptr));
         inputBeaconTwoLabel->setText(QCoreApplication::translate("MainWindow", "Beacon distance", nullptr));
-    } // retranslateUi
-
+    }  // retranslateUi
 };
 
 namespace Ui {
-    class MainWindow: public Ui_MainWindow {};
-} // namespace Ui
+class MainWindow : public Ui_MainWindow {
+};
+}  // namespace Ui
 
 QT_END_NAMESPACE

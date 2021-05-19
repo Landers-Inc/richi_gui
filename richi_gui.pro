@@ -72,7 +72,8 @@ HEADERS += \
     inc/dataprocessor.h \
     inc/usbadc.h \
     inc/dataacquisition.h \
-    inc/qcustomplot.h
+    inc/qcustomplot.h \
+    inc/keyboard.h
 
 LIBS+= -lfftw3 -lpthread -lportaudio
 

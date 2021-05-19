@@ -4,9 +4,9 @@
 #include <QQuickWidget>
 #include <QtWidgets>
 
-class InputDialog : public QObject{
+class InputDialog : public QObject {
     Q_OBJECT
-private:
+   private:
     QQuickWidget *keyboardWidget;
     QWidget *inputBeaconWidget;
     QVBoxLayout *inputBeaconLayout;
@@ -17,8 +17,9 @@ private:
     QLabel *inputBeaconTwoLabel;
     QLineEdit *inputBeaconOneText;
     QLineEdit *inputBeaconTwoText;
-public:
-    explicit InputDialog(QWidget *parent = 0){
+
+   public:
+    explicit InputDialog(QWidget *parent = 0) {
         inputBeaconWidget = new QWidget(parent);
         inputBeaconWidget->setObjectName(QString::fromUtf8("inputBeaconWidget"));
         inputBeaconWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
