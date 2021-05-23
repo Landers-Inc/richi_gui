@@ -1,9 +1,10 @@
 #pragma once
 
 #include <portaudio.h>
-
 #include <iostream>
 #include <random>
+#include <chrono>
+#include <thread>
 
 #include "datareader.h"
 

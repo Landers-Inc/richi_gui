@@ -8,7 +8,7 @@
             "name": "(gdb) Attach to remote",
             "type": "cppdbg",
             "request": "launch",
-            "MIMode" : "gdb",
+            "MIMode": "gdb",
             "program": "${workspaceFolder}/build/richi_gui",
             "miDebuggerServerAddress": "chmunozpardo.hopto.org:10000",
             "cwd": "${workspaceFolder}",

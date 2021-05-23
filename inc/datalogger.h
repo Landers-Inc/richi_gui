@@ -1,10 +1,10 @@
 #pragma once
 
+#include <QDebug>
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QtSql>
-#include <QDebug>
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -70,19 +70,19 @@ class DataLogger : public QObject {
     // We define an structure to save the timestamp and position
     typedef struct TimeData {
         unsigned long long timestamp;  // Timestamp with respect to UTC
-        double latPosition;      // Latitude GPS position
-        double lonPosition;      // Longitude GPS Position
+        double latPosition;            // Latitude GPS position
+        double lonPosition;            // Longitude GPS Position
     } TimeData;
 
     // We define an structure to save the peaks data (frequency and power)
     typedef struct PeaksData {
-        double frequency;          // Frequency of the peak
-        double power;              // Power of the peak
+        double frequency;  // Frequency of the peak
+        double power;      // Power of the peak
     } PeaksData;
 
     // We define an structure to save the actual spectrum
     typedef struct SpectrumData {
-        std::vector<double> spectrum;   // Here we save the complete spectrum
+        std::vector<double> spectrum;  // Here we save the complete spectrum
     } SpectrumData;
    public slots:
     void insertConfiguration(Configuration const &conf);

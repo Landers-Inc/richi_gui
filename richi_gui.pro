@@ -66,6 +66,7 @@ SOURCES += \
     src/dataprocessor.cpp \
     src/usbadc.cpp \
     src/datalogger.cpp \
+    src/statemachine.cpp \
     src/qcustomplot.cpp
 
 HEADERS += \
@@ -75,6 +76,7 @@ HEADERS += \
     inc/datareader.h \
     inc/qcustomplot.h \
     inc/datalogger.h \
+    inc/statemachine.h \
     inc/keyboard.h
 
 LIBS+= -lfftw3 -lpthread -lportaudio

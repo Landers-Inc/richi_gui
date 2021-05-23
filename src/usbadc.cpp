@@ -51,6 +51,7 @@ bool USBADC::open() {
 
     // In case Alsa fails at the beginning, try several times
     do {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         err = Pa_OpenStream(
             &stream,
             &outputParameters,

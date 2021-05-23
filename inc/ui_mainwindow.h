@@ -23,6 +23,8 @@ class Ui_MainWindow {
     QQuickWidget *keyboardWidget;
 
     QWidget *centralWidget;
+    QFrame *statusLine;
+    QLabel *statusLabel;
     QWidget *layoutWidget;
     QVBoxLayout *verticalLayout;
     QHBoxLayout *plotsLayout;
@@ -110,7 +112,7 @@ class Ui_MainWindow {
             "    border-style: outset;\n"
             "    border-color: black;\n"
             "    background: #888;\n"
-            "   font: 24px 'Ubuntu';\n"
+            "   font: 20px 'Ubuntu';\n"
             "   font-weight: bold;\n"
             "}\n"
             "\n"
@@ -146,7 +148,7 @@ class Ui_MainWindow {
         centralWidget->setMaximumSize(QSize(1280, 800));
         layoutWidget = new QWidget(centralWidget);
         layoutWidget->setObjectName(QString::fromUtf8("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 10, 1261, 781));
+        layoutWidget->setGeometry(QRect(10, 10, 1260, 780));
         verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
@@ -596,6 +598,18 @@ class Ui_MainWindow {
 
         verticalLayout->addLayout(panelLayout);
 
+        statusLine = new QFrame(layoutWidget);
+        statusLine->setObjectName(QString::fromUtf8("statusLine"));
+        statusLine->setFrameShape(QFrame::HLine);
+        statusLine->setFrameShadow(QFrame::Sunken);
+        statusLine->setLineWidth(1280);
+        statusLabel = new QLabel(layoutWidget);
+        statusLabel->setObjectName(QString::fromUtf8("statusLabel"));
+        statusLabel->setGeometry(QRect(10, 710, 1260, 80));
+
+        verticalLayout->addWidget(statusLine);
+        verticalLayout->addWidget(statusLabel);
+
         verticalLayout->setStretch(0, 1);
         verticalLayout->setStretch(1, 1);
         MainWindow->setCentralWidget(centralWidget);
@@ -607,7 +621,8 @@ class Ui_MainWindow {
 
     void retranslateUi(QMainWindow *MainWindow) {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        peaksTitle->setText(QCoreApplication::translate("MainWindow", "Peaks detected", nullptr));
+        statusLabel->setText(QCoreApplication::translate("MainWindow", "Status:", nullptr));
+        peaksTitle->setText(QCoreApplication::translate("MainWindow", "Peaks Detectados", nullptr));
         peakOneFreqValue->setText(QCoreApplication::translate("MainWindow", "11", nullptr));
         peakOneFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz", nullptr));
         peakTwoFreqValue->setText(QCoreApplication::translate("MainWindow", "12", nullptr));
@@ -620,17 +635,18 @@ class Ui_MainWindow {
         peakTwoPowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
         peakThreePowerValue->setText(QCoreApplication::translate("MainWindow", "-110", nullptr));
         peakThreePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
-        selectBeacon->setText(QCoreApplication::translate("MainWindow", "Select beacon", nullptr));
-        beaconFound->setText(QCoreApplication::translate("MainWindow", "Beacon found", nullptr));
-        preblastLog->setText(QCoreApplication::translate("MainWindow", "Preblast Log", nullptr));
-        postblastLog->setText(QCoreApplication::translate("MainWindow", "Postblast Log", nullptr));
-        startLog->setText(QCoreApplication::translate("MainWindow", "Start New Blast Log", nullptr));
-        saveLog->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
-        closeShutdown->setText(QCoreApplication::translate("MainWindow", "Close and Shutdown", nullptr));
-        selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Select Display\nFrequency", nullptr));
+        selectBeacon->setText(QCoreApplication::translate("MainWindow", "Seleccionar Beacon", nullptr));
+        beaconFound->setText(QCoreApplication::translate("MainWindow", "Beacon Encontrado", nullptr));
+        preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro Pre-Estallido", nullptr));
+        postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro Post-Estallido", nullptr));
+        startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo Registro", nullptr));
+        saveLog->setText(QCoreApplication::translate("MainWindow", "Guardar", nullptr));
+        closeShutdown->setText(QCoreApplication::translate("MainWindow", "Cerrar y Apagar", nullptr));
+        selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nFrecuencia", nullptr));
         selectOneFreq->setText(QCoreApplication::translate("MainWindow", "11 kHz", nullptr));
         selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "12 kHz", nullptr));
         selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "13 kHz", nullptr));
+
         inputBeaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Input beacon data", nullptr));
         inputBeaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Beacon number", nullptr));
         inputBeaconTwoLabel->setText(QCoreApplication::translate("MainWindow", "Beacon distance", nullptr));
