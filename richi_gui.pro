@@ -1,8 +1,8 @@
-QT += core gui virtualkeyboard quickwidgets qml quick
+QT += core gui virtualkeyboard quickwidgets qml quick sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-CONFIG += c++14
+CONFIG += c++14 console
 
 INCLUDEPATH += \
     inc \
@@ -65,14 +65,16 @@ SOURCES += \
     src/mainwindow.cpp \
     src/dataprocessor.cpp \
     src/usbadc.cpp \
+    src/datalogger.cpp \
     src/qcustomplot.cpp
 
 HEADERS += \
     inc/mainwindow.h \
     inc/dataprocessor.h \
     inc/usbadc.h \
-    inc/dataacquisition.h \
+    inc/datareader.h \
     inc/qcustomplot.h \
+    inc/datalogger.h \
     inc/keyboard.h
 
 LIBS+= -lfftw3 -lpthread -lportaudio
@@ -82,11 +84,6 @@ RESOURCES += resources/richikb/testo.qrc \
 
 OTHER_FILES += \
     resources/richikb/style.qml
-
-
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
     stylesheet.qss

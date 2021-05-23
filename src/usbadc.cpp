@@ -135,6 +135,5 @@ void USBADC::paStreamFinished(void *userData) {
 }
 
 void USBADC::getData() {
-    // Let's generate a cosine wave with white gaussian noise and a small frequency variation
     emit dataReady(amplitudeData);
 }

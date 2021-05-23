@@ -10,9 +10,9 @@
             "request": "launch",
             "MIMode" : "gdb",
             "program": "${workspaceFolder}/build/richi_gui",
-            "miDebuggerServerAddress": "10.199.203.180:10000",
+            "miDebuggerServerAddress": "chmunozpardo.hopto.org:10000",
             "cwd": "${workspaceFolder}",
-            "miDebuggerPath": "C:/SysGCC/raspberry4/bin/arm-linux-gnueabihf-gdb.exe",
+            "miDebuggerPath": "C:/SysGCC/raspberry/bin/arm-linux-gnueabihf-gdb.exe",
             "preLaunchTask": "Launch GDB Server for debugging"
         }
     ]

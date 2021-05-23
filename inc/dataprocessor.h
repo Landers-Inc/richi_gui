@@ -6,6 +6,7 @@
 #include <iostream>
 #include <random>
 
+#include "datalogger.h"
 #include "datawindow.h"
 #include "fftw3.h"
 #include "qcustomplot.h"
@@ -79,6 +80,18 @@ class DataProcessor : public QObject {
     void peakTwoReady(double freq, double power);
     // Qt Signal used to update the third peak data in the GUI thread
     void peakThreeReady(double freq, double power);
+
+    // Qt Signal used to log a configuration
+    void logConfiguration(DataLogger::Configuration const &conf);
+    // Qt Signal used to log a timestamp
+    void logTimestamp(DataLogger::TimeData const &time);
+    // Qt Signal used to log a beacon
+    void logBeacon(DataLogger::BeaconData const &beacon);
+    // Qt Signal used to log a spectrum
+    void logSpectrum(DataLogger::SpectrumData const &spectrum);
+    // Qt Signal used to log a peak
+    void logPeaks(DataLogger::PeaksData const &peaks);
+
    public slots:
     // Qt Slot used to receive the data from the DataAcquisition
     void processData(std::vector<double> amplitudeData);

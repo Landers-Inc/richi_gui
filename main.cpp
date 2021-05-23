@@ -16,6 +16,9 @@ int main(int argc, char *argv[]) {
 
     qRegisterMetaType<QVector<double>>("QVector<double>");
     qRegisterMetaType<std::vector<double>>("std::vector<double>");
+    qRegisterMetaType<DataLogger::TimeData>("DataLogger::TimeData");
+    qRegisterMetaType<DataLogger::PeaksData>("DataLogger::PeaksData");
+    qRegisterMetaType<DataLogger::SpectrumData>("DataLogger::SpectrumData");
 
     MainWindow w;
     w.show();

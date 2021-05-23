@@ -10,7 +10,9 @@
             "args": [
                 "-ssh",
                 "-batch",
-                "pi@10.199.203.180",
+                "-p",
+                "2255",
+                "pi@chmunozpardo.hopto.org",
                 "export DISPLAY=:0;",
                 "export QT_QPA_EGLFS_HIDECURSOR=1;",
                 "export QT_QPA_EGLFS_WIDTH=1280;",
@@ -44,9 +46,9 @@
             "command": "ssh",
             "args": [
                 "-X",
-                //"-ssh",
-                //"-batch",
-                "pi@10.199.203.180",
+                "-p",
+                "2255",
+                "pi@chmunozpardo.hopto.org",
                 "export DISPLAY=localhost:10.0;",
                 "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
@@ -145,7 +147,7 @@
             "label": "Run qmake release",
             "type": "shell",
             "windows": {
-                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5pi/bin/qmake.exe",
+                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/bin/qmake.exe",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
@@ -168,7 +170,7 @@
             "label": "Run qmake debug",
             "type": "shell",
             "windows": {
-                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5pi/bin/qmake.exe",
+                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/bin/qmake.exe",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
@@ -214,8 +216,10 @@
             "windows": {
                 "command": "scp",
                 "args": [
+                    "-P",
+                    "2255",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
+                    "pi@chmunozpardo.hopto.org:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {
@@ -233,8 +237,10 @@
             "windows": {
                 "command": "scp",
                 "args": [
+                    "-P",
+                    "2255",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
+                    "pi@chmunozpardo.hopto.org:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QThread>
 
+#include "datalogger.h"
 #include "dataprocessor.h"
 #include "datareader.h"
 #include "qcustomplot.h"
@@ -28,9 +29,11 @@ class MainWindow : public QMainWindow {
     Ui::MainWindow *ui;
     QThread dataProcessing;
     QThread dataAcquiring;
+    QThread dataLogging;
     std::thread *startPeripherals;
     DataProcessor *dataProcessor;
     DataReader *dataAcquisition;
+    DataLogger *dataLogger;
     void startThreads();
    signals:
     void peripheralsReady(double freq, double power);

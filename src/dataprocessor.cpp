@@ -67,6 +67,9 @@ double DataProcessor::calculateEntropy(std::vector<std::vector<double>> data) {
 }
 
 void DataProcessor::processData(std::vector<double> amplitudeData) {
+    auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    DataLogger::TimeData timestamp = {timeNow, 0.0, 0.0};
+    emit logTimestamp(timestamp);
     // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
     QVector<double> Qoutx = QVector<double>(timeDomain.begin(), timeDomain.end());
     QVector<double> Qouty = QVector<double>(amplitudeData.begin(), amplitudeData.end());
@@ -83,6 +86,10 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     accumulatorPointer = (++accumulatorPointer) % accumulatorSize;
     // Average FFT
     std::vector<double> averageFFT = fftAverage(fftAccumulator);
+    if (accumulatorPointer == 0) {
+        DataLogger::SpectrumData spectrum = {averageFFT};
+        emit logSpectrum(spectrum);
+    }
 
     // Cast FFT from std::vector to QVector. Necessary to plot data on QCustomPlot
     Qoutx = QVector<double>(frequencyDomain.begin(), frequencyDomain.end());
@@ -92,6 +99,8 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
 
     // Calculate peaks on FFT
     std::vector<Peak> peaksData = getPeaks(dataFFT);
+    DataLogger::PeaksData peak = {peaksData[0].frequency, peaksData[0].value};
+    emit logPeaks(peak);
     // Emit signal to MainWindow to update peak frequency and power
     emit peakOneReady(peaksData[0].frequency, 20.0 * log10(peaksData[0].value));
     emit peakTwoReady(peaksData[1].frequency, 20.0 * log10(peaksData[1].value));

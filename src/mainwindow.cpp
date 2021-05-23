@@ -74,15 +74,21 @@ void MainWindow::updatePlots() {
 void MainWindow::startThreads() {
     connect(this, &MainWindow::peripheralsReady, this, &MainWindow::updateThreePeak, Qt::QueuedConnection);
 
-    dataProcessing.setObjectName("processor thread");
+    dataLogging.setObjectName("logging thread");
     dataAcquiring.setObjectName("acquiring thread");
+    dataProcessing.setObjectName("processor thread");
+
+    dataLogger = DataLogger::getInstance();
     dataProcessor = new DataProcessor(N_size, sampleFrequency);
     dataAcquisition = new USBADC(N_size, sampleFrequency);
+
+    dataLogger->moveToThread(&dataLogging);
     dataProcessor->moveToThread(&dataProcessing);
     dataAcquisition->moveToThread(&dataAcquiring);
 
     connect(&dataProcessing, &QThread::finished, dataProcessor, &QObject::deleteLater);
     connect(&dataAcquiring, &QThread::finished, dataAcquisition, &QObject::deleteLater);
+    connect(&dataLogging, &QThread::finished, dataLogger, &QObject::deleteLater);
     //TODO Possible Queue infinitely increment
     connect(dataAcquisition, &DataReader::dataReady, dataProcessor, &DataProcessor::processData, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::dataReady, this, &MainWindow::updateData, Qt::QueuedConnection);
@@ -91,6 +97,12 @@ void MainWindow::startThreads() {
     connect(dataProcessor, &DataProcessor::peakOneReady, this, &MainWindow::updateOnePeak, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::peakTwoReady, this, &MainWindow::updateTwoPeak, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::peakThreeReady, this, &MainWindow::updateThreePeak, Qt::QueuedConnection);
+
+    connect(dataProcessor, &DataProcessor::logConfiguration, dataLogger, &DataLogger::insertConfiguration, Qt::QueuedConnection);
+    connect(dataProcessor, &DataProcessor::logBeacon, dataLogger, &DataLogger::insertBeaconData, Qt::QueuedConnection);
+    connect(dataProcessor, &DataProcessor::logTimestamp, dataLogger, &DataLogger::insertTimeData, Qt::QueuedConnection);
+    connect(dataProcessor, &DataProcessor::logPeaks, dataLogger, &DataLogger::insertPeaksData, Qt::QueuedConnection);
+    connect(dataProcessor, &DataProcessor::logSpectrum, dataLogger, &DataLogger::insertSpectrumData, Qt::QueuedConnection);
 
     emit peripheralsReady(1.1, 1.2);
 }
@@ -104,6 +116,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     dataAcquiring.start();
     dataProcessing.start();
+    dataLogging.start();
 }
 
 void MainWindow::openBeaconInput() {
@@ -124,8 +137,10 @@ void MainWindow::connectButtons() {
 MainWindow::~MainWindow() {
     dataAcquiring.quit();
     dataProcessing.quit();
+    dataLogging.quit();
     dataAcquiring.wait();
     dataProcessing.wait();
+    dataLogging.wait();
     delete ui;
 }
 

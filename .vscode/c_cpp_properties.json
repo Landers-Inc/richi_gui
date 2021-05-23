@@ -15,9 +15,9 @@
         {
             "name": "Windows",
             "includePath": [
-                "${workspaceFolder}/**",
                 "${workspaceFolder}/inc/**",
-                "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5pi/**",
+                "${workspaceFolder}/src/**",
+                "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/**",
                 "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/**"
             ],
             "defines": [],
