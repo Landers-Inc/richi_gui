@@ -166,13 +166,12 @@ void DataLogger::insertSpectrumData(SpectrumData const &spectrum) {
     else
         qDebug() << query.lastError();
 
-    QByteArray binarySpectrum(32768, 0x00);
+    QByteArray binarySpectrum(16384, 0x00);
     unsigned int n = 0;
 
-    for (unsigned int i = 0; i < bufferSize; i++) {
+    for (unsigned int i = 0; i < bufferSize / 2; i++) {
         unsigned char *spectraCast = (unsigned char *)&spectrum.spectrum[i];
         for (unsigned int j = 0; j < 8; j++) {
-            // std::cout << *(spectraCast + j);
             binarySpectrum[n++] = *(spectraCast + j);
         }
     }
