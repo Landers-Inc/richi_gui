@@ -14,17 +14,6 @@ void DataLogger::setDatabaseTables() {
     if (!query.exec()) qDebug() << query.lastError();
 
     query.prepare(
-        "CREATE TABLE IF NOT EXISTS BeaconData ("
-        "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
-        "distance DOUBLE NOT NULL,"
-        "frequency DOUBLE NOT NULL,"
-        "power DOUBLE NOT NULL,"
-        "latPosition DOUBLE NOT NULL,"
-        "lonPosition DOUBLE NOT NULL"
-        ")");
-    if (!query.exec()) qDebug() << query.lastError();
-
-    query.prepare(
         "CREATE TABLE IF NOT EXISTS TimeData ("
         "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
         "timestamp BIGINT UNSIGNED NOT NULL,"
@@ -34,13 +23,38 @@ void DataLogger::setDatabaseTables() {
     if (!query.exec()) qDebug() << query.lastError();
 
     query.prepare(
+        "CREATE TABLE IF NOT EXISTS BeaconData ("
+        "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        "timedata_id INT UNSIGNED NOT NULL, "
+        "configuration_id INT UNSIGNED NOT NULL, "
+        "registerType INT UNSIGNED NOT NULL, "
+        "distance DOUBLE NOT NULL,"
+        "frequency DOUBLE NOT NULL,"
+        "power DOUBLE NOT NULL,"
+        "CONSTRAINT fk_beacon_timedata "
+        "FOREIGN KEY (timedata_id) REFERENCES TimeData (id) "
+        "ON DELETE CASCADE "
+        "ON UPDATE RESTRICT, "
+        "CONSTRAINT fk_beacon_configuration "
+        "FOREIGN KEY (configuration_id) REFERENCES Configuration (id) "
+        "ON DELETE CASCADE "
+        "ON UPDATE RESTRICT"
+        ")");
+    if (!query.exec()) qDebug() << query.lastError();
+
+    query.prepare(
         "CREATE TABLE IF NOT EXISTS PeaksData ("
         "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, "
         "timedata_id INT UNSIGNED NOT NULL, "
+        "configuration_id INT UNSIGNED NOT NULL, "
         "frequency DOUBLE NOT NULL, "
         "power DOUBLE NOT NULL, "
         "CONSTRAINT fk_peaks_timedata "
         "FOREIGN KEY (timedata_id) REFERENCES TimeData (id) "
+        "ON DELETE CASCADE "
+        "ON UPDATE RESTRICT, "
+        "CONSTRAINT fk_peaks_configuration "
+        "FOREIGN KEY (configuration_id) REFERENCES Configuration (id) "
         "ON DELETE CASCADE "
         "ON UPDATE RESTRICT"
         ")");
@@ -64,6 +78,27 @@ void DataLogger::setDatabaseTables() {
     if (!query.exec()) qDebug() << query.lastError();
 }
 
+void DataLogger::getLastIDs() {
+    QSqlQuery query(loggerDatabase);
+    query.prepare("SELECT MAX(id) FROM TimeData");
+    if (query.exec())
+        if (query.next())
+            timestampId = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
+
+    query.prepare("SELECT MAX(id) FROM Configuration");
+    if (query.exec())
+        if (query.next())
+            configurationId = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
+}
+
 void DataLogger::insertConfiguration(Configuration const &conf) {
     QSqlQuery query(loggerDatabase);
 
@@ -77,31 +112,6 @@ void DataLogger::insertConfiguration(Configuration const &conf) {
         ")");
     query.bindValue(":dataSize", conf.dataSize);
     query.bindValue(":sampleFrequency", conf.sampleFrequency);
-    if (!query.exec()) qDebug() << query.lastError();
-}
-
-void DataLogger::insertBeaconData(BeaconData const &beacon) {
-    QSqlQuery query(loggerDatabase);
-
-    query.prepare(
-        "INSERT INTO BeaconData ("
-        "distance,"
-        "frequency,"
-        "power,"
-        "latPosition,"
-        "lonPosition"
-        ") VALUES ("
-        ":dataSize,"
-        ":frequency,"
-        ":power,"
-        ":latPosition,"
-        ":lonPosition"
-        ")");
-    query.bindValue(":distance", beacon.distance);
-    query.bindValue(":frequency", beacon.frequency);
-    query.bindValue(":power", beacon.power);
-    query.bindValue(":latPosition", beacon.latPosition);
-    query.bindValue(":lonPosition", beacon.lonPosition);
     if (!query.exec()) qDebug() << query.lastError();
 }
 
@@ -133,20 +143,53 @@ void DataLogger::insertTimeData(TimeData const &time) {
         qDebug() << query.lastError();
 }
 
+void DataLogger::insertBeaconData(BeaconData const &beacon) {
+    QSqlQuery query(loggerDatabase);
+
+    query.prepare(
+        "INSERT INTO BeaconData ("
+        "timedata_id,"
+        "configuration_id,"
+        "registerType,"
+        "distance,"
+        "frequency,"
+        "power,"
+        "latPosition,"
+        "lonPosition"
+        ") VALUES ("
+        ":timedata_id,"
+        ":configuration_id,"
+        ":registerType,"
+        ":dataSize,"
+        ":frequency,"
+        ":power"
+        ")");
+    query.bindValue(":timedata_id", timestampId);
+    query.bindValue(":configuration_id", configurationId);
+    query.bindValue(":registerType", beacon.registerType);
+    query.bindValue(":distance", beacon.distance);
+    query.bindValue(":frequency", beacon.frequency);
+    query.bindValue(":power", beacon.power);
+    if (!query.exec()) qDebug() << query.lastError();
+}
+
 void DataLogger::insertPeaksData(PeaksData const &peak) {
     QSqlQuery query(loggerDatabase);
 
     query.prepare(
         "INSERT INTO PeaksData ("
         "timedata_id,"
+        "configuration_id,"
         "frequency,"
         "power"
         ") VALUES ("
         ":timedata_id,"
+        ":configuration_id,"
         ":frequency,"
         ":power"
         ")");
     query.bindValue(":timedata_id", timestampId);
+    query.bindValue(":configuration_id", configurationId);
     query.bindValue(":frequency", peak.frequency);
     query.bindValue(":power", peak.power);
     if (!query.exec()) qDebug() << query.lastError();

@@ -23,7 +23,7 @@ class DataLogger : public QObject {
     // Current timestamp id
     unsigned int timestampId = 0;
     // Current configuration id
-    unsigned int configurationId = 1;
+    unsigned int configurationId = 0;
 
     // Private constructor so that no other objects can be created.
     DataLogger() {
@@ -39,10 +39,14 @@ class DataLogger : public QObject {
         loggerDatabase.setDatabaseName("datalog");
         loggerDatabase.setUserName("admin");
         loggerDatabase.setPassword("password");
-        if (loggerDatabase.open()) setDatabaseTables();
+        if (loggerDatabase.open()) {
+            setDatabaseTables();
+            getLastIDs();
+        }
     };
 
     void setDatabaseTables();
+    void getLastIDs();
 
    public:
     // The DataLogger object is created when getting the object's instance
@@ -53,18 +57,16 @@ class DataLogger : public QObject {
 
     // We define an structure to save the current configuration
     typedef struct Configuration {
-        unsigned int id;         // Identifier
         unsigned int dataSize;   // Buffer used to process Spectrum
         double sampleFrequency;  // Frequency sampling for this configuration
     } Configuration;
 
     // We define an structure to save the data from one beacon
     typedef struct BeaconData {
-        double distance;     // Distance from surface
-        double frequency;    // Frequency of the beacon
-        double power;        // Frequency of the beacon
-        double latPosition;  // Latitude GPS position
-        double lonPosition;  // Longitude GPS Position
+        unsigned int registerType;  // Register type for beacon (Pre or Post blast)
+        double distance;            // Distance from surface
+        double frequency;           // Frequency of the beacon
+        double power;               // Frequency of the beacon
     } BeaconData;
 
     // We define an structure to save the timestamp and position

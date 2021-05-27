@@ -10,6 +10,7 @@
 #include "datawindow.h"
 #include "fftw3.h"
 #include "qcustomplot.h"
+#include "statemachine.h"
 
 // Class dedicated to process incoming data
 class DataProcessor : public QObject {
@@ -34,9 +35,15 @@ class DataProcessor : public QObject {
 
    private:
     // Accumulator size
-    int accumulatorSize = 10;
+    int accumulatorSize = 5;
     // Pointer to the current value value in the accumulator to overwrite
     int accumulatorPointer = 0;
+    // Peaks serie size
+    int peakSerieSize = 2048;
+    // Peak tracking to display in the GUI size
+    int peakToDisplay = 0;
+    // Pointer to the current value value in the peak to overwrite
+    int peakPointer = 0;
     // Buffer size for data processing
     int dataSize = 0;
     // Sample frequency
@@ -53,11 +60,13 @@ class DataProcessor : public QObject {
     std::vector<FrequencyIndex> frequencyBins;
     // FFT accumulator used to get the average of several FFTs
     std::vector<std::vector<double>> fftAccumulator;
+    // FFT accumulator used to get the average of several FFTs
+    std::vector<std::vector<double>> peakTimeserie;
 
     // Function to calculate the FFT of a time serie
     std::vector<std::vector<double>> fftCalculation(std::vector<double> data);
     // Function to calculate the average FFT of the accumulator
-    std::vector<double> fftAverage(std::vector<std::vector<double>> data);
+    std::vector<std::vector<double>> fftAverage(std::vector<std::vector<double>> data);
     // Function to get the peaks of the instantaneous FFT
     std::vector<DataProcessor::Peak> getPeaks(std::vector<std::vector<double>> fft);
     // Function to get the weighted frequency of the peak
@@ -95,4 +104,6 @@ class DataProcessor : public QObject {
    public slots:
     // Qt Slot used to receive the data from the DataAcquisition
     void processData(std::vector<double> amplitudeData);
+
+    void setPeakToDisplay(int disp);
 };

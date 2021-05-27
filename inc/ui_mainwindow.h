@@ -12,7 +12,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
-#include "keyboard.h"
+#include "inputdialog.h"
 #include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
@@ -20,7 +20,12 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow {
    public:
     QCPItemText *textLabel;
-    QQuickWidget *keyboardWidget;
+    QCPAxisRect *wideAxisOne;
+    QCPAxisRect *wideAxisTwo;
+    QCPAxisRect *wideAxisThree;
+    QCPGraph *mainGraphOne;
+    QCPGraph *mainGraphTwo;
+    QCPGraph *mainGraphThree;
 
     QWidget *centralWidget;
     QFrame *statusLine;
@@ -56,15 +61,7 @@ class Ui_MainWindow {
     QLabel *peakThreePowerUnit;
     QVBoxLayout *beaconLayout;
     QPushButton *selectBeacon;
-    QWidget *inputBeaconWidget;
-    QVBoxLayout *inputBeaconLayout;
-    QHBoxLayout *inputBeaconOneLayout;
-    QHBoxLayout *inputBeaconTwoLayout;
-    QLabel *inputBeaconTopLabel;
-    QLabel *inputBeaconOneLabel;
-    QLabel *inputBeaconTwoLabel;
-    QLineEdit *inputBeaconOneText;
-    QLineEdit *inputBeaconTwoText;
+    InputDialog *inputBeaconWidget;
     QPushButton *beaconFound;
     QVBoxLayout *logLayout;
     QPushButton *preblastLog;
@@ -403,75 +400,9 @@ class Ui_MainWindow {
         selectBeacon->setSizePolicy(sizePolicy1);
         selectBeacon->setFont(font);
 
-        inputBeaconWidget = new QDialog(centralWidget);
-        inputBeaconWidget->setObjectName(QString::fromUtf8("inputBeaconWidget"));
-        inputBeaconWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        inputBeaconWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
-        inputBeaconWidget->move(200, 20);
-        inputBeaconWidget->setMinimumSize(880, 300);
-        inputBeaconWidget->setWindowFlags(Qt::Dialog);
-        inputBeaconWidget->setVisible(false);
-
-        inputBeaconLayout = new QVBoxLayout(inputBeaconWidget);
-        inputBeaconLayout->setObjectName(QString::fromUtf8("inputBeaconLayout"));
-        inputBeaconLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        inputBeaconLayout->setContentsMargins(10, 10, 10, 10);
-        inputBeaconTopLabel = new QLabel(inputBeaconWidget);
-        inputBeaconTopLabel->setObjectName(QString::fromUtf8("inputBeaconTopLabel"));
-        inputBeaconTopLabel->setContentsMargins(10, 10, 10, 10);
-
-        keyboardWidget = new Keyboard(QUrl("qrc:/main.qml"), centralWidget);
-        keyboardWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        keyboardWidget->move(200, 300);
-        keyboardWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
-        keyboardWidget->setAttribute(Qt::WA_TranslucentBackground);
-        keyboardWidget->setClearColor(Qt::transparent);
-        keyboardWidget->setMinimumSize(880, 500);
-        keyboardWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-        // keyboardWidget->setFocusPolicy(Qt::FocusPolicy::NoFocus);
-        keyboardWidget->setVisible(false);
-
-        inputBeaconLayout->addWidget(inputBeaconTopLabel);
-
-        inputBeaconOneLayout = new QHBoxLayout();
-        inputBeaconOneLayout->setObjectName(QString::fromUtf8("inputBeaconOneLayout"));
-        inputBeaconOneLayout->setContentsMargins(10, 10, 10, 10);
-        inputBeaconOneLabel = new QLabel(inputBeaconWidget);
-        inputBeaconOneLabel->setObjectName(QString::fromUtf8("inputBeaconOneLabel"));
-        inputBeaconOneText = new QLineEdit(inputBeaconWidget);
-        inputBeaconOneText->setObjectName(QString::fromUtf8("inputBeaconOneText"));
-        inputBeaconOneText->setInputMethodHints(Qt::ImhDigitsOnly);
-
-        inputBeaconOneLayout->addWidget(inputBeaconOneLabel);
-        inputBeaconOneLayout->addWidget(inputBeaconOneText);
-
-        inputBeaconLayout->addLayout(inputBeaconOneLayout);
-
-        inputBeaconOneLayout->setStretch(0, 1);
-        inputBeaconOneLayout->setStretch(1, 1);
-
-        inputBeaconTwoLayout = new QHBoxLayout();
-        inputBeaconTwoLayout->setObjectName(QString::fromUtf8("inputBeaconTwoLayout"));
-        inputBeaconTwoLayout->setContentsMargins(10, 10, 10, 10);
-        inputBeaconTwoLabel = new QLabel(inputBeaconWidget);
-        inputBeaconTwoLabel->setObjectName(QString::fromUtf8("inputBeaconTwoLabel"));
-        inputBeaconTwoText = new QLineEdit(inputBeaconWidget);
-        inputBeaconTwoText->setObjectName(QString::fromUtf8("inputBeaconTwoText"));
-        inputBeaconTwoText->setInputMethodHints(Qt::ImhDigitsOnly);
-
-        inputBeaconTwoLayout->addWidget(inputBeaconTwoLabel);
-        inputBeaconTwoLayout->addWidget(inputBeaconTwoText);
-
-        inputBeaconLayout->addLayout(inputBeaconTwoLayout);
-
-        inputBeaconTwoLayout->setStretch(0, 1);
-        inputBeaconTwoLayout->setStretch(1, 1);
-
-        inputBeaconLayout->setStretch(0, 1);
-        inputBeaconLayout->setStretch(1, 1);
-        inputBeaconLayout->setStretch(2, 1);
-
         beaconLayout->addWidget(selectBeacon);
+
+        inputBeaconWidget = new InputDialog(MainWindow);
 
         beaconFound = new QPushButton(layoutWidget);
         beaconFound->setObjectName(QString::fromUtf8("beaconFound"));
@@ -564,6 +495,7 @@ class Ui_MainWindow {
         selectDisplayFreq->setFont(font);
         selectDisplayFreq->setStyleSheet(QString::fromUtf8(""));
         selectDisplayFreq->setFlat(false);
+        selectDisplayFreq->setEnabled(false);
 
         selectLayout->addWidget(selectDisplayFreq);
 
@@ -621,25 +553,25 @@ class Ui_MainWindow {
 
     void retranslateUi(QMainWindow *MainWindow) {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        statusLabel->setText(QCoreApplication::translate("MainWindow", "Status:", nullptr));
+        statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Inicializando", nullptr));
         peaksTitle->setText(QCoreApplication::translate("MainWindow", "Peaks Detectados", nullptr));
-        peakOneFreqValue->setText(QCoreApplication::translate("MainWindow", "11", nullptr));
+        peakOneFreqValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
         peakOneFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz", nullptr));
-        peakTwoFreqValue->setText(QCoreApplication::translate("MainWindow", "12", nullptr));
+        peakTwoFreqValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
         peakTwoFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz", nullptr));
-        peakThreeFreqValue->setText(QCoreApplication::translate("MainWindow", "13", nullptr));
+        peakThreeFreqValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
         peakThreeFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz", nullptr));
-        peakOnePowerValue->setText(QCoreApplication::translate("MainWindow", "-88", nullptr));
+        peakOnePowerValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
         peakOnePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
-        peakTwoPowerValue->setText(QCoreApplication::translate("MainWindow", "-100", nullptr));
+        peakTwoPowerValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
         peakTwoPowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
-        peakThreePowerValue->setText(QCoreApplication::translate("MainWindow", "-110", nullptr));
+        peakThreePowerValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
         peakThreePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
-        selectBeacon->setText(QCoreApplication::translate("MainWindow", "Seleccionar Beacon", nullptr));
-        beaconFound->setText(QCoreApplication::translate("MainWindow", "Beacon Encontrado", nullptr));
-        preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro Pre-Estallido", nullptr));
-        postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro Post-Estallido", nullptr));
-        startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo Registro", nullptr));
+        selectBeacon->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nBeacon", nullptr));
+        beaconFound->setText(QCoreApplication::translate("MainWindow", "Beacon\nEncontrado", nullptr));
+        preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPre-Estallido", nullptr));
+        postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPost-Estallido", nullptr));
+        startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro", nullptr));
         saveLog->setText(QCoreApplication::translate("MainWindow", "Guardar", nullptr));
         closeShutdown->setText(QCoreApplication::translate("MainWindow", "Cerrar y Apagar", nullptr));
         selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nFrecuencia", nullptr));
@@ -647,10 +579,11 @@ class Ui_MainWindow {
         selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "12 kHz", nullptr));
         selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "13 kHz", nullptr));
 
-        inputBeaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Input beacon data", nullptr));
-        inputBeaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Beacon number", nullptr));
-        inputBeaconTwoLabel->setText(QCoreApplication::translate("MainWindow", "Beacon distance", nullptr));
-    }  // retranslateUi
+        inputBeaconWidget->inputBeaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nuevo Beacon", nullptr));
+        inputBeaconWidget->inputBeaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Beacon [metros]", nullptr));
+        inputBeaconWidget->inputBeaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar", nullptr));
+        inputBeaconWidget->inputBeaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar", nullptr));
+    }
 };
 
 namespace Ui {

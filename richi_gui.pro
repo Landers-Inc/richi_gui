@@ -77,7 +77,7 @@ HEADERS += \
     inc/qcustomplot.h \
     inc/datalogger.h \
     inc/statemachine.h \
-    inc/keyboard.h
+    inc/inputdialog.h
 
 LIBS+= -lfftw3 -lpthread -lportaudio
 

@@ -16,11 +16,14 @@ std::vector<std::vector<double>> DataProcessor::fftCalculation(std::vector<doubl
     return out;
 }
 
-std::vector<double> DataProcessor::fftAverage(std::vector<std::vector<double>> data) {
-    std::vector<double> out(dataSize / 2, 0);
+std::vector<std::vector<double>> DataProcessor::fftAverage(std::vector<std::vector<double>> data) {
+    std::vector<std::vector<double>> out = {
+        std::vector<double>(dataSize / 2, 0),
+        std::vector<double>(dataSize / 2, 0)};
     for (int i = 0; i < dataSize / 2; i++) {
-        for (int j = 0; j < accumulatorSize; j++) out[i] += data[j][i];
-        out[i] = 20.0 * log10(out[i] / accumulatorSize);
+        for (int j = 0; j < accumulatorSize; j++) out[0][i] += data[j][i];
+        out[0][i] = (out[0][i] / accumulatorSize);
+        out[1][i] = 20.0 * log10(out[0][i]);
     }
 
     return out;
@@ -67,14 +70,11 @@ double DataProcessor::calculateEntropy(std::vector<std::vector<double>> data) {
 }
 
 void DataProcessor::processData(std::vector<double> amplitudeData) {
-    auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-    DataLogger::TimeData timestamp = {timeNow, 0.0, 0.0};
-    emit logTimestamp(timestamp);
-    // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
-    QVector<double> Qoutx = QVector<double>(timeDomain.begin(), timeDomain.end());
-    QVector<double> Qouty = QVector<double>(amplitudeData.begin(), amplitudeData.end());
-    // Emit signal to MainWindow to plot time data
-    emit dataReady(Qoutx, Qouty);
+    if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
+        auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        DataLogger::TimeData timestamp = {timeNow, 0.0, 0.0};
+        emit logTimestamp(timestamp);
+    }
 
     // Apply Hanning Window to data
     for (unsigned int i = 0; i < amplitudeData.size(); ++i) amplitudeData[i] *= dataWindow[i];
@@ -85,22 +85,36 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     fftAccumulator[accumulatorPointer] = dataFFT[0];
     accumulatorPointer = (++accumulatorPointer) % accumulatorSize;
     // Average FFT
-    std::vector<double> averageFFT = fftAverage(fftAccumulator);
-    if (accumulatorPointer == 0) {
-        DataLogger::SpectrumData spectrum = {averageFFT};
-        emit logSpectrum(spectrum);
-    }
+    std::vector<std::vector<double>> averageFFT = fftAverage(fftAccumulator);
 
     // Cast FFT from std::vector to QVector. Necessary to plot data on QCustomPlot
-    Qoutx = QVector<double>(frequencyDomain.begin(), frequencyDomain.end());
-    Qouty = QVector<double>(averageFFT.begin(), averageFFT.end());
+    QVector<double> Qoutx = QVector<double>(frequencyDomain.begin(), frequencyDomain.end());
+    QVector<double> Qouty = QVector<double>(averageFFT[1].begin(), averageFFT[1].end());
     // Emit signal to MainWindow to plot frequency data
     emit fftReady(Qoutx, Qouty);
 
     // Calculate peaks on FFT
-    std::vector<Peak> peaksData = getPeaks(dataFFT);
+    std::vector<Peak> peaksData = getPeaks(averageFFT);
     DataLogger::PeaksData peak = {peaksData[0].frequency, peaksData[0].value};
-    emit logPeaks(peak);
+
+    if (accumulatorPointer == 0) {
+        if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
+            DataLogger::SpectrumData spectrum = {averageFFT[1]};
+            emit logSpectrum(spectrum);
+        }
+        peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].value);
+        peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].value);
+        peakTimeserie[2][peakPointer] = 20.0 * log10(peaksData[2].value);
+        peakPointer = (++peakPointer) % peakSerieSize;
+    }
+
+    // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
+    Qoutx = QVector<double>(timeDomain.begin(), timeDomain.begin() + peakSerieSize);
+    Qouty = QVector<double>(peakTimeserie[peakToDisplay].begin(), peakTimeserie[peakToDisplay].end());
+    // Emit signal to MainWindow to plot time data
+    emit dataReady(Qoutx, Qouty);
+
+    if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) emit logPeaks(peak);
     // Emit signal to MainWindow to update peak frequency and power
     emit peakOneReady(peaksData[0].frequency, 20.0 * log10(peaksData[0].value));
     emit peakTwoReady(peaksData[1].frequency, 20.0 * log10(peaksData[1].value));
@@ -124,4 +138,9 @@ void DataProcessor::initialize() {
     frequencyBins[2] = {(int)floor(dataSize * 12500.0 / sampleFrequency), (int)ceil(dataSize * 13500.0 / sampleFrequency)};
 
     for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
+    for (int i = 0; i < 3; i++) peakTimeserie.push_back(std::vector<double>(peakSerieSize, -130));
+}
+
+void DataProcessor::setPeakToDisplay(int disp) {
+    peakToDisplay = disp;
 }

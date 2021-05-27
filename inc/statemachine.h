@@ -1,7 +1,10 @@
 #pragma once
 
+#include <QObject>
+
 // This is singleton StateMachine class to coordinate function in the different classes
-class StateMachine {
+class StateMachine : public QObject {
+    Q_OBJECT
    public:
     static StateMachine *getInstance() {
         if (!instance) instance = new StateMachine;
@@ -9,20 +12,29 @@ class StateMachine {
     }
 
     typedef enum State {
-        IDLE = 0,
+        STARTUP = 0,
         PERIPHERALS,
-        READY,
+        NEWLOG,
+        IDLE,
         PREBLAST,
         POSTBLAST
     } State;
+
+    State getState() {
+        return currentState;
+    }
+    void startingPeripherals();
+    void peripheralsReady();
+    void newLog();
+    void preblastLog();
+    void postblastLog();
+    void gotoIdle();
 
    private:
     // Static object to store the singleton instance
     static StateMachine *instance;
     // Current state in the state machine
-    State currentState = IDLE;
+    State currentState = STARTUP;
 
-    StateMachine(){
-
-    };
+    StateMachine(){};
 };

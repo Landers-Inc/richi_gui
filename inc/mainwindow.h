@@ -3,11 +3,13 @@
 #include <QDebug>
 #include <QMainWindow>
 #include <QThread>
+#include <QVirtualKeyboardInputEngine>
 
 #include "datalogger.h"
 #include "dataprocessor.h"
 #include "datareader.h"
 #include "qcustomplot.h"
+#include "statemachine.h"
 #include "usbadc.h"
 
 QT_BEGIN_NAMESPACE
@@ -35,8 +37,20 @@ class MainWindow : public QMainWindow {
     DataReader *dataAcquisition;
     DataLogger *dataLogger;
     void startThreads();
+    int dispFreqPlot;
    signals:
     void peripheralsReady(double freq, double power);
+    void setPeakTimeserie(int disp);
+    // Qt Signal used to log a configuration
+    void logConfiguration(DataLogger::Configuration const &conf);
+    // Qt Signal used to log a timestamp
+    void logTimestamp(DataLogger::TimeData const &time);
+    // Qt Signal used to log a beacon
+    void logBeacon(DataLogger::BeaconData const &beacon);
+    // Qt Signal used to log a spectrum
+    void logSpectrum(DataLogger::SpectrumData const &spectrum);
+    // Qt Signal used to log a peak
+    void logPeaks(DataLogger::PeaksData const &peaks);
    public slots:
     void updateData(QVector<double> const &xSeries, QVector<double> const &ySeries);
     void updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries);
@@ -45,4 +59,12 @@ class MainWindow : public QMainWindow {
     void updateThreePeak(double freq, double power);
     void updatePlots();
     void openBeaconInput();
+    void beaconAccept();
+    void beaconCancel();
+    void dispFrequencyOne();
+    void dispFrequencyTwo();
+    void dispFrequencyThree();
+    void startNewLog();
+    void startNewPreblastLog();
+    void startNewPostblastLog();
 };

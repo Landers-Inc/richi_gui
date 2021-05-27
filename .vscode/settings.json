@@ -92,7 +92,8 @@
         "cwctype": "cpp",
         "deque": "cpp",
         "qsqldatabase": "cpp",
-        "qdebug": "cpp"
+        "qdebug": "cpp",
+        "qvirtualkeyboardinputengine": "cpp"
     },
     "editor.tabSize": 4,
     "editor.detectIndentation": false,

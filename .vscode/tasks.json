@@ -10,15 +10,13 @@
             "args": [
                 "-ssh",
                 "-batch",
-                "-p",
-                "2255",
-                "pi@chmunozpardo.hopto.org",
+                "-P",
+                "22",
+                "pi@192.168.1.139",
                 "export DISPLAY=:0;",
                 "export QT_QPA_EGLFS_HIDECURSOR=1;",
                 "export QT_QPA_EGLFS_WIDTH=1280;",
                 "export QT_QPA_EGLFS_HEIGHT=800;",
-                "export QT_QPA_EGLFS_PHYSICAL_HEIGHT=126;",
-                "export QT_QPA_EGLFS_PHYSICAL_WIDTH=224;",
                 "startx;"
             ],
             "isBackground": true,
@@ -47,8 +45,8 @@
             "args": [
                 "-X",
                 "-p",
-                "2255",
-                "pi@chmunozpardo.hopto.org",
+                "22",
+                "pi@192.168.1.139",
                 "export DISPLAY=localhost:10.0;",
                 "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
@@ -217,9 +215,9 @@
                 "command": "scp",
                 "args": [
                     "-P",
-                    "2255",
+                    "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@chmunozpardo.hopto.org:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {
@@ -238,9 +236,9 @@
                 "command": "scp",
                 "args": [
                     "-P",
-                    "2255",
+                    "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@chmunozpardo.hopto.org:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {

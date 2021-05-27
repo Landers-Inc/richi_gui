@@ -1,12 +1,37 @@
 #pragma once
 
-#include <QObject>
+#include <QDialog>
 #include <QQuickWidget>
 #include <QtWidgets>
+#include <iostream>
 
-class InputDialog : public QObject {
+class InputWidget : public QDialog {
     Q_OBJECT
-   private:
+   public:
+    using QDialog::QDialog;
+
+   protected:
+    void keyPressEvent(QKeyEvent *event) override {
+        std::cout << "Funcionaaaa Key" << std::endl;
+        QWidget::keyPressEvent(event);
+    }
+    void keyReleaseEvent(QKeyEvent *event) override {
+        std::cout << "Funcionaaaa Key Rel" << std::endl;
+        QWidget::keyReleaseEvent(event);
+    }
+    void inputMethodEvent(QInputMethodEvent *event) override {
+        std::cout << "Funcionaaaa Method" << std::endl;
+        QWidget::inputMethodEvent(event);
+    }
+    bool eventFilter(QObject *object, QEvent *event) {
+        std::cout << "Funcionaaaa Event" << std::endl;
+    }
+};
+
+class InputDialog : public QDialog {
+    Q_OBJECT
+   public:
+    QWidget *dialogWidget;
     QQuickWidget *keyboardWidget;
     QWidget *inputBeaconWidget;
     QVBoxLayout *inputBeaconLayout;
@@ -17,16 +42,40 @@ class InputDialog : public QObject {
     QLabel *inputBeaconTwoLabel;
     QLineEdit *inputBeaconOneText;
     QLineEdit *inputBeaconTwoText;
+    QPushButton *inputBeaconAccept;
+    QPushButton *inputBeaconCancel;
 
-   public:
     explicit InputDialog(QWidget *parent = 0) {
-        inputBeaconWidget = new QWidget(parent);
+        QFont font;
+        font.setFamily(QString::fromUtf8("Ubuntu"));
+        font.setBold(true);
+        font.setItalic(false);
+        font.setWeight(75);
+
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(parent->sizePolicy().hasHeightForWidth());
+
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+
+        dialogWidget = new QWidget(parent);
+        dialogWidget->setObjectName(QString::fromUtf8("dialogWidget"));
+        sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
+        dialogWidget->setSizePolicy(sizePolicy);
+        dialogWidget->setMinimumSize(QSize(1280, 800));
+        dialogWidget->setMaximumSize(QSize(1280, 800));
+        dialogWidget->setVisible(false);
+
+        inputBeaconWidget = new InputWidget(dialogWidget);
         inputBeaconWidget->setObjectName(QString::fromUtf8("inputBeaconWidget"));
         inputBeaconWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        inputBeaconWidget->move(440, 50);
-        inputBeaconWidget->setMinimumSize(400, 300);
+        inputBeaconWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
+        inputBeaconWidget->move(200, 20);
+        inputBeaconWidget->setMinimumSize(880, 300);
         inputBeaconWidget->setWindowFlags(Qt::Dialog);
-        inputBeaconWidget->setVisible(false);
 
         inputBeaconLayout = new QVBoxLayout(inputBeaconWidget);
         inputBeaconLayout->setObjectName(QString::fromUtf8("inputBeaconLayout"));
@@ -36,12 +85,15 @@ class InputDialog : public QObject {
         inputBeaconTopLabel->setObjectName(QString::fromUtf8("inputBeaconTopLabel"));
         inputBeaconTopLabel->setContentsMargins(10, 10, 10, 10);
 
-        keyboardWidget = new QQuickWidget(QUrl("qrc:/main.qml"), parent);
+        keyboardWidget = new QQuickWidget(QUrl("qrc:/main.qml"), dialogWidget);
         keyboardWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        keyboardWidget->move(200, 400);
-        keyboardWidget->setMinimumSize(880, 400);
+        keyboardWidget->move(200, 300);
+        keyboardWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
+        keyboardWidget->setAttribute(Qt::WA_TranslucentBackground);
+        keyboardWidget->setAttribute(Qt::WA_InputMethodEnabled, true);
+        keyboardWidget->setClearColor(Qt::transparent);
+        keyboardWidget->setMinimumSize(880, 500);
         keyboardWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-        keyboardWidget->setVisible(false);
 
         inputBeaconLayout->addWidget(inputBeaconTopLabel);
 
@@ -52,6 +104,7 @@ class InputDialog : public QObject {
         inputBeaconOneLabel->setObjectName(QString::fromUtf8("inputBeaconOneLabel"));
         inputBeaconOneText = new QLineEdit(inputBeaconWidget);
         inputBeaconOneText->setObjectName(QString::fromUtf8("inputBeaconOneText"));
+        inputBeaconOneText->setInputMethodHints(Qt::ImhDigitsOnly);
 
         inputBeaconOneLayout->addWidget(inputBeaconOneLabel);
         inputBeaconOneLayout->addWidget(inputBeaconOneText);
@@ -64,13 +117,19 @@ class InputDialog : public QObject {
         inputBeaconTwoLayout = new QHBoxLayout();
         inputBeaconTwoLayout->setObjectName(QString::fromUtf8("inputBeaconTwoLayout"));
         inputBeaconTwoLayout->setContentsMargins(10, 10, 10, 10);
-        inputBeaconTwoLabel = new QLabel(inputBeaconWidget);
-        inputBeaconTwoLabel->setObjectName(QString::fromUtf8("inputBeaconTwoLabel"));
-        inputBeaconTwoText = new QLineEdit(inputBeaconWidget);
-        inputBeaconTwoText->setObjectName(QString::fromUtf8("inputBeaconTwoText"));
+        inputBeaconAccept = new QPushButton(inputBeaconWidget);
+        inputBeaconAccept->setObjectName(QString::fromUtf8("inputBeaconAccept"));
+        sizePolicy1.setHeightForWidth(inputBeaconAccept->sizePolicy().hasHeightForWidth());
+        inputBeaconAccept->setSizePolicy(sizePolicy1);
+        inputBeaconAccept->setFont(font);
+        inputBeaconCancel = new QPushButton(inputBeaconWidget);
+        inputBeaconCancel->setObjectName(QString::fromUtf8("inputBeaconCancel"));
+        sizePolicy1.setHeightForWidth(inputBeaconCancel->sizePolicy().hasHeightForWidth());
+        inputBeaconCancel->setSizePolicy(sizePolicy1);
+        inputBeaconCancel->setFont(font);
 
-        inputBeaconTwoLayout->addWidget(inputBeaconTwoLabel);
-        inputBeaconTwoLayout->addWidget(inputBeaconTwoText);
+        inputBeaconTwoLayout->addWidget(inputBeaconAccept);
+        inputBeaconTwoLayout->addWidget(inputBeaconCancel);
 
         inputBeaconLayout->addLayout(inputBeaconTwoLayout);
 
