@@ -93,9 +93,28 @@
         "deque": "cpp",
         "qsqldatabase": "cpp",
         "qdebug": "cpp",
-        "qvirtualkeyboardinputengine": "cpp"
+        "qvirtualkeyboardinputengine": "cpp",
+        "cstdarg": "cpp",
+        "cinttypes": "cpp"
     },
     "editor.tabSize": 4,
     "editor.detectIndentation": false,
-    "files.trimTrailingWhitespace": true
+    "files.trimTrailingWhitespace": true,
+    "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0}",
+    "python.pythonPath": "C:\\anaconda3\\python.exe",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "192.168.1.141",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "asdf",
+            "database": "datalog",
+            "username": "admin",
+            "password": "password"
+        }
+    ]
 }

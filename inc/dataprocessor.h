@@ -8,6 +8,7 @@
 
 #include "datalogger.h"
 #include "datawindow.h"
+#include "emlidgps.h"
 #include "fftw3.h"
 #include "qcustomplot.h"
 #include "statemachine.h"
@@ -34,6 +35,11 @@ class DataProcessor : public QObject {
     } FrequencyIndex;
 
    private:
+    EMLIDGPS *gpsInstance;
+    double gpsLatitude = 0;
+    double gpsLongitude = 0;
+    unsigned int gpsTime = 0;
+    unsigned int nSV = 0;
     // Accumulator size
     int accumulatorSize = 5;
     // Pointer to the current value value in the accumulator to overwrite
@@ -100,10 +106,14 @@ class DataProcessor : public QObject {
     void logSpectrum(DataLogger::SpectrumData const &spectrum);
     // Qt Signal used to log a peak
     void logPeaks(DataLogger::PeaksData const &peaks);
+    // Qt Signal used to get data from GPS thread
+    void getGPSData();
 
    public slots:
-    // Qt Slot used to receive the data from the DataAcquisition
+    // Qt Slot used to receive the data from DataAcquisition
     void processData(std::vector<double> amplitudeData);
-
+    // Qt Slot used to receive the data from GPSReader
+    void processGPS(double const &latitude, double const &longitude);
+    // Qt Slot used to select peak timeserie to display
     void setPeakToDisplay(int disp);
 };

@@ -66,6 +66,7 @@ SOURCES += \
     src/dataprocessor.cpp \
     src/usbadc.cpp \
     src/datalogger.cpp \
+    src/emlidgps.cpp \
     src/statemachine.cpp \
     src/qcustomplot.cpp
 
@@ -74,12 +75,13 @@ HEADERS += \
     inc/dataprocessor.h \
     inc/usbadc.h \
     inc/datareader.h \
+    inc/emlidgps.h \
     inc/qcustomplot.h \
     inc/datalogger.h \
     inc/statemachine.h \
     inc/inputdialog.h
 
-LIBS+= -lfftw3 -lpthread -lportaudio
+LIBS+= -lfftw3 -lpthread -lportaudio -lwiringPi
 
 RESOURCES += resources/richikb/testo.qrc \
     resources.qrc

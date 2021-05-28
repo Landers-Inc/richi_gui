@@ -4,7 +4,7 @@ import json
 import struct
 import binascii
 
-f = open('SpectrumData2.json',)
+f = open('SpectrumData.json',)
 
 data = json.load(f)
 

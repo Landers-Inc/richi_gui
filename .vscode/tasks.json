@@ -12,7 +12,7 @@
                 "-batch",
                 "-P",
                 "22",
-                "pi@192.168.1.139",
+                "pi@192.168.1.141",
                 "export DISPLAY=:0;",
                 "export QT_QPA_EGLFS_HIDECURSOR=1;",
                 "export QT_QPA_EGLFS_WIDTH=1280;",
@@ -97,9 +97,9 @@
                     "qmake_all"
                 ]
             },
-            "dependsOn": [
-                "Run qmake release"
-            ],
+            // "dependsOn": [
+            //     "Run qmake release"
+            // ],
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },
@@ -133,9 +133,9 @@
                     "qmake_all"
                 ]
             },
-            "dependsOn": [
-                "Run qmake debug"
-            ],
+            // "dependsOn": [
+            //     "Run qmake debug"
+            // ],
             "options": {
                 "cwd": "${workspaceFolder}/build"
             },

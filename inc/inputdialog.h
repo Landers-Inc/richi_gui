@@ -46,12 +46,6 @@ class InputDialog : public QDialog {
     QPushButton *inputBeaconCancel;
 
     explicit InputDialog(QWidget *parent = 0) {
-        QFont font;
-        font.setFamily(QString::fromUtf8("Ubuntu"));
-        font.setBold(true);
-        font.setItalic(false);
-        font.setWeight(75);
-
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -62,7 +56,7 @@ class InputDialog : public QDialog {
         sizePolicy1.setVerticalStretch(0);
 
         dialogWidget = new QWidget(parent);
-        dialogWidget->setObjectName(QString::fromUtf8("dialogWidget"));
+        dialogWidget->setObjectName("dialogWidget");
         sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
         dialogWidget->setSizePolicy(sizePolicy);
         dialogWidget->setMinimumSize(QSize(1280, 800));
@@ -70,20 +64,33 @@ class InputDialog : public QDialog {
         dialogWidget->setVisible(false);
 
         inputBeaconWidget = new InputWidget(dialogWidget);
-        inputBeaconWidget->setObjectName(QString::fromUtf8("inputBeaconWidget"));
+        inputBeaconWidget->setObjectName("inputBeaconWidget");
         inputBeaconWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         inputBeaconWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
-        inputBeaconWidget->move(200, 20);
-        inputBeaconWidget->setMinimumSize(880, 300);
+        inputBeaconWidget->move(400, 100);
+        inputBeaconWidget->setMinimumSize(480, 200);
         inputBeaconWidget->setWindowFlags(Qt::Dialog);
+        inputBeaconWidget->setStyleSheet(
+            "#inputBeaconWidget{"
+            "background: #ddd;"
+            "border-radius: 10px;"
+            "border-style: solid;"
+            "border-width: 2px;"
+            "border-radius: 7px;"
+            "border-color: black;}");
 
         inputBeaconLayout = new QVBoxLayout(inputBeaconWidget);
-        inputBeaconLayout->setObjectName(QString::fromUtf8("inputBeaconLayout"));
+        inputBeaconLayout->setObjectName("inputBeaconLayout");
         inputBeaconLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         inputBeaconLayout->setContentsMargins(10, 10, 10, 10);
         inputBeaconTopLabel = new QLabel(inputBeaconWidget);
-        inputBeaconTopLabel->setObjectName(QString::fromUtf8("inputBeaconTopLabel"));
+        inputBeaconTopLabel->setObjectName("inputBeaconTopLabel");
         inputBeaconTopLabel->setContentsMargins(10, 10, 10, 10);
+        inputBeaconTopLabel->setAlignment(Qt::AlignCenter);
+        inputBeaconTopLabel->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 30px 'Ubuntu';"
+            "font-weight: bold;");
 
         keyboardWidget = new QQuickWidget(QUrl("qrc:/main.qml"), dialogWidget);
         keyboardWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -98,12 +105,16 @@ class InputDialog : public QDialog {
         inputBeaconLayout->addWidget(inputBeaconTopLabel);
 
         inputBeaconOneLayout = new QHBoxLayout();
-        inputBeaconOneLayout->setObjectName(QString::fromUtf8("inputBeaconOneLayout"));
+        inputBeaconOneLayout->setObjectName("inputBeaconOneLayout");
         inputBeaconOneLayout->setContentsMargins(10, 10, 10, 10);
         inputBeaconOneLabel = new QLabel(inputBeaconWidget);
-        inputBeaconOneLabel->setObjectName(QString::fromUtf8("inputBeaconOneLabel"));
+        inputBeaconOneLabel->setObjectName("inputBeaconOneLabel");
+        inputBeaconOneLabel->setAlignment(Qt::AlignCenter);
+        inputBeaconOneLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
         inputBeaconOneText = new QLineEdit(inputBeaconWidget);
-        inputBeaconOneText->setObjectName(QString::fromUtf8("inputBeaconOneText"));
+        inputBeaconOneText->setObjectName("inputBeaconOneText");
         inputBeaconOneText->setInputMethodHints(Qt::ImhDigitsOnly);
 
         inputBeaconOneLayout->addWidget(inputBeaconOneLabel);
@@ -115,18 +126,16 @@ class InputDialog : public QDialog {
         inputBeaconOneLayout->setStretch(1, 1);
 
         inputBeaconTwoLayout = new QHBoxLayout();
-        inputBeaconTwoLayout->setObjectName(QString::fromUtf8("inputBeaconTwoLayout"));
+        inputBeaconTwoLayout->setObjectName("inputBeaconTwoLayout");
         inputBeaconTwoLayout->setContentsMargins(10, 10, 10, 10);
         inputBeaconAccept = new QPushButton(inputBeaconWidget);
-        inputBeaconAccept->setObjectName(QString::fromUtf8("inputBeaconAccept"));
+        inputBeaconAccept->setObjectName("inputBeaconAccept");
         sizePolicy1.setHeightForWidth(inputBeaconAccept->sizePolicy().hasHeightForWidth());
         inputBeaconAccept->setSizePolicy(sizePolicy1);
-        inputBeaconAccept->setFont(font);
         inputBeaconCancel = new QPushButton(inputBeaconWidget);
-        inputBeaconCancel->setObjectName(QString::fromUtf8("inputBeaconCancel"));
+        inputBeaconCancel->setObjectName("inputBeaconCancel");
         sizePolicy1.setHeightForWidth(inputBeaconCancel->sizePolicy().hasHeightForWidth());
         inputBeaconCancel->setSizePolicy(sizePolicy1);
-        inputBeaconCancel->setFont(font);
 
         inputBeaconTwoLayout->addWidget(inputBeaconAccept);
         inputBeaconTwoLayout->addWidget(inputBeaconCancel);

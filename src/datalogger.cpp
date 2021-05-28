@@ -11,7 +11,8 @@ void DataLogger::setDatabaseTables() {
         "dataSize INT UNSIGNED NOT NULL,"
         "sampleFrequency DOUBLE NOT NULL"
         ")");
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS TimeData ("
@@ -20,7 +21,8 @@ void DataLogger::setDatabaseTables() {
         "latPosition DOUBLE NOT NULL,"
         "lonPosition DOUBLE NOT NULL"
         ")");
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS BeaconData ("
@@ -40,7 +42,8 @@ void DataLogger::setDatabaseTables() {
         "ON DELETE CASCADE "
         "ON UPDATE RESTRICT"
         ")");
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS PeaksData ("
@@ -58,7 +61,8 @@ void DataLogger::setDatabaseTables() {
         "ON DELETE CASCADE "
         "ON UPDATE RESTRICT"
         ")");
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS SpectrumData ("
@@ -75,7 +79,8 @@ void DataLogger::setDatabaseTables() {
         "ON DELETE CASCADE "
         "ON UPDATE RESTRICT"
         ")");
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 }
 
 void DataLogger::getLastIDs() {
@@ -89,10 +94,41 @@ void DataLogger::getLastIDs() {
     else
         qDebug() << query.lastError();
 
+    query.clear();
     query.prepare("SELECT MAX(id) FROM Configuration");
     if (query.exec())
         if (query.next())
             configurationId = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
+
+    query.clear();
+    query.prepare(
+        "SELECT COUNT(*) "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
+        "AND registerType=0");
+    query.bindValue(":configuration_id", configurationId);
+    if (query.exec())
+        if (query.next())
+            beaconPreCount = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
+
+    query.clear();
+    query.prepare(
+        "SELECT COUNT(*) "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
+        "AND registerType=1");
+    query.bindValue(":configuration_id", configurationId);
+    if (query.exec())
+        if (query.next())
+            beaconPostCount = query.value(0).toUInt();
         else
             qDebug() << query.lastError();
     else
@@ -112,7 +148,17 @@ void DataLogger::insertConfiguration(Configuration const &conf) {
         ")");
     query.bindValue(":dataSize", conf.dataSize);
     query.bindValue(":sampleFrequency", conf.sampleFrequency);
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
+
+    query.prepare("SELECT MAX(id) FROM Configuration");
+    if (query.exec())
+        if (query.next())
+            configurationId = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
 }
 
 void DataLogger::insertTimeData(TimeData const &time) {
@@ -131,7 +177,8 @@ void DataLogger::insertTimeData(TimeData const &time) {
     query.bindValue(":timestamp", time.timestamp);
     query.bindValue(":latPosition", time.latPosition);
     query.bindValue(":lonPosition", time.lonPosition);
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 
     query.prepare("SELECT MAX(id) FROM TimeData");
     if (query.exec())
@@ -170,7 +217,36 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
     query.bindValue(":distance", beacon.distance);
     query.bindValue(":frequency", beacon.frequency);
     query.bindValue(":power", beacon.power);
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
+
+    query.prepare(
+        "SELECT COUNT(*)"
+        "FROM BeaconData"
+        "WHERE configuration_id=:configuration_id"
+        "AND registerType=0");
+    query.bindValue(":configuration_id", configurationId);
+    if (query.exec())
+        if (query.next())
+            beaconPreCount = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
+
+    query.prepare(
+        "SELECT COUNT(*)"
+        "FROM BeaconData"
+        "WHERE configuration_id=:configuration_id"
+        "AND registerType=1");
+    query.bindValue(":configuration_id", configurationId);
+    if (query.exec())
+        if (query.next())
+            beaconPostCount = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
 }
 
 void DataLogger::insertPeaksData(PeaksData const &peak) {
@@ -192,7 +268,8 @@ void DataLogger::insertPeaksData(PeaksData const &peak) {
     query.bindValue(":configuration_id", configurationId);
     query.bindValue(":frequency", peak.frequency);
     query.bindValue(":power", peak.power);
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 }
 
 void DataLogger::insertSpectrumData(SpectrumData const &spectrum) {
@@ -232,5 +309,6 @@ void DataLogger::insertSpectrumData(SpectrumData const &spectrum) {
     query.bindValue(":timedata_id", timestampId);
     query.bindValue(":configuration_id", configurationId);
     query.bindValue(":spectrum", binarySpectrum);
-    if (!query.exec()) qDebug() << query.lastError();
+    if (!query.exec())
+        qDebug() << query.lastError();
 }

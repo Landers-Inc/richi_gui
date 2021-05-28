@@ -70,12 +70,6 @@ double DataProcessor::calculateEntropy(std::vector<std::vector<double>> data) {
 }
 
 void DataProcessor::processData(std::vector<double> amplitudeData) {
-    if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
-        auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        DataLogger::TimeData timestamp = {timeNow, 0.0, 0.0};
-        emit logTimestamp(timestamp);
-    }
-
     // Apply Hanning Window to data
     for (unsigned int i = 0; i < amplitudeData.size(); ++i) amplitudeData[i] *= dataWindow[i];
 
@@ -99,6 +93,14 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
 
     if (accumulatorPointer == 0) {
         if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
+            // QEventLoop loop;
+            // connect(gpsInstance, &EMLIDGPS::dataReady, &loop, &QEventLoop::quit);
+            emit getGPSData();
+            // loop.exec();
+            auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
+            emit logTimestamp(timestamp);
+
             DataLogger::SpectrumData spectrum = {averageFFT[1]};
             emit logSpectrum(spectrum);
         }
@@ -133,14 +135,24 @@ void DataProcessor::initialize() {
     }
 
     frequencyBins = std::vector<FrequencyIndex>(3);
-    frequencyBins[0] = {(int)floor(dataSize * 10500.0 / sampleFrequency), (int)ceil(dataSize * 11500.0 / sampleFrequency)};
-    frequencyBins[1] = {(int)floor(dataSize * 11500.0 / sampleFrequency), (int)ceil(dataSize * 12500.0 / sampleFrequency)};
-    frequencyBins[2] = {(int)floor(dataSize * 12500.0 / sampleFrequency), (int)ceil(dataSize * 13500.0 / sampleFrequency)};
+    frequencyBins[0] = {(int)floor(dataSize * (13750.0 - 125.0) / sampleFrequency), (int)ceil(dataSize * (13750.0 + 125.0) / sampleFrequency)};
+    frequencyBins[1] = {(int)floor(dataSize * (14000.0 - 125.0) / sampleFrequency), (int)ceil(dataSize * (14000.0 + 125.0) / sampleFrequency)};
+    frequencyBins[2] = {(int)floor(dataSize * (14250.0 - 125.0) / sampleFrequency), (int)ceil(dataSize * (14250.0 + 125.0) / sampleFrequency)};
 
     for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
     for (int i = 0; i < 3; i++) peakTimeserie.push_back(std::vector<double>(peakSerieSize, -130));
+
+    gpsInstance = EMLIDGPS::getInstance();
+    connect(this, &DataProcessor::getGPSData, gpsInstance, &EMLIDGPS::getData, Qt::DirectConnection);
+    connect(gpsInstance, &EMLIDGPS::dataReady, this, &DataProcessor::processGPS);
+    gpsInstance->start();
 }
 
 void DataProcessor::setPeakToDisplay(int disp) {
     peakToDisplay = disp;
+}
+
+void DataProcessor::processGPS(double const &latitude, double const &longitude) {
+    gpsLatitude = latitude;
+    gpsLongitude = longitude;
 }

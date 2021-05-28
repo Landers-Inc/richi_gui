@@ -17,24 +17,19 @@ class DataLogger : public QObject {
     // Static object to store the singleton instance
     static DataLogger *instance;
     // Static member to save filename
-    std::string filename;
-    // Static member to save filename
     QSqlDatabase loggerDatabase = QSqlDatabase::addDatabase("QMYSQL");
     // Current timestamp id
     unsigned int timestampId = 0;
     // Current configuration id
     unsigned int configurationId = 0;
+    // Current beacon preblast count
+    unsigned int beaconPreCount = 0;
+    // Current beacon postblast count
+    unsigned int beaconPostCount = 0;
 
     // Private constructor so that no other objects can be created.
     DataLogger() {
-        // Read actual time to save datalogger file
-        auto timeNow = std::chrono::system_clock::now();
-        time_t timeNowT = std::chrono::system_clock::to_time_t(timeNow);
-        char temp[100];
-        std::strftime(temp, sizeof(temp), "datalogger_%Y_%m_%d_%H-%M-%S.csv", std::gmtime(&timeNowT));
-        filename = std::string(temp);
-
-        // Set MySQL database
+        // Set MariaDB database
         loggerDatabase.setHostName("127.0.0.1");
         loggerDatabase.setDatabaseName("datalog");
         loggerDatabase.setUserName("admin");

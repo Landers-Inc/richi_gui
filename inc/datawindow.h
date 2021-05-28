@@ -1,14 +1,12 @@
-/** author Christopher Muñoz
- * date 07-05-2021
-*/
-
 #pragma once
 
 #include <cmath>
 #include <vector>
 
+// Class to generate a data processing window
 class DataWindow {
    public:
+    // Window types
     enum {
         NOWINDOW = 0,
         HAMMING,
@@ -18,6 +16,7 @@ class DataWindow {
         BLACKMAN_NUTTALL,
         BLACKMAN_HARRIS
     };
+    // Returns a window with size and type given by the arguments
     static std::vector<double> CreateWindow(const int size, const int windowName) {
         std::vector<double> coefficients = std::vector<double>(size);
         switch (windowName) {

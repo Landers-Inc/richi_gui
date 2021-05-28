@@ -18,17 +18,52 @@
 int N_size = 4096;
 double sampleFrequency = 44100.0;
 
+void MainWindow::warningStatus(QString message) {
+    QString tempSave = ui->statusLabel->text();
+    ui->statusLabel->setText(message);
+    QTimer::singleShot(3000, [this, tempSave]() {
+        ui->statusLabel->setText(tempSave);
+    });
+}
+
+void MainWindow::warningDialog(QString message) {
+    QString tempSave = ui->statusLabel->text();
+    ui->statusLabel->setText(message);
+    QTimer::singleShot(3000, [this, tempSave]() {
+        ui->statusLabel->setText(tempSave);
+    });
+}
+
+void MainWindow::switchView() {
+    simpleView = !simpleView;
+    if (simpleView) {
+        ui->rightPlot->setVisible(false);
+        ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "Baliza A", nullptr));
+        ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B", nullptr));
+        ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "Baliza C", nullptr));
+        ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista simple", nullptr));
+        warningStatus("Status: Vista simple seleccionada");
+    } else {
+        ui->rightPlot->setVisible(true);
+        ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz", nullptr));
+        ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz", nullptr));
+        ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz", nullptr));
+        ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada", nullptr));
+        warningStatus("Status: Vista avanzada seleccionada");
+    }
+}
+
 void MainWindow::updateData(QVector<double> const &xSeries, QVector<double> const &ySeries) {
     ui->leftPlot->graph(0)->setData(xSeries, ySeries);
 }
 
 void MainWindow::updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries) {
-    ui->rightPlot->graph(0)->setData(xSeries, ySeries);
+    if (!simpleView) ui->rightPlot->graph(0)->setData(xSeries, ySeries);
 }
 
 void MainWindow::updateOnePeak(double freq, double power) {
-    ui->peakOneFreqValue->setText(QString::number(freq));
-    ui->peakOnePowerValue->setText(QString::number(power));
+    ui->peakOneFreqValue->setText(QString::number(freq, 'f', 1));
+    ui->peakOnePowerValue->setText(QString::number(power, 'f', 2));
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -36,8 +71,8 @@ void MainWindow::updateOnePeak(double freq, double power) {
 }
 
 void MainWindow::updateTwoPeak(double freq, double power) {
-    ui->peakTwoFreqValue->setText(QString::number(freq));
-    ui->peakTwoPowerValue->setText(QString::number(power));
+    ui->peakTwoFreqValue->setText(QString::number(freq, 'f', 1));
+    ui->peakTwoPowerValue->setText(QString::number(power, 'f', 2));
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -45,8 +80,8 @@ void MainWindow::updateTwoPeak(double freq, double power) {
 }
 
 void MainWindow::updateThreePeak(double freq, double power) {
-    ui->peakThreeFreqValue->setText(QString::number(freq));
-    ui->peakThreePowerValue->setText(QString::number(power));
+    ui->peakThreeFreqValue->setText(QString::number(freq, 'f', 1));
+    ui->peakThreePowerValue->setText(QString::number(power, 'f', 2));
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -54,12 +89,11 @@ void MainWindow::updateThreePeak(double freq, double power) {
 }
 
 void MainWindow::updatePlots() {
-    ui->rightPlot->replot();
+    if (!simpleView) ui->rightPlot->replot();
     ui->leftPlot->replot();
 }
 
 void MainWindow::startThreads() {
-    connect(this, &MainWindow::peripheralsReady, this, &MainWindow::updateThreePeak, Qt::QueuedConnection);
     StateMachine::getInstance()->startingPeripherals();
     ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Inicializando periféricos", nullptr));
 
@@ -103,7 +137,6 @@ void MainWindow::startThreads() {
 
     StateMachine::getInstance()->peripheralsReady();
     ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Periféricos listos", nullptr));
-    emit peripheralsReady(1.1, 1.2);
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -119,12 +152,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 void MainWindow::openBeaconInput() {
-    if (!ui->inputBeaconWidget->dialogWidget->isVisible()) {
-        ui->inputBeaconWidget->dialogWidget->setVisible(true);
-        ui->inputBeaconWidget->inputBeaconWidget->setVisible(true);
-        ui->inputBeaconWidget->keyboardWidget->setVisible(true);
-        ui->inputBeaconWidget->inputBeaconWidget->activateWindow();
-        ui->inputBeaconWidget->inputBeaconWidget->setFocus(Qt::ActiveWindowFocusReason);
+    if (StateMachine::getInstance()->getState() == StateMachine::PREBLAST) {
+        if (!ui->inputBeaconWidget->dialogWidget->isVisible()) {
+            ui->inputBeaconWidget->dialogWidget->setVisible(true);
+            ui->inputBeaconWidget->inputBeaconWidget->setVisible(true);
+            ui->inputBeaconWidget->keyboardWidget->setVisible(true);
+            ui->inputBeaconWidget->inputBeaconWidget->activateWindow();
+            ui->inputBeaconWidget->inputBeaconWidget->setFocus(Qt::ActiveWindowFocusReason);
+        }
+    }
+}
+
+void MainWindow::beaconFoundLog() {
+    if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
     }
 }
 
@@ -174,18 +214,21 @@ void MainWindow::startNewLog() {
 
 void MainWindow::startNewPreblastLog() {
     StateMachine::getInstance()->preblastLog();
-    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Nuevo registro pre-estallido empezado", nullptr));
+    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Nuevo registro pre-tronadura empezado", nullptr));
 }
 
 void MainWindow::startNewPostblastLog() {
     StateMachine::getInstance()->postblastLog();
-    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Nuevo registro post-estallido empezado", nullptr));
+    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Nuevo registro post-tronadura empezado", nullptr));
 }
 
 void MainWindow::connectButtons() {
     // Close and Shutdown button
     connect(ui->closeShutdown, &QPushButton::released, this, &QMainWindow::close);
+    connect(ui->saveLog, &QPushButton::released, this, &MainWindow::switchView);
+    //
     connect(ui->selectBeacon, &QPushButton::released, this, &MainWindow::openBeaconInput);
+    connect(ui->beaconFound, &QPushButton::released, this, &MainWindow::openBeaconInput);
     connect(ui->selectOneFreq, &QPushButton::released, this, &MainWindow::dispFrequencyOne);
     connect(ui->selectTwoFreq, &QPushButton::released, this, &MainWindow::dispFrequencyTwo);
     connect(ui->selectThreeFreq, &QPushButton::released, this, &MainWindow::dispFrequencyThree);
@@ -222,10 +265,6 @@ void MainWindow::setupGUI() {
     ui->rightPlot->addGraph();
     ui->rightPlot->xAxis->setLabel("Frequency");
     ui->rightPlot->yAxis->setLabel("Power");
-    // ui->rightPlot->xAxis->setTickLabelFont(pfont);
-    // ui->rightPlot->yAxis->setTickLabelFont(pfont);
-    // ui->rightPlot->xAxis->setLabelFont(pfont);
-    // ui->rightPlot->yAxis->setLabelFont(pfont);
     ui->rightPlot->xAxis->setRange(0, sampleFrequency / 2);
     ui->rightPlot->yAxis->setRange(-140, 4);
     ui->rightPlot->graph(0)->setPen(QPen(Qt::blue));
@@ -237,14 +276,13 @@ void MainWindow::setupGUI() {
     ui->textLabel->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
     ui->textLabel->setPadding(QMargins(5, 5, 5, 5));
     ui->textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
-    ui->textLabel->position->setCoords(0.85, 0);
-    ui->textLabel->setFont(QFont(font().family(), 12));
+    ui->textLabel->position->setCoords(0.75, 0);
+    ui->textLabel->setFont(QFont(font().family(), 10));
     ui->textLabel->setPen(QPen(Qt::black));
     ui->textLabel->setBrush(QBrush(Qt::white));
     ui->textLabel->setText("Window Hanning \nN = 4096\nFs = 44100.0");
 
     ui->leftPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
-    ui->leftPlot->addGraph();
     ui->leftPlot->addGraph();
     ui->leftPlot->xAxis->setLabel("Time");
     ui->leftPlot->yAxis->setLabel("Amplitude");

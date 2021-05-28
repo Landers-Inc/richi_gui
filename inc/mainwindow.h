@@ -38,6 +38,7 @@ class MainWindow : public QMainWindow {
     DataLogger *dataLogger;
     void startThreads();
     int dispFreqPlot;
+    bool simpleView = false;
    signals:
     void peripheralsReady(double freq, double power);
     void setPeakTimeserie(int disp);
@@ -52,6 +53,8 @@ class MainWindow : public QMainWindow {
     // Qt Signal used to log a peak
     void logPeaks(DataLogger::PeaksData const &peaks);
    public slots:
+    void warningStatus(QString message);
+    void warningDialog(QString message);
     void updateData(QVector<double> const &xSeries, QVector<double> const &ySeries);
     void updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries);
     void updateOnePeak(double freq, double power);
@@ -59,6 +62,7 @@ class MainWindow : public QMainWindow {
     void updateThreePeak(double freq, double power);
     void updatePlots();
     void openBeaconInput();
+    void beaconFoundLog();
     void beaconAccept();
     void beaconCancel();
     void dispFrequencyOne();
@@ -67,4 +71,5 @@ class MainWindow : public QMainWindow {
     void startNewLog();
     void startNewPreblastLog();
     void startNewPostblastLog();
+    void switchView();
 };
