@@ -71,10 +71,11 @@ SOURCES += \
     src/qcustomplot.cpp
 
 HEADERS += \
+    inc/abstract/datareader.h \
+    inc/abstract/gpsreader.h \
     inc/mainwindow.h \
     inc/dataprocessor.h \
     inc/usbadc.h \
-    inc/datareader.h \
     inc/emlidgps.h \
     inc/qcustomplot.h \
     inc/datalogger.h \

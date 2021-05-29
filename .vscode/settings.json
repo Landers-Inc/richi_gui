@@ -101,7 +101,7 @@
     "editor.detectIndentation": false,
     "files.trimTrailingWhitespace": true,
     "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 0}",
-    "python.pythonPath": "C:\\anaconda3\\python.exe",
+    "python.pythonPath": "C:\\Users\\christopher.munoz\\Anaconda3\\python.exe",
     "sqltools.connections": [
         {
             "mysqlOptions": {

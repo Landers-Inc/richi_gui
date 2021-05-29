@@ -12,7 +12,7 @@
                 "-batch",
                 "-P",
                 "22",
-                "pi@192.168.1.141",
+                "pi@10.199.203.180",
                 "export DISPLAY=:0;",
                 "export QT_QPA_EGLFS_HIDECURSOR=1;",
                 "export QT_QPA_EGLFS_WIDTH=1280;",
@@ -46,7 +46,7 @@
                 "-X",
                 "-p",
                 "22",
-                "pi@192.168.1.139",
+                "pi@10.199.203.180",
                 "export DISPLAY=localhost:10.0;",
                 "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
@@ -217,7 +217,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {
@@ -238,7 +238,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {

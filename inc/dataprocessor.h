@@ -12,19 +12,27 @@
 #include "fftw3.h"
 #include "qcustomplot.h"
 #include "statemachine.h"
+#include "usbadc.h"
 
 // Class dedicated to process incoming data
 class DataProcessor : public QObject {
     Q_OBJECT
+   private:
+    QThread *dataAcquiring;
+    QThread *gpsAcquiring;
+    DataReader *dataAcquisition;
+    GPSReader *gpsAcquisition;
+
    public:
     explicit DataProcessor(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg) {
         initialize();
     };
+    ~DataProcessor();
 
     // Struct to save peaks data
     typedef struct Peak {
         double frequency;
-        double value;
+        double power;
         int index;
     } Peak;
 
@@ -35,10 +43,15 @@ class DataProcessor : public QObject {
     } FrequencyIndex;
 
    private:
+    // GPS object instance
     EMLIDGPS *gpsInstance;
+    // Latitude position received from GPS
     double gpsLatitude = 0;
+    // Longitude position received from GPS
     double gpsLongitude = 0;
+    // Timestamp received from GPS
     unsigned int gpsTime = 0;
+    // Number of Space Vehicles used
     unsigned int nSV = 0;
     // Accumulator size
     int accumulatorSize = 5;
@@ -88,6 +101,8 @@ class DataProcessor : public QObject {
     void dataReady(QVector<double> const &xSeries, QVector<double> const &ySeries);
     // Qt Signal used to refresh the screen in the GUI thread
     void plotData();
+    // Qt Signal used to stop GPS running thread
+    void gpsQuit();
 
     // Qt Signal used to update the first peak data in the GUI thread
     void peakOneReady(double freq, double power);
@@ -106,8 +121,6 @@ class DataProcessor : public QObject {
     void logSpectrum(DataLogger::SpectrumData const &spectrum);
     // Qt Signal used to log a peak
     void logPeaks(DataLogger::PeaksData const &peaks);
-    // Qt Signal used to get data from GPS thread
-    void getGPSData();
 
    public slots:
     // Qt Slot used to receive the data from DataAcquisition

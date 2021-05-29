@@ -97,23 +97,21 @@ void MainWindow::startThreads() {
     StateMachine::getInstance()->startingPeripherals();
     ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Inicializando periféricos", nullptr));
 
-    dataLogging.setObjectName("logging thread");
-    dataAcquiring.setObjectName("acquiring thread");
-    dataProcessing.setObjectName("processor thread");
+    dataLogging = new QThread();
+    dataProcessing = new QThread();
+
+    dataLogging->setObjectName("logging thread");
+    dataProcessing->setObjectName("processor thread");
 
     dataLogger = DataLogger::getInstance();
     dataProcessor = new DataProcessor(N_size, sampleFrequency);
-    dataAcquisition = new USBADC(N_size, sampleFrequency);
 
-    dataLogger->moveToThread(&dataLogging);
-    dataProcessor->moveToThread(&dataProcessing);
-    dataAcquisition->moveToThread(&dataAcquiring);
+    dataLogger->moveToThread(dataLogging);
+    dataProcessor->moveToThread(dataProcessing);
 
-    connect(&dataProcessing, &QThread::finished, dataProcessor, &QObject::deleteLater);
-    connect(&dataAcquiring, &QThread::finished, dataAcquisition, &QObject::deleteLater);
-    connect(&dataLogging, &QThread::finished, dataLogger, &QObject::deleteLater);
+    connect(dataProcessing, &QThread::finished, dataProcessor, &QObject::deleteLater);
+    connect(dataLogging, &QThread::finished, dataLogger, &QObject::deleteLater);
     //TODO Possible Queue infinitely increment
-    connect(dataAcquisition, &DataReader::dataReady, dataProcessor, &DataProcessor::processData, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::dataReady, this, &MainWindow::updateData, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::fftReady, this, &MainWindow::updateFFT, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::plotData, this, &MainWindow::updatePlots, Qt::QueuedConnection);
@@ -146,9 +144,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connectButtons();
 
-    dataAcquiring.start();
-    dataProcessing.start();
-    dataLogging.start();
+    startPeripherals->join();
+
+    dataProcessing->start();
+    dataLogging->start();
 }
 
 void MainWindow::openBeaconInput() {
@@ -242,12 +241,10 @@ void MainWindow::connectButtons() {
 }
 
 MainWindow::~MainWindow() {
-    dataAcquiring.quit();
-    dataProcessing.quit();
-    dataLogging.quit();
-    dataAcquiring.wait();
-    dataProcessing.wait();
-    dataLogging.wait();
+    dataProcessing->quit();
+    dataLogging->quit();
+    dataProcessing->wait();
+    dataLogging->wait();
     delete ui;
 }
 

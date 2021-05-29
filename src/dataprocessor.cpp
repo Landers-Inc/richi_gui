@@ -1,5 +1,14 @@
 #include "dataprocessor.h"
 
+DataProcessor::~DataProcessor() {
+    dataAcquiring->quit();
+    dataAcquiring->wait();
+    emit gpsQuit();
+    gpsAcquiring->quit();
+    gpsAcquiring->wait();
+}
+
+// Function to calculate the FFT of a time serie
 std::vector<std::vector<double>> DataProcessor::fftCalculation(std::vector<double> data) {
     std::vector<std::vector<double>> out = {
         std::vector<double>(dataSize / 2),
@@ -16,6 +25,7 @@ std::vector<std::vector<double>> DataProcessor::fftCalculation(std::vector<doubl
     return out;
 }
 
+// Function to calculate the average FFT of the accumulator
 std::vector<std::vector<double>> DataProcessor::fftAverage(std::vector<std::vector<double>> data) {
     std::vector<std::vector<double>> out = {
         std::vector<double>(dataSize / 2, 0),
@@ -29,6 +39,7 @@ std::vector<std::vector<double>> DataProcessor::fftAverage(std::vector<std::vect
     return out;
 }
 
+// Function to get the peaks of the instantaneous FFT
 std::vector<DataProcessor::Peak> DataProcessor::getPeaks(std::vector<std::vector<double>> fft) {
     std::vector<Peak> out;
 
@@ -47,6 +58,7 @@ std::vector<DataProcessor::Peak> DataProcessor::getPeaks(std::vector<std::vector
     return out;
 }
 
+// Function to get the weighted frequency of the peak
 DataProcessor::Peak DataProcessor::getWeightedFrequency(std::vector<std::vector<double>> fft, int index) {
     double weightedFrequency = 0.0;
     double powerIntegral = 0.0;
@@ -61,6 +73,7 @@ DataProcessor::Peak DataProcessor::getWeightedFrequency(std::vector<std::vector<
     return out;
 }
 
+// Function to calculate the entropy of the FFT - Unused right now
 double DataProcessor::calculateEntropy(std::vector<std::vector<double>> data) {
     double out = 0.0;
     double normalizeData = 0.0;
@@ -69,6 +82,7 @@ double DataProcessor::calculateEntropy(std::vector<std::vector<double>> data) {
     return out;
 }
 
+// Qt Slot used to receive the data from DataAcquisition
 void DataProcessor::processData(std::vector<double> amplitudeData) {
     // Apply Hanning Window to data
     for (unsigned int i = 0; i < amplitudeData.size(); ++i) amplitudeData[i] *= dataWindow[i];
@@ -84,74 +98,108 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     // Cast FFT from std::vector to QVector. Necessary to plot data on QCustomPlot
     QVector<double> Qoutx = QVector<double>(frequencyDomain.begin(), frequencyDomain.end());
     QVector<double> Qouty = QVector<double>(averageFFT[1].begin(), averageFFT[1].end());
-    // Emit signal to MainWindow to plot frequency data
+    // Emit signal to MainWindow to update frequency data
     emit fftReady(Qoutx, Qouty);
 
     // Calculate peaks on FFT
     std::vector<Peak> peaksData = getPeaks(averageFFT);
-    DataLogger::PeaksData peak = {peaksData[0].frequency, peaksData[0].value};
 
+    // Update the data only after an accumulator cycle
     if (accumulatorPointer == 0) {
+        // Log data only on Postblast state
         if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
-            // QEventLoop loop;
-            // connect(gpsInstance, &EMLIDGPS::dataReady, &loop, &QEventLoop::quit);
-            emit getGPSData();
-            // loop.exec();
+            // Get timestamp in milliseconds from system
             auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+            // Save data in an struct
             DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
+            // Log timestamp data
             emit logTimestamp(timestamp);
-
+            // Log spectrum in logarithm scale
             DataLogger::SpectrumData spectrum = {averageFFT[1]};
             emit logSpectrum(spectrum);
+            // Log each peak data in logarithm scale
+            for (unsigned char i = 0; i < 3; i++) {
+                DataLogger::PeaksData peak = {i, peaksData[i].frequency, 20.0 * log10(peaksData[i].power)};
+                emit logPeaks(peak);
+            }
         }
-        peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].value);
-        peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].value);
-        peakTimeserie[2][peakPointer] = 20.0 * log10(peaksData[2].value);
+        // Update values of peak timeserie
+        peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].power);
+        peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].power);
+        peakTimeserie[2][peakPointer] = 20.0 * log10(peaksData[2].power);
         peakPointer = (++peakPointer) % peakSerieSize;
     }
 
     // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
     Qoutx = QVector<double>(timeDomain.begin(), timeDomain.begin() + peakSerieSize);
     Qouty = QVector<double>(peakTimeserie[peakToDisplay].begin(), peakTimeserie[peakToDisplay].end());
-    // Emit signal to MainWindow to plot time data
+    // Emit signal to MainWindow to update time data
     emit dataReady(Qoutx, Qouty);
 
-    if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) emit logPeaks(peak);
     // Emit signal to MainWindow to update peak frequency and power
-    emit peakOneReady(peaksData[0].frequency, 20.0 * log10(peaksData[0].value));
-    emit peakTwoReady(peaksData[1].frequency, 20.0 * log10(peaksData[1].value));
-    emit peakThreeReady(peaksData[2].frequency, 20.0 * log10(peaksData[2].value));
+    emit peakOneReady(peaksData[0].frequency, 20.0 * log10(peaksData[0].power));
+    emit peakTwoReady(peaksData[1].frequency, 20.0 * log10(peaksData[1].power));
+    emit peakThreeReady(peaksData[2].frequency, 20.0 * log10(peaksData[2].power));
+    // Emit signal to update plots
     emit plotData();
-    //Sleep(500);
 }
 
+// Function to initialize the vector members
 void DataProcessor::initialize() {
+    // Declare data processing window
     dataWindow = DataWindow::CreateWindow(dataSize, DataWindow::NUTALL);
+    // Declare vector for time domain X-axis plot
     timeDomain = std::vector<double>(dataSize, 0);
+    // Declare vector for frequency domain X-axis plot in FFT
     frequencyDomain = std::vector<double>(dataSize / 2, 0);
+    // Initialize time domain and frequency domain X-axis
     for (int i = 0; i < dataSize; i++) {
         timeDomain[i] = (double)i / (double)sampleFrequency;
         if (i < dataSize / 2) frequencyDomain[i] = (double)sampleFrequency * i / dataSize;
     }
 
-    frequencyBins = std::vector<FrequencyIndex>(3);
-    frequencyBins[0] = {(int)floor(dataSize * (13750.0 - 125.0) / sampleFrequency), (int)ceil(dataSize * (13750.0 + 125.0) / sampleFrequency)};
-    frequencyBins[1] = {(int)floor(dataSize * (14000.0 - 125.0) / sampleFrequency), (int)ceil(dataSize * (14000.0 + 125.0) / sampleFrequency)};
-    frequencyBins[2] = {(int)floor(dataSize * (14250.0 - 125.0) / sampleFrequency), (int)ceil(dataSize * (14250.0 + 125.0) / sampleFrequency)};
+    // Initialize frequency bins to look for peaks
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (13750.0 - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (13750.0 + 125.0) / sampleFrequency)});
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (14000.0 - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (14000.0 + 125.0) / sampleFrequency)});
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (14250.0 - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (14250.0 + 125.0) / sampleFrequency)});
 
+    // Initialize FFT accumulator with zeroes
     for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
+    // Initialize peak timeserie low value
     for (int i = 0; i < 3; i++) peakTimeserie.push_back(std::vector<double>(peakSerieSize, -130));
 
-    gpsInstance = EMLIDGPS::getInstance();
-    connect(this, &DataProcessor::getGPSData, gpsInstance, &EMLIDGPS::getData, Qt::DirectConnection);
-    connect(gpsInstance, &EMLIDGPS::dataReady, this, &DataProcessor::processGPS);
-    gpsInstance->start();
+    dataAcquiring = new QThread();
+    dataAcquiring->setObjectName("acquiring thread");
+    dataAcquisition = new USBADC(dataSize, sampleFrequency);
+    dataAcquisition->moveToThread(dataAcquiring);
+
+    connect(dataAcquiring, &QThread::finished, dataAcquisition, &QObject::deleteLater);
+    connect(dataAcquisition, &DataReader::dataReady, this, &DataProcessor::processData, Qt::QueuedConnection);
+
+    // Initialize GPS instance
+    gpsAcquiring = new QThread();
+    gpsAcquiring->setObjectName("gps thread");
+    gpsAcquisition = new EMLIDGPS();
+    gpsAcquisition->moveToThread(gpsAcquiring);
+    // Connect this object with GPS instance to receive new position data. DirectConnection since it is high priority
+    connect(gpsAcquiring, &QThread::started, gpsAcquisition, &GPSReader::run);
+    connect(gpsAcquiring, &QThread::finished, gpsAcquisition, &QObject::deleteLater);
+    connect(gpsAcquisition, &GPSReader::dataReady, this, &DataProcessor::processGPS, Qt::DirectConnection);
+    connect(this, &DataProcessor::gpsQuit, gpsAcquisition, &GPSReader::quit, Qt::DirectConnection);
+    // Start GPS thread
+    dataAcquiring->start();
+    gpsAcquiring->start();
 }
 
+// Qt Slot used to select peak timeserie to display
 void DataProcessor::setPeakToDisplay(int disp) {
     peakToDisplay = disp;
 }
 
+// Qt Slot used to receive the data from GPSReader
 void DataProcessor::processGPS(double const &latitude, double const &longitude) {
     gpsLatitude = latitude;
     gpsLongitude = longitude;

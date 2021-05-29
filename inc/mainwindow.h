@@ -7,10 +7,8 @@
 
 #include "datalogger.h"
 #include "dataprocessor.h"
-#include "datareader.h"
 #include "qcustomplot.h"
 #include "statemachine.h"
-#include "usbadc.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -29,12 +27,10 @@ class MainWindow : public QMainWindow {
    private:
     void connectButtons();
     Ui::MainWindow *ui;
-    QThread dataProcessing;
-    QThread dataAcquiring;
-    QThread dataLogging;
+    QThread *dataProcessing;
+    QThread *dataLogging;
     std::thread *startPeripherals;
     DataProcessor *dataProcessor;
-    DataReader *dataAcquisition;
     DataLogger *dataLogger;
     void startThreads();
     int dispFreqPlot;

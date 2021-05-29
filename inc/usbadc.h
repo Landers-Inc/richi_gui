@@ -6,7 +6,7 @@
 #include <chrono>
 #include <thread>
 
-#include "datareader.h"
+#include "abstract/datareader.h"
 
 class USBADC : public DataReader {
     Q_OBJECT

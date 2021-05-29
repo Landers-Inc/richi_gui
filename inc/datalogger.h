@@ -68,13 +68,14 @@ class DataLogger : public QObject {
     typedef struct TimeData {
         unsigned long long timestamp;  // Timestamp with respect to UTC
         double latPosition;            // Latitude GPS position
-        double lonPosition;            // Longitude GPS Position
+        double lngPosition;            // Longitude GPS Position
     } TimeData;
 
     // We define an structure to save the peaks data (frequency and power)
     typedef struct PeaksData {
-        double frequency;  // Frequency of the peak
-        double power;      // Power of the peak
+        unsigned int peakId;  // Frequency of the peak
+        double frequency;     // Frequency of the peak
+        double power;         // Power of the peak
     } PeaksData;
 
     // We define an structure to save the actual spectrum

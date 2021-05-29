@@ -1,7 +1,5 @@
 #include "emlidgps.h"
 
-EMLIDGPS* EMLIDGPS::instance = nullptr;
-
 EMLIDGPS::EMLIDGPS() {
     fd = serialOpen("/dev/ttyACM0", 115200);
     if (fd < 0) {
@@ -14,10 +12,6 @@ EMLIDGPS::~EMLIDGPS() {
     serialClose(fd);
 };
 
-void EMLIDGPS::getData() {
-    emit dataReady(latValue, lngValue);
-};
-
 void EMLIDGPS::run() {
     char buff[100] = {0};
     char headerIdentifier[3] = {0};
@@ -25,7 +19,7 @@ void EMLIDGPS::run() {
     unsigned int sizeA = 0;
     unsigned int sizeB = 0;
     unsigned int length = 0;
-    while (true) {
+    while (running) {
         headerIdentifier[0] = headerIdentifier[1];
         headerIdentifier[1] = serialGetchar(fd);
         if (strcmp(headerIdentifier, "ER") == 0) {
@@ -36,9 +30,9 @@ void EMLIDGPS::run() {
             for (int i = 0; i < length + 2; i++) buff[i] = serialGetchar(fd);
             if (id == 0x01) {
                 unsigned int* timeGPS = (unsigned int*)(buff + 0);
-                unsigned int verH = buff[4];
-                unsigned int verM = buff[5];
-                unsigned int verL = buff[6];
+                unsigned char* verH = (unsigned char*)(buff + 4);
+                unsigned char* verM = (unsigned char*)(buff + 5);
+                unsigned char* verL = (unsigned char*)(buff + 6);
             } else if (id == 0x02) {
                 unsigned int* timeGPS = (unsigned int*)(buff + 0);
                 double* lng = (double*)(buff + 4);
@@ -49,6 +43,7 @@ void EMLIDGPS::run() {
                 unsigned int* accVer = (unsigned int*)(buff + 40);
                 lngValue = *lng;
                 latValue = *lat;
+                emit dataReady(latValue, lngValue);
             } else if (id == 0x07) {
                 unsigned char* numSV = (unsigned char*)(buff + 0);
                 unsigned short* age = (unsigned short*)(buff + 1);
