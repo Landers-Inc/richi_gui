@@ -80,6 +80,7 @@ HEADERS += \
     inc/qcustomplot.h \
     inc/datalogger.h \
     inc/statemachine.h \
+    inc/warningdialog.h \
     inc/inputdialog.h
 
 LIBS+= -lfftw3 -lpthread -lportaudio -lwiringPi

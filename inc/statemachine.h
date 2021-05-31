@@ -1,6 +1,17 @@
 #pragma once
 
 #include <QObject>
+#include <iostream>
+#include <string>
+
+typedef enum State {
+    STARTUP = 0,
+    PERIPHERALS,
+    NEWLOG,
+    IDLE,
+    PREBLAST,
+    POSTBLAST
+} State;
 
 // This is singleton StateMachine class to coordinate function in the different classes
 class StateMachine : public QObject {
@@ -11,14 +22,7 @@ class StateMachine : public QObject {
         return instance;
     }
 
-    typedef enum State {
-        STARTUP = 0,
-        PERIPHERALS,
-        NEWLOG,
-        IDLE,
-        PREBLAST,
-        POSTBLAST
-    } State;
+    static std::map<State, const char *> stateString;
 
     State getState() {
         return currentState;
@@ -29,6 +33,10 @@ class StateMachine : public QObject {
     void preblastLog();
     void postblastLog();
     void gotoIdle();
+
+    ~StateMachine() {
+        std::cout << "Closing StateMachine instance" << std::endl;
+    };
 
    private:
     // Static object to store the singleton instance

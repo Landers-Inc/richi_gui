@@ -13,8 +13,8 @@ USBADC::~USBADC() {
 bool USBADC::open() {
     PaError err;
     std::cout
-        << "PortAudio Test: output sine wave. SR = " << sampleFrequency
-        << ", BufSize = " << dataSize
+        << "Sample Frequency = " << sampleFrequency
+        << ", Buffer Size = " << dataSize
         << std::endl;
 
     err = Pa_Initialize();

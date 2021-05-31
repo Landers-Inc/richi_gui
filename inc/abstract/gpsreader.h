@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <random>
+#include <iostream>
 
 // Abstract class for gps acquisition
 class GPSReader : public QObject {
@@ -22,7 +23,9 @@ class GPSReader : public QObject {
     // Class constructor
     explicit GPSReader(QObject *parent = 0) : QObject(parent){};
     // Class destructor
-    virtual ~GPSReader(){};
+    virtual ~GPSReader() {
+        std::cout << "Closing GPSReader instance" << std::endl;
+    };
    signals:
     // Qt Signal used to transfer data to DataProcessor thread
     virtual void dataReady(double const &latitude, double const &longitude);

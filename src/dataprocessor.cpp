@@ -1,6 +1,7 @@
 #include "dataprocessor.h"
 
 DataProcessor::~DataProcessor() {
+    std::cout << "Closing DataProcessor instance" << std::endl;
     dataAcquiring->quit();
     dataAcquiring->wait();
     emit gpsQuit();
@@ -107,7 +108,7 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     // Update the data only after an accumulator cycle
     if (accumulatorPointer == 0) {
         // Log data only on Postblast state
-        if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
+        if (stateInstance->getState() == POSTBLAST) {
             // Get timestamp in milliseconds from system
             auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
             // Save data in an struct
@@ -179,6 +180,7 @@ void DataProcessor::initialize() {
     connect(dataAcquiring, &QThread::finished, dataAcquisition, &QObject::deleteLater);
     connect(dataAcquisition, &DataReader::dataReady, this, &DataProcessor::processData, Qt::QueuedConnection);
 
+    stateInstance = StateMachine::getInstance();
     // Initialize GPS instance
     gpsAcquiring = new QThread();
     gpsAcquiring->setObjectName("gps thread");

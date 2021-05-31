@@ -19,24 +19,28 @@ int N_size = 4096;
 double sampleFrequency = 44100.0;
 
 void MainWindow::warningStatus(QString message) {
-    QString tempSave = ui->statusLabel->text();
     ui->statusLabel->setText(message);
-    QTimer::singleShot(3000, [this, tempSave]() {
-        ui->statusLabel->setText(tempSave);
-    });
-}
-
-void MainWindow::warningDialog(QString message) {
-    QString tempSave = ui->statusLabel->text();
-    ui->statusLabel->setText(message);
-    QTimer::singleShot(3000, [this, tempSave]() {
-        ui->statusLabel->setText(tempSave);
+    QTimer::singleShot(3000, [this]() {
+        ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
     });
 }
 
 void MainWindow::switchView() {
     simpleView = !simpleView;
     if (simpleView) {
+        ui->barsPlot->setVisible(true);
+        ui->peakOneFreqValue->setVisible(false);
+        ui->peakOneFreqUnit->setVisible(false);
+        ui->peakOnePowerValue->setVisible(false);
+        ui->peakOnePowerUnit->setVisible(false);
+        ui->peakTwoFreqValue->setVisible(false);
+        ui->peakTwoFreqUnit->setVisible(false);
+        ui->peakTwoPowerValue->setVisible(false);
+        ui->peakTwoPowerUnit->setVisible(false);
+        ui->peakThreeFreqValue->setVisible(false);
+        ui->peakThreeFreqUnit->setVisible(false);
+        ui->peakThreePowerValue->setVisible(false);
+        ui->peakThreePowerUnit->setVisible(false);
         ui->rightPlot->setVisible(false);
         ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "Baliza A", nullptr));
         ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B", nullptr));
@@ -44,6 +48,19 @@ void MainWindow::switchView() {
         ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista simple", nullptr));
         warningStatus("Status: Vista simple seleccionada");
     } else {
+        ui->barsPlot->setVisible(false);
+        ui->peakOneFreqValue->setVisible(true);
+        ui->peakOneFreqUnit->setVisible(true);
+        ui->peakOnePowerValue->setVisible(true);
+        ui->peakOnePowerUnit->setVisible(true);
+        ui->peakTwoFreqValue->setVisible(true);
+        ui->peakTwoFreqUnit->setVisible(true);
+        ui->peakTwoPowerValue->setVisible(true);
+        ui->peakTwoPowerUnit->setVisible(true);
+        ui->peakThreeFreqValue->setVisible(true);
+        ui->peakThreeFreqUnit->setVisible(true);
+        ui->peakThreePowerValue->setVisible(true);
+        ui->peakThreePowerUnit->setVisible(true);
         ui->rightPlot->setVisible(true);
         ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz", nullptr));
         ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz", nullptr));
@@ -65,6 +82,8 @@ void MainWindow::updateOnePeak(double freq, double power) {
     ui->peakOneFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakOnePowerValue->setText(QString::number(power, 'f', 2));
 
+    peakValues[0] = power + 150;
+
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
     ui->rightPlot->graph(1)->setData(peakOneLineX, peakOneLineY);
@@ -73,6 +92,8 @@ void MainWindow::updateOnePeak(double freq, double power) {
 void MainWindow::updateTwoPeak(double freq, double power) {
     ui->peakTwoFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakTwoPowerValue->setText(QString::number(power, 'f', 2));
+
+    peakValues[1] = power + 150;
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -83,19 +104,26 @@ void MainWindow::updateThreePeak(double freq, double power) {
     ui->peakThreeFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakThreePowerValue->setText(QString::number(power, 'f', 2));
 
+    peakValues[2] = power + 150;
+
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
     ui->rightPlot->graph(3)->setData(peakOneLineX, peakOneLineY);
 }
 
 void MainWindow::updatePlots() {
-    if (!simpleView) ui->rightPlot->replot();
+    if (!simpleView) {
+        ui->rightPlot->replot();
+    } else {
+        ui->peaksBars->setData(ui->ticks, peakValues);
+        ui->barsPlot->replot();
+    }
     ui->leftPlot->replot();
 }
 
 void MainWindow::startThreads() {
-    StateMachine::getInstance()->startingPeripherals();
-    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Inicializando periféricos", nullptr));
+    stateInstance->startingPeripherals();
+    ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
 
     dataLogging = new QThread();
     dataProcessing = new QThread();
@@ -133,12 +161,16 @@ void MainWindow::startThreads() {
 
     connect(this, &MainWindow::setPeakTimeserie, dataProcessor, &DataProcessor::setPeakToDisplay, Qt::QueuedConnection);
 
-    StateMachine::getInstance()->peripheralsReady();
-    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Periféricos listos", nullptr));
+    stateInstance->peripheralsReady();
+    ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+
+    peakValues = QVector<double>(3);
+
+    stateInstance = StateMachine::getInstance();
 
     startPeripherals = new std::thread(&MainWindow::startThreads, this);
 
@@ -151,7 +183,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 
 void MainWindow::openBeaconInput() {
-    if (StateMachine::getInstance()->getState() == StateMachine::PREBLAST) {
+    if (stateInstance->getState() == PREBLAST) {
         if (!ui->inputBeaconWidget->dialogWidget->isVisible()) {
             ui->inputBeaconWidget->dialogWidget->setVisible(true);
             ui->inputBeaconWidget->inputBeaconWidget->setVisible(true);
@@ -163,7 +195,7 @@ void MainWindow::openBeaconInput() {
 }
 
 void MainWindow::beaconFoundLog() {
-    if (StateMachine::getInstance()->getState() == StateMachine::POSTBLAST) {
+    if (stateInstance->getState() == POSTBLAST) {
     }
 }
 
@@ -180,6 +212,24 @@ void MainWindow::beaconCancel() {
         ui->inputBeaconWidget->dialogWidget->setVisible(false);
         ui->inputBeaconWidget->inputBeaconWidget->setVisible(false);
         ui->inputBeaconWidget->keyboardWidget->setVisible(false);
+    }
+}
+
+void MainWindow::warningAccept() {
+    if (ui->warningWidget->dialogWidget->isVisible()) {
+        ui->warningWidget->dialogWidget->setVisible(false);
+        ui->warningWidget->warningWidget->setVisible(false);
+    }
+    DataLogger::Configuration conf = {N_size, sampleFrequency};
+    emit logConfiguration(conf);
+    stateInstance->newLog();
+    ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
+}
+
+void MainWindow::warningCancel() {
+    if (ui->warningWidget->dialogWidget->isVisible()) {
+        ui->warningWidget->dialogWidget->setVisible(false);
+        ui->warningWidget->warningWidget->setVisible(false);
     }
 }
 
@@ -205,20 +255,22 @@ void MainWindow::dispFrequencyThree() {
 }
 
 void MainWindow::startNewLog() {
-    DataLogger::Configuration conf = {N_size, sampleFrequency};
-    emit logConfiguration(conf);
-    StateMachine::getInstance()->newLog();
-    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Nuevo registro configurado", nullptr));
+    if (!ui->warningWidget->dialogWidget->isVisible()) {
+        ui->warningWidget->dialogWidget->setVisible(true);
+        ui->warningWidget->warningWidget->setVisible(true);
+        ui->warningWidget->warningWidget->activateWindow();
+        ui->warningWidget->warningWidget->setFocus(Qt::ActiveWindowFocusReason);
+    }
 }
 
 void MainWindow::startNewPreblastLog() {
-    StateMachine::getInstance()->preblastLog();
-    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Nuevo registro pre-tronadura empezado", nullptr));
+    stateInstance->preblastLog();
+    ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
 }
 
 void MainWindow::startNewPostblastLog() {
-    StateMachine::getInstance()->postblastLog();
-    ui->statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Nuevo registro post-tronadura empezado", nullptr));
+    stateInstance->postblastLog();
+    ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
 }
 
 void MainWindow::connectButtons() {
@@ -238,6 +290,9 @@ void MainWindow::connectButtons() {
 
     connect(ui->inputBeaconWidget->inputBeaconAccept, &QPushButton::released, this, &MainWindow::beaconAccept);
     connect(ui->inputBeaconWidget->inputBeaconCancel, &QPushButton::released, this, &MainWindow::beaconCancel);
+
+    connect(ui->warningWidget->warningAccept, &QPushButton::released, this, &MainWindow::warningAccept);
+    connect(ui->warningWidget->warningCancel, &QPushButton::released, this, &MainWindow::warningCancel);
 }
 
 MainWindow::~MainWindow() {
@@ -245,6 +300,7 @@ MainWindow::~MainWindow() {
     dataLogging->quit();
     dataProcessing->wait();
     dataLogging->wait();
+    delete stateInstance;
     delete ui;
 }
 
@@ -286,6 +342,31 @@ void MainWindow::setupGUI() {
     ui->leftPlot->xAxis->setRange(0, (double)(N_size / 2.0 / sampleFrequency));
     ui->leftPlot->yAxis->setRange(-140, 4);
     ui->leftPlot->graph(0)->setPen(QPen(Qt::blue));
+
+    ui->barsPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
+    ui->barsPlot->setStyleSheet("border: 1px solid #000;");
+    ui->peaksBars = new QCPBars(ui->barsPlot->xAxis, ui->barsPlot->yAxis);
+    ui->peaksBars->setAntialiased(false);
+    ui->peaksBars->setPen(QPen(Qt::blue));
+    ui->peaksBars->setBaseValue(-150.0);
+    ui->ticks << 1 << 2 << 3;
+    ui->labels << "Baliza A"
+               << "Baliza B"
+               << "Baliza C";
+    QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
+    textTicker->addTicks(ui->ticks, ui->labels);
+    ui->barsPlot->xAxis->setTicker(textTicker);
+    ui->barsPlot->xAxis->setSubTicks(false);
+    ui->barsPlot->xAxis->setTickLength(0, 3);
+    ui->barsPlot->xAxis->setRange(0, 4);
+    ui->barsPlot->xAxis->grid()->setVisible(false);
+
+    ui->barsPlot->yAxis->setRange(-140, 0);
+    ui->barsPlot->yAxis->setPadding(5);
+    ui->barsPlot->yAxis->setLabel("Potencia");
+    ui->barsPlot->yAxis->setSubTickPen(QPen(Qt::white));
+    ui->barsPlot->yAxis->grid()->setVisible(false);
+    ui->barsPlot->yAxis->grid()->setSubGridVisible(false);
 
     ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4); border: none;");
     ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");

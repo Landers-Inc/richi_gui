@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <random>
+#include <iostream>
 
 // Abstract class for data acquisition
 class DataReader : public QObject {
@@ -19,7 +20,9 @@ class DataReader : public QObject {
     // Class constructor
     explicit DataReader(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg), amplitudeData(dataSize), timeData(dataSize){};
     // Class destructor
-    virtual ~DataReader(){};
+    virtual ~DataReader() {
+        std::cout << "Closing DataReader instance" << std::endl;
+    };
     // Buffer size setter
     void setDataSize(int newSize) { dataSize = newSize; };
     // Buffer size getter

@@ -6,11 +6,9 @@
         {
             "label": "Launch on RPi4",
             "type": "process",
-            "command": "plink",
+            "command": "ssh",
             "args": [
-                "-ssh",
-                "-batch",
-                "-P",
+                "-p",
                 "22",
                 "pi@10.199.203.180",
                 "export DISPLAY=:0;",

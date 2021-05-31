@@ -14,11 +14,15 @@
 
 #include "inputdialog.h"
 #include "qcustomplot.h"
+#include "warningdialog.h"
 
 QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow {
    public:
+    QVector<double> ticks;
+    QVector<QString> labels;
+
     QCPItemText *textLabel;
     QCPAxisRect *wideAxisOne;
     QCPAxisRect *wideAxisTwo;
@@ -26,6 +30,8 @@ class Ui_MainWindow {
     QCPGraph *mainGraphOne;
     QCPGraph *mainGraphTwo;
     QCPGraph *mainGraphThree;
+    QCustomPlot *barsPlot;
+    QCPBars *peaksBars;
 
     QWidget *centralWidget;
     QFrame *statusLine;
@@ -38,6 +44,7 @@ class Ui_MainWindow {
     QHBoxLayout *panelLayout;
     QVBoxLayout *dataLayout;
     QHBoxLayout *miscLayout;
+    QHBoxLayout *peaksViewLayout;
     QVBoxLayout *peaksLayout;
     QLabel *peaksTitle;
     QGridLayout *peaksData;
@@ -62,6 +69,7 @@ class Ui_MainWindow {
     QVBoxLayout *beaconLayout;
     QPushButton *selectBeacon;
     InputDialog *inputBeaconWidget;
+    WarningDialog *warningWidget;
     QPushButton *beaconFound;
     QVBoxLayout *logLayout;
     QPushButton *preblastLog;
@@ -180,10 +188,24 @@ class Ui_MainWindow {
         peaksTitle->setAlignment(Qt::AlignCenter);
         peaksTitle->setStyleSheet(
             "border: 1px solid #000;"
-            "font: 30px 'Ubuntu';"
+            "font: 24px 'Ubuntu';"
             "font-weight: bold;");
 
         peaksLayout->addWidget(peaksTitle);
+
+        peaksViewLayout = new QHBoxLayout();
+        peaksViewLayout->setObjectName("peaksViewLayout");
+
+        barsPlot = new QCustomPlot(layoutWidget);
+        barsPlot->setObjectName("barsPlot");
+        sizePolicy1.setHeightForWidth(barsPlot->sizePolicy().hasHeightForWidth());
+        barsPlot->setSizePolicy(sizePolicy1);
+        barsPlot->setMinimumSize(QSize(0, 0));
+        barsPlot->setMaximumSize(QSize(16777215, 16777215));
+        barsPlot->setAutoFillBackground(false);
+        barsPlot->setVisible(false);
+
+        peaksViewLayout->addWidget(barsPlot);
 
         peaksData = new QGridLayout();
         peaksData->setSpacing(0);
@@ -394,10 +416,15 @@ class Ui_MainWindow {
         peaksData->setColumnStretch(0, 1);
         peaksData->setColumnStretch(1, 1);
 
-        peaksLayout->addLayout(peaksData);
+        peaksViewLayout->addLayout(peaksData);
+
+        peaksViewLayout->setStretch(0, 1);
+        peaksViewLayout->setStretch(1, 1);
+
+        peaksLayout->addLayout(peaksViewLayout);
 
         peaksLayout->setStretch(0, 1);
-        peaksLayout->setStretch(1, 2);
+        peaksLayout->setStretch(1, 4);
 
         miscLayout->addLayout(peaksLayout);
 
@@ -413,6 +440,8 @@ class Ui_MainWindow {
         beaconLayout->addWidget(selectBeacon);
 
         inputBeaconWidget = new InputDialog(MainWindow);
+
+        warningWidget = new WarningDialog(MainWindow);
 
         beaconFound = new QPushButton(layoutWidget);
         beaconFound->setObjectName("beaconFound");
@@ -584,10 +613,14 @@ class Ui_MainWindow {
         selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz", nullptr));
         selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz", nullptr));
 
-        inputBeaconWidget->inputBeaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza", nullptr));
-        inputBeaconWidget->inputBeaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]", nullptr));
-        inputBeaconWidget->inputBeaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar", nullptr));
-        inputBeaconWidget->inputBeaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar", nullptr));
+        inputBeaconWidget->inputBeaconTopLabel->setText("Ingreso Nueva Baliza");
+        inputBeaconWidget->inputBeaconOneLabel->setText("Distancia Baliza [metros]");
+        inputBeaconWidget->inputBeaconAccept->setText("Aceptar");
+        inputBeaconWidget->inputBeaconCancel->setText("Cancelar");
+
+        warningWidget->warningLabel->setText("Comenzará un nuevo registro\nLuego de esto no podrá modificar el registro atual");
+        warningWidget->warningAccept->setText("Aceptar");
+        warningWidget->warningCancel->setText("Cancelar");
     }
 };
 

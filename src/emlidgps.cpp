@@ -1,11 +1,17 @@
 #include "emlidgps.h"
 
 EMLIDGPS::EMLIDGPS() {
-    fd = serialOpen("/dev/ttyACM0", 115200);
-    if (fd < 0) {
-        fprintf(stderr, "Unable to open serial device: %s\n", strerror(errno));
-        exit(1);
-    }
+    do {
+        fd = serialOpen("/dev/ttyACM0", 115200);
+        if (fd < 0) {
+            fprintf(stderr, "Unable to open serial device: %s\n", strerror(errno));
+            fd = serialOpen("/dev/ttyACM1", 115200);
+            if (fd < 0) {
+                fprintf(stderr, "Unable to open serial device: %s\n", strerror(errno));
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    } while (fd < 0);
 };
 
 EMLIDGPS::~EMLIDGPS() {

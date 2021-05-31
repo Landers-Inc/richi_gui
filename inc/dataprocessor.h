@@ -22,6 +22,7 @@ class DataProcessor : public QObject {
     QThread *gpsAcquiring;
     DataReader *dataAcquisition;
     GPSReader *gpsAcquisition;
+    StateMachine *stateInstance;
 
    public:
     explicit DataProcessor(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg) {

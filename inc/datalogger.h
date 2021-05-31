@@ -40,6 +40,10 @@ class DataLogger : public QObject {
         }
     };
 
+    ~DataLogger() {
+        std::cout << "Closing DataLogger instance" << std::endl;
+    };
+
     void setDatabaseTables();
     void getLastIDs();
 

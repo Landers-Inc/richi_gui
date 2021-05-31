@@ -1,9 +1,8 @@
 #pragma once
 
-#include <QDebug>
 #include <QMainWindow>
 #include <QThread>
-#include <QVirtualKeyboardInputEngine>
+#include <QVector>
 
 #include "datalogger.h"
 #include "dataprocessor.h"
@@ -32,9 +31,11 @@ class MainWindow : public QMainWindow {
     std::thread *startPeripherals;
     DataProcessor *dataProcessor;
     DataLogger *dataLogger;
+    StateMachine *stateInstance;
     void startThreads();
     int dispFreqPlot;
     bool simpleView = false;
+    QVector<double> peakValues;
    signals:
     void peripheralsReady(double freq, double power);
     void setPeakTimeserie(int disp);
@@ -49,23 +50,44 @@ class MainWindow : public QMainWindow {
     // Qt Signal used to log a peak
     void logPeaks(DataLogger::PeaksData const &peaks);
    public slots:
+    // Qt Slot used to change Status label
     void warningStatus(QString message);
-    void warningDialog(QString message);
+    // Qt Slot used to update timeserie data
     void updateData(QVector<double> const &xSeries, QVector<double> const &ySeries);
+    // Qt Slot used to update FFT data
     void updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries);
+    // Qt Slot used to update Peak
     void updateOnePeak(double freq, double power);
+    // Qt Slot used to
     void updateTwoPeak(double freq, double power);
+    // Qt Slot used to
     void updateThreePeak(double freq, double power);
+    // Qt Slot used to
     void updatePlots();
+    // Qt Slot used to;
     void openBeaconInput();
+    // Qt Slot used to
     void beaconFoundLog();
+    // Qt Slot used to
     void beaconAccept();
+    // Qt Slot used to
     void beaconCancel();
+    // Qt Slot used to
+    void warningAccept();
+    // Qt Slot used to
+    void warningCancel();
+    // Qt Slot used to
     void dispFrequencyOne();
+    // Qt Slot used to
     void dispFrequencyTwo();
+    // Qt Slot used to
     void dispFrequencyThree();
+    // Qt Slot used to
     void startNewLog();
+    // Qt Slot used to
     void startNewPreblastLog();
+    // Qt Slot used to
     void startNewPostblastLog();
+    // Qt Slot used to
     void switchView();
 };
