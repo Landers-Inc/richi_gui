@@ -14,7 +14,7 @@ class EMLIDGPS : public GPSReader {
     // Class constructor
     EMLIDGPS();
     // Class destructor
-    ~EMLIDGPS();
+    ~EMLIDGPS() override;
    public slots:
     // Qt Slot used to run GPS reading process
     void run() override;

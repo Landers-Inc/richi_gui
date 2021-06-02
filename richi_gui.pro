@@ -75,6 +75,7 @@ HEADERS += \
     inc/abstract/gpsreader.h \
     inc/mainwindow.h \
     inc/dataprocessor.h \
+    inc/ui_mainwindow.h \
     inc/usbadc.h \
     inc/emlidgps.h \
     inc/qcustomplot.h \
@@ -86,10 +87,17 @@ HEADERS += \
 LIBS+= -lfftw3 -lpthread -lportaudio -lwiringPi
 
 RESOURCES += resources/richikb/testo.qrc \
-    resources.qrc
+    resources.qrc \
+    languages/languages.qrc
 
 OTHER_FILES += \
-    resources/richikb/style.qml
+    resources/richikb/style.qml \
+    languages/richigui_en.qm \
+    languages/richigui_es.qm
 
 DISTFILES += \
     stylesheet.qss
+
+TRANSLATIONS += \
+    languages/richigui_en.ts \
+    languages/richigui_es.ts

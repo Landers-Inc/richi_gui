@@ -80,7 +80,9 @@ class DataProcessor : public QObject {
     std::vector<FrequencyIndex> frequencyBins;
     // FFT accumulator used to get the average of several FFTs
     std::vector<std::vector<double>> fftAccumulator;
+    std::vector<std::vector<double>> averageFFT;
     // FFT accumulator used to get the average of several FFTs
+    std::vector<Peak> peaksData;
     std::vector<std::vector<double>> peakTimeserie;
 
     // Function to calculate the FFT of a time serie

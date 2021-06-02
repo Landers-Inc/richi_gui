@@ -94,7 +94,7 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     fftAccumulator[accumulatorPointer] = dataFFT[0];
     accumulatorPointer = (++accumulatorPointer) % accumulatorSize;
     // Average FFT
-    std::vector<std::vector<double>> averageFFT = fftAverage(fftAccumulator);
+    averageFFT = fftAverage(fftAccumulator);
 
     // Cast FFT from std::vector to QVector. Necessary to plot data on QCustomPlot
     QVector<double> Qoutx = QVector<double>(frequencyDomain.begin(), frequencyDomain.end());
@@ -103,33 +103,7 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     emit fftReady(Qoutx, Qouty);
 
     // Calculate peaks on FFT
-    std::vector<Peak> peaksData = getPeaks(averageFFT);
-
-    // Update the data only after an accumulator cycle
-    if (accumulatorPointer == 0) {
-        // Log data only on Postblast state
-        if (stateInstance->getState() == POSTBLAST) {
-            // Get timestamp in milliseconds from system
-            auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-            // Save data in an struct
-            DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
-            // Log timestamp data
-            emit logTimestamp(timestamp);
-            // Log spectrum in logarithm scale
-            DataLogger::SpectrumData spectrum = {averageFFT[1]};
-            emit logSpectrum(spectrum);
-            // Log each peak data in logarithm scale
-            for (unsigned char i = 0; i < 3; i++) {
-                DataLogger::PeaksData peak = {i, peaksData[i].frequency, 20.0 * log10(peaksData[i].power)};
-                emit logPeaks(peak);
-            }
-        }
-        // Update values of peak timeserie
-        peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].power);
-        peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].power);
-        peakTimeserie[2][peakPointer] = 20.0 * log10(peaksData[2].power);
-        peakPointer = (++peakPointer) % peakSerieSize;
-    }
+    peaksData = getPeaks(averageFFT);
 
     // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
     Qoutx = QVector<double>(timeDomain.begin(), timeDomain.begin() + peakSerieSize);
@@ -169,6 +143,7 @@ void DataProcessor::initialize() {
 
     // Initialize FFT accumulator with zeroes
     for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
+
     // Initialize peak timeserie low value
     for (int i = 0; i < 3; i++) peakTimeserie.push_back(std::vector<double>(peakSerieSize, -130));
 
@@ -189,7 +164,7 @@ void DataProcessor::initialize() {
     // Connect this object with GPS instance to receive new position data. DirectConnection since it is high priority
     connect(gpsAcquiring, &QThread::started, gpsAcquisition, &GPSReader::run);
     connect(gpsAcquiring, &QThread::finished, gpsAcquisition, &QObject::deleteLater);
-    connect(gpsAcquisition, &GPSReader::dataReady, this, &DataProcessor::processGPS, Qt::DirectConnection);
+    connect(gpsAcquisition, &GPSReader::dataReady, this, &DataProcessor::processGPS, Qt::QueuedConnection);
     connect(this, &DataProcessor::gpsQuit, gpsAcquisition, &GPSReader::quit, Qt::DirectConnection);
     // Start GPS thread
     dataAcquiring->start();
@@ -205,4 +180,25 @@ void DataProcessor::setPeakToDisplay(int disp) {
 void DataProcessor::processGPS(double const &latitude, double const &longitude) {
     gpsLatitude = latitude;
     gpsLongitude = longitude;
+    if (stateInstance->getState() == POSTBLAST) {
+        // Get timestamp in milliseconds from system
+        auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        // Save data in an struct
+        DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
+        // Log timestamp data
+        emit logTimestamp(timestamp);
+        // Log spectrum in logarithm scale
+        DataLogger::SpectrumData spectrum = {averageFFT[1]};
+        emit logSpectrum(spectrum);
+        // Log each peak data in logarithm scale
+        for (unsigned char i = 0; i < 3; i++) {
+            DataLogger::PeaksData peak = {i, peaksData[i].frequency, 20.0 * log10(peaksData[i].power)};
+            emit logPeaks(peak);
+        }
+    }
+    // Update values of peak timeserie
+    peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].power);
+    peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].power);
+    peakTimeserie[2][peakPointer] = 20.0 * log10(peaksData[2].power);
+    peakPointer = (++peakPointer) % peakSerieSize;
 }

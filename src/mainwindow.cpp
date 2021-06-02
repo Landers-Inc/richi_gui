@@ -42,11 +42,14 @@ void MainWindow::switchView() {
         ui->peakThreePowerValue->setVisible(false);
         ui->peakThreePowerUnit->setVisible(false);
         ui->rightPlot->setVisible(false);
-        ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "Baliza A", nullptr));
-        ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B", nullptr));
-        ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "Baliza C", nullptr));
-        ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista simple", nullptr));
-        warningStatus("Status: Vista simple seleccionada");
+        ui->selectDistanceAxis->setVisible(false);
+        ui->selectTimeAxis->setVisible(false);
+        ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "Baliza A"));
+        ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
+        ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "Baliza C"));
+        ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista simple"));
+        ui->selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nBaliza"));
+        warningStatus(QCoreApplication::translate("MainWindow", "Status: Vista simple seleccionada"));
     } else {
         ui->barsPlot->setVisible(false);
         ui->peakOneFreqValue->setVisible(true);
@@ -62,11 +65,14 @@ void MainWindow::switchView() {
         ui->peakThreePowerValue->setVisible(true);
         ui->peakThreePowerUnit->setVisible(true);
         ui->rightPlot->setVisible(true);
-        ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz", nullptr));
-        ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz", nullptr));
-        ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz", nullptr));
-        ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada", nullptr));
-        warningStatus("Status: Vista avanzada seleccionada");
+        ui->selectDistanceAxis->setVisible(true);
+        ui->selectTimeAxis->setVisible(true);
+        ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
+        ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
+        ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
+        ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
+        ui->selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nFrequencia"));
+        warningStatus(QCoreApplication::translate("MainWindow", "Status: Vista avanzada seleccionada"));
     }
 }
 
@@ -168,6 +174,26 @@ void MainWindow::startThreads() {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
+    appLanguage = new Ui::Language;
+    *appLanguage = Ui::Language::ENGLISH;
+
+    ui->translator_es = new QTranslator;
+    ui->translator_en = new QTranslator;
+
+    ui->translator_es->load(":/richigui_es");
+    ui->translator_en->load(":/richigui_en");
+
+    switch (*appLanguage) {
+        case Ui::Language::ENGLISH:
+            QCoreApplication::installTranslator(ui->translator_en);
+            break;
+        case Ui::Language::SPANISH:
+            QCoreApplication::installTranslator(ui->translator_es);
+            break;
+    }
+
+    ui->retranslateUi(this);
+
     peakValues = QVector<double>(3);
 
     stateInstance = StateMachine::getInstance();
@@ -263,6 +289,23 @@ void MainWindow::startNewLog() {
     }
 }
 
+void MainWindow::switchLanguage() {
+    switch (*appLanguage) {
+        case Ui::Language::ENGLISH:
+            *appLanguage = Ui::Language::SPANISH;
+            QCoreApplication::removeTranslator(ui->translator_en);
+            QCoreApplication::installTranslator(ui->translator_es);
+            break;
+
+        case Ui::Language::SPANISH:
+            *appLanguage = Ui::Language::ENGLISH;
+            QCoreApplication::removeTranslator(ui->translator_es);
+            QCoreApplication::installTranslator(ui->translator_en);
+            break;
+    }
+    ui->retranslateUi(this);
+}
+
 void MainWindow::startNewPreblastLog() {
     stateInstance->preblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
@@ -276,6 +319,7 @@ void MainWindow::startNewPostblastLog() {
 void MainWindow::connectButtons() {
     // Close and Shutdown button
     connect(ui->closeShutdown, &QPushButton::released, this, &QMainWindow::close);
+    connect(ui->switchLanguage, &QPushButton::released, this, &MainWindow::switchLanguage);
     connect(ui->saveLog, &QPushButton::released, this, &MainWindow::switchView);
     //
     connect(ui->selectBeacon, &QPushButton::released, this, &MainWindow::openBeaconInput);
@@ -316,8 +360,8 @@ void MainWindow::setupGUI() {
     ui->rightPlot->addGraph();
     ui->rightPlot->addGraph();
     ui->rightPlot->addGraph();
-    ui->rightPlot->xAxis->setLabel("Frequency");
-    ui->rightPlot->yAxis->setLabel("Power");
+    ui->rightPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Frequency"));
+    ui->rightPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Power"));
     ui->rightPlot->xAxis->setRange(0, sampleFrequency / 2);
     ui->rightPlot->yAxis->setRange(-140, 4);
     ui->rightPlot->graph(0)->setPen(QPen(Qt::blue));
@@ -333,12 +377,12 @@ void MainWindow::setupGUI() {
     ui->textLabel->setFont(QFont(font().family(), 10));
     ui->textLabel->setPen(QPen(Qt::black));
     ui->textLabel->setBrush(QBrush(Qt::white));
-    ui->textLabel->setText("Window Hanning \nN = 4096\nFs = 44100.0");
+    ui->textLabel->setText(QCoreApplication::translate("MainWindow", "Window Hanning \nN = 4096\nFs = 44100.0"));
 
     ui->leftPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
     ui->leftPlot->addGraph();
-    ui->leftPlot->xAxis->setLabel("Time");
-    ui->leftPlot->yAxis->setLabel("Amplitude");
+    ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time"));
+    ui->leftPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Amplitude"));
     ui->leftPlot->xAxis->setRange(0, (double)(N_size / 2.0 / sampleFrequency));
     ui->leftPlot->yAxis->setRange(-140, 4);
     ui->leftPlot->graph(0)->setPen(QPen(Qt::blue));
@@ -350,9 +394,9 @@ void MainWindow::setupGUI() {
     ui->peaksBars->setPen(QPen(Qt::blue));
     ui->peaksBars->setBaseValue(-150.0);
     ui->ticks << 1 << 2 << 3;
-    ui->labels << "Baliza A"
-               << "Baliza B"
-               << "Baliza C";
+    ui->labels << QCoreApplication::translate("MainWindow", "Baliza A")
+               << QCoreApplication::translate("MainWindow", "Baliza B")
+               << QCoreApplication::translate("MainWindow", "Baliza C");
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
     textTicker->addTicks(ui->ticks, ui->labels);
     ui->barsPlot->xAxis->setTicker(textTicker);
@@ -363,7 +407,7 @@ void MainWindow::setupGUI() {
 
     ui->barsPlot->yAxis->setRange(-140, 0);
     ui->barsPlot->yAxis->setPadding(5);
-    ui->barsPlot->yAxis->setLabel("Potencia");
+    ui->barsPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Potencia"));
     ui->barsPlot->yAxis->setSubTickPen(QPen(Qt::white));
     ui->barsPlot->yAxis->grid()->setVisible(false);
     ui->barsPlot->yAxis->grid()->setSubGridVisible(false);

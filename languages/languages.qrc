@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+    <qresource prefix="/">
+        <file>richigui_en.qm</file>
+        <file>richigui_es.qm</file>
+    </qresource>
+</RCC>

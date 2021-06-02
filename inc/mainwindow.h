@@ -11,8 +11,12 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
+typedef enum Language {
+    ENGLISH = 0,
+    SPANISH
+} Language;
 class MainWindow;
-}
+}  // namespace Ui
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
@@ -25,6 +29,7 @@ class MainWindow : public QMainWindow {
 
    private:
     void connectButtons();
+    Ui::Language *appLanguage;
     Ui::MainWindow *ui;
     QThread *dataProcessing;
     QThread *dataLogging;
@@ -90,4 +95,6 @@ class MainWindow : public QMainWindow {
     void startNewPostblastLog();
     // Qt Slot used to
     void switchView();
+    // Qt Slot used to
+    void switchLanguage();
 };

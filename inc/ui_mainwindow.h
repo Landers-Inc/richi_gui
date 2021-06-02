@@ -20,6 +20,9 @@ QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow {
    public:
+    QTranslator *translator_es;
+    QTranslator *translator_en;
+
     QVector<double> ticks;
     QVector<QString> labels;
 
@@ -67,14 +70,17 @@ class Ui_MainWindow {
     QLabel *peakThreePowerValue;
     QLabel *peakThreePowerUnit;
     QVBoxLayout *beaconLayout;
+    QPushButton *selectTimeAxis;
     QPushButton *selectBeacon;
     InputDialog *inputBeaconWidget;
     WarningDialog *warningWidget;
     QPushButton *beaconFound;
     QVBoxLayout *logLayout;
+    QPushButton *selectDistanceAxis;
     QPushButton *preblastLog;
     QPushButton *postblastLog;
     QHBoxLayout *saveLayout;
+    QPushButton *switchLanguage;
     QPushButton *startLog;
     QPushButton *saveLog;
     QPushButton *closeShutdown;
@@ -432,6 +438,14 @@ class Ui_MainWindow {
         beaconLayout->setObjectName("beaconLayout");
         beaconLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         beaconLayout->setContentsMargins(10, 10, 10, 10);
+
+        selectTimeAxis = new QPushButton(layoutWidget);
+        selectTimeAxis->setObjectName("selectTimeAxis");
+        sizePolicy1.setHeightForWidth(selectTimeAxis->sizePolicy().hasHeightForWidth());
+        selectTimeAxis->setSizePolicy(sizePolicy1);
+
+        beaconLayout->addWidget(selectTimeAxis);
+
         selectBeacon = new QPushButton(layoutWidget);
         selectBeacon->setObjectName("selectBeacon");
         sizePolicy1.setHeightForWidth(selectBeacon->sizePolicy().hasHeightForWidth());
@@ -452,6 +466,7 @@ class Ui_MainWindow {
 
         beaconLayout->setStretch(0, 1);
         beaconLayout->setStretch(1, 1);
+        beaconLayout->setStretch(2, 1);
 
         miscLayout->addLayout(beaconLayout);
 
@@ -459,6 +474,14 @@ class Ui_MainWindow {
         logLayout->setObjectName("logLayout");
         logLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         logLayout->setContentsMargins(10, 10, 10, 10);
+
+        selectDistanceAxis = new QPushButton(layoutWidget);
+        selectDistanceAxis->setObjectName("selectDistanceAxis");
+        sizePolicy1.setHeightForWidth(selectDistanceAxis->sizePolicy().hasHeightForWidth());
+        selectDistanceAxis->setSizePolicy(sizePolicy1);
+
+        logLayout->addWidget(selectDistanceAxis);
+
         preblastLog = new QPushButton(layoutWidget);
         preblastLog->setObjectName("preblastLog");
         sizePolicy1.setHeightForWidth(preblastLog->sizePolicy().hasHeightForWidth());
@@ -475,6 +498,7 @@ class Ui_MainWindow {
 
         logLayout->setStretch(0, 1);
         logLayout->setStretch(1, 1);
+        logLayout->setStretch(2, 1);
 
         miscLayout->addLayout(logLayout);
 
@@ -487,6 +511,14 @@ class Ui_MainWindow {
         saveLayout = new QHBoxLayout();
         saveLayout->setObjectName("saveLayout");
         saveLayout->setContentsMargins(10, 10, 10, 10);
+
+        switchLanguage = new QPushButton(layoutWidget);
+        switchLanguage->setObjectName("switchLanguage");
+        sizePolicy1.setHeightForWidth(switchLanguage->sizePolicy().hasHeightForWidth());
+        switchLanguage->setSizePolicy(sizePolicy1);
+
+        saveLayout->addWidget(switchLanguage);
+
         saveLog = new QPushButton(layoutWidget);
         saveLog->setObjectName("simpleView");
         sizePolicy1.setHeightForWidth(saveLog->sizePolicy().hasHeightForWidth());
@@ -511,8 +543,9 @@ class Ui_MainWindow {
         saveLayout->addWidget(closeShutdown);
 
         saveLayout->setStretch(0, 2);
-        saveLayout->setStretch(1, 3);
+        saveLayout->setStretch(1, 2);
         saveLayout->setStretch(2, 3);
+        saveLayout->setStretch(3, 3);
 
         dataLayout->addLayout(saveLayout);
 
@@ -586,41 +619,44 @@ class Ui_MainWindow {
     }
 
     void retranslateUi(QMainWindow *MainWindow) {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-        statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Inicializando", nullptr));
-        peaksTitle->setText(QCoreApplication::translate("MainWindow", "Peaks Detectados", nullptr));
-        peakOneFreqValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
-        peakOneFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz", nullptr));
-        peakTwoFreqValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
-        peakTwoFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz", nullptr));
-        peakThreeFreqValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
-        peakThreeFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz", nullptr));
-        peakOnePowerValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
-        peakOnePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
-        peakTwoPowerValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
-        peakTwoPowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
-        peakThreePowerValue->setText(QCoreApplication::translate("MainWindow", "", nullptr));
-        peakThreePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS", nullptr));
-        selectBeacon->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nBaliza", nullptr));
-        beaconFound->setText(QCoreApplication::translate("MainWindow", "Baliza\nEncontrada", nullptr));
-        preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPre-Tronadura", nullptr));
-        postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPost-Tronadura", nullptr));
-        saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada", nullptr));
-        startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro", nullptr));
-        closeShutdown->setText(QCoreApplication::translate("MainWindow", "Cerrar y Apagar", nullptr));
-        selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nFrecuencia", nullptr));
-        selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz", nullptr));
-        selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz", nullptr));
-        selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow"));
+        statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Inicializando"));
+        peaksTitle->setText(QCoreApplication::translate("MainWindow", "Peaks Detectados"));
+        peakOneFreqValue->setText(QCoreApplication::translate("MainWindow", ""));
+        peakOneFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz"));
+        peakTwoFreqValue->setText(QCoreApplication::translate("MainWindow", ""));
+        peakTwoFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz"));
+        peakThreeFreqValue->setText(QCoreApplication::translate("MainWindow", ""));
+        peakThreeFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz"));
+        peakOnePowerValue->setText(QCoreApplication::translate("MainWindow", ""));
+        peakOnePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS"));
+        peakTwoPowerValue->setText(QCoreApplication::translate("MainWindow", ""));
+        peakTwoPowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS"));
+        peakThreePowerValue->setText(QCoreApplication::translate("MainWindow", ""));
+        peakThreePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS"));
+        selectTimeAxis->setText(QCoreApplication::translate("MainWindow", "Versus\nTiempo"));
+        selectDistanceAxis->setText(QCoreApplication::translate("MainWindow", "Versus\nDistancia"));
+        selectBeacon->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nBaliza"));
+        beaconFound->setText(QCoreApplication::translate("MainWindow", "Baliza\nEncontrada"));
+        preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPre-Tronadura"));
+        postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPost-Tronadura"));
+        switchLanguage->setText(QCoreApplication::translate("MainWindow", "Español"));
+        saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
+        startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro"));
+        closeShutdown->setText(QCoreApplication::translate("MainWindow", "Cerrar y Apagar"));
+        selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nFrecuencia"));
+        selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
+        selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
+        selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
 
-        inputBeaconWidget->inputBeaconTopLabel->setText("Ingreso Nueva Baliza");
-        inputBeaconWidget->inputBeaconOneLabel->setText("Distancia Baliza [metros]");
-        inputBeaconWidget->inputBeaconAccept->setText("Aceptar");
-        inputBeaconWidget->inputBeaconCancel->setText("Cancelar");
+        inputBeaconWidget->inputBeaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza"));
+        inputBeaconWidget->inputBeaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]"));
+        inputBeaconWidget->inputBeaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+        inputBeaconWidget->inputBeaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
 
-        warningWidget->warningLabel->setText("Comenzará un nuevo registro\nLuego de esto no podrá modificar el registro atual");
-        warningWidget->warningAccept->setText("Aceptar");
-        warningWidget->warningCancel->setText("Cancelar");
+        warningWidget->warningLabel->setText(QCoreApplication::translate("MainWindow", "Comenzará un nuevo registro\nLuego de esto no podrá modificar el registro actual"));
+        warningWidget->warningAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+        warningWidget->warningCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
     }
 };
 

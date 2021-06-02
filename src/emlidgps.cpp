@@ -2,20 +2,21 @@
 
 EMLIDGPS::EMLIDGPS() {
     do {
-        fd = serialOpen("/dev/ttyACM0", 115200);
+        fd = serialOpen("/dev/ttyACM0", 9600);
         if (fd < 0) {
-            fprintf(stderr, "Unable to open serial device: %s\n", strerror(errno));
-            fd = serialOpen("/dev/ttyACM1", 115200);
+            fprintf(stderr, "Unable to open serial device /dev/ttyACM0: %s\n", strerror(errno));
+            fd = serialOpen("/dev/ttyACM1", 9600);
             if (fd < 0) {
-                fprintf(stderr, "Unable to open serial device: %s\n", strerror(errno));
+                fprintf(stderr, "Unable to open serial device /dev/ttyACM1: %s\n", strerror(errno));
             }
         }
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
     } while (fd < 0);
 };
 
 EMLIDGPS::~EMLIDGPS() {
     serialClose(fd);
+    std::cout << "Closed GPS Serial connection" << std::endl;
 };
 
 void EMLIDGPS::run() {

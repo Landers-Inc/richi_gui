@@ -20,7 +20,6 @@ int main(int argc, char* argv[]) {
     QApplication a(argc, argv);
 
     QQmlApplicationEngine engine;
-
     engine.addImportPath(":/resources");
 
     qRegisterMetaType<QVector<double>>("QVector<double>");
