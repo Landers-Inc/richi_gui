@@ -44,6 +44,7 @@ class MainWindow : public QMainWindow {
    signals:
     void peripheralsReady(double freq, double power);
     void setPeakTimeserie(int disp);
+    void setViewAxis(int axis);
     // Qt Signal used to log a configuration
     void logConfiguration(DataLogger::Configuration const &conf);
     // Qt Signal used to log a beacon
@@ -63,6 +64,10 @@ class MainWindow : public QMainWindow {
     void updateThreePeak(double freq, double power);
     // Qt Slot used to
     void updatePlots();
+    // Qt Slot used to
+    void selectTimeAxis();
+    // Qt Slot used to
+    void selectDistanceAxis();
     // Qt Slot used to;
     void openBeaconInput();
     // Qt Slot used to;

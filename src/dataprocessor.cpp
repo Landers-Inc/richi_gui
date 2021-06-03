@@ -1,5 +1,15 @@
 #include "dataprocessor.h"
 
+double measureDistance(double lat1, double lon1, double lat2, double lon2) {
+    double R = 6378.137;
+    double dLat = lat2 * M_PI / 180.0 - lat1 * M_PI / 180.0;
+    double dLon = lon2 * M_PI / 180.0 - lon1 * M_PI / 180.0;
+    double a = sin(dLat / 2) * sin(dLat / 2) + cos(lat1 * M_PI / 180) * cos(lat2 * M_PI / 180) * sin(dLon / 2) * sin(dLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double d = R * c;
+    return d * 1000;
+}
+
 DataProcessor::~DataProcessor() {
     std::cout << "Closing DataProcessor instance" << std::endl;
     dataAcquiring->quit();
@@ -105,12 +115,6 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     // Calculate peaks on FFT
     peaksData = getPeaks(averageFFT);
 
-    // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
-    Qoutx = QVector<double>(timeDomain.begin(), timeDomain.begin() + peakSerieSize);
-    Qouty = QVector<double>(peakTimeserie[peakToDisplay].begin(), peakTimeserie[peakToDisplay].end());
-    // Emit signal to MainWindow to update time data
-    emit dataReady(Qoutx, Qouty);
-
     // Emit signal to MainWindow to update peak frequency and power
     emit peakOneReady(peaksData[0].frequency, 20.0 * log10(peaksData[0].power));
     emit peakTwoReady(peaksData[1].frequency, 20.0 * log10(peaksData[1].power));
@@ -121,15 +125,12 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
 
 // Function to initialize the vector members
 void DataProcessor::initialize() {
-    // Declare data processing window
+    // Initialize data processing window
     dataWindow = DataWindow::CreateWindow(dataSize, DataWindow::NUTALL);
-    // Declare vector for time domain X-axis plot
-    timeDomain = std::vector<double>(dataSize, 0);
-    // Declare vector for frequency domain X-axis plot in FFT
+    // Initialize vector for frequency domain X-axis plot in FFT
     frequencyDomain = std::vector<double>(dataSize / 2, 0);
     // Initialize time domain and frequency domain X-axis
     for (int i = 0; i < dataSize; i++) {
-        timeDomain[i] = (double)i / (double)sampleFrequency;
         if (i < dataSize / 2) frequencyDomain[i] = (double)sampleFrequency * i / dataSize;
     }
 
@@ -146,6 +147,10 @@ void DataProcessor::initialize() {
 
     // Initialize peak timeserie low value
     for (int i = 0; i < 3; i++) peakTimeserie.push_back(std::vector<double>(peakSerieSize, -130));
+
+    currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    timeDomain = std::vector<double>(peakSerieSize, 0);
+    distanceDomain = std::vector<double>(peakSerieSize, 0);
 
     dataAcquiring = new QThread();
     dataAcquiring->setObjectName("acquiring thread");
@@ -176,13 +181,26 @@ void DataProcessor::setPeakToDisplay(int disp) {
     peakToDisplay = disp;
 }
 
+// Qt Slot used to select peak timeserie to display
+void DataProcessor::setViewAxis(int axis) {
+    timeDistance = axis;
+}
+
 // Qt Slot used to receive the data from GPSReader
 void DataProcessor::processGPS(double const &latitude, double const &longitude) {
     gpsLatitude = latitude;
     gpsLongitude = longitude;
+
+    if (!startingAxisPosition) {
+        startingAxisPosition = true;
+        currentPositionLatitude = gpsLatitude;
+        currentPositionLongitude = gpsLongitude;
+    }
+
+    // Get timestamp in milliseconds from system
+    unsigned int timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
     if (stateInstance->getState() == POSTBLAST) {
-        // Get timestamp in milliseconds from system
-        auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         // Save data in an struct
         DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
         // Log timestamp data
@@ -196,11 +214,24 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
             emit logPeaks(peak);
         }
     }
+
+    timeDomain[peakPointer] = (double)(timeNow - currentTime) / 1000.0;
+    distanceDomain[peakPointer] = measureDistance(gpsLatitude, gpsLongitude, currentPositionLatitude, currentPositionLongitude);
     // Update values of peak timeserie
     peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].power);
     peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].power);
     peakTimeserie[2][peakPointer] = 20.0 * log10(peaksData[2].power);
     peakPointer = (++peakPointer) % peakSerieSize;
+
+    // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
+    QVector<double> Qoutx;
+    if (timeDistance == 0)
+        Qoutx = QVector<double>(timeDomain.begin(), timeDomain.end());
+    else if (timeDistance == 1)
+        Qoutx = QVector<double>(distanceDomain.begin(), distanceDomain.end());
+    QVector<double> Qouty = QVector<double>(peakTimeserie[peakToDisplay].begin(), peakTimeserie[peakToDisplay].end());
+    // Emit signal to MainWindow to update time data
+    emit dataReady(Qoutx, Qouty);
 }
 
 void DataProcessor::saveBeacon(double distance) {

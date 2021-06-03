@@ -5,19 +5,19 @@
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.cpp" line="47"/>
-        <location filename="../src/mainwindow.cpp" line="421"/>
+        <location filename="../src/mainwindow.cpp" line="443"/>
         <source>Baliza A</source>
         <translation>Baliza A</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="48"/>
-        <location filename="../src/mainwindow.cpp" line="422"/>
+        <location filename="../src/mainwindow.cpp" line="444"/>
         <source>Baliza B</source>
         <translation>Baliza B</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="49"/>
-        <location filename="../src/mainwindow.cpp" line="423"/>
+        <location filename="../src/mainwindow.cpp" line="445"/>
         <source>Baliza C</source>
         <translation>Baliza C</translation>
     </message>
@@ -44,27 +44,38 @@ Frequencia</translation>
         <translation>Status: Vista avanzada seleccionada</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="236"/>
+        <location filename="../src/mainwindow.cpp" line="238"/>
         <source>Status: Nueva baliza post-tronadura registrada</source>
         <translation>Status: Nueva baliza post-tronadura registrada</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="251"/>
+        <location filename="../src/mainwindow.cpp" line="257"/>
         <source>Status: Nueva baliza pre-tronadura registrada</source>
         <translation>Status: Nueva baliza pre-tronadura registrada</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="387"/>
+        <location filename="../src/mainwindow.cpp" line="348"/>
+        <location filename="../src/mainwindow.cpp" line="428"/>
+        <source>Time [seconds]</source>
+        <translation>Tiempo [segundos]</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="353"/>
+        <source>Distance [meters]</source>
+        <translation>Distancia [metros]</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="407"/>
         <source>Frequency</source>
         <translation>Frecuencia</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="388"/>
+        <location filename="../src/mainwindow.cpp" line="408"/>
         <source>Power</source>
         <translation>Potencia</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="404"/>
+        <location filename="../src/mainwindow.cpp" line="424"/>
         <source>Window Hanning
 N = 4096
 Fs = 44100.0</source>
@@ -81,17 +92,16 @@ N = 4096
 Fs = 44100.0</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="408"/>
         <source>Time</source>
-        <translation>Tiempo</translation>
+        <translation type="vanished">Tiempo</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="409"/>
+        <location filename="../src/mainwindow.cpp" line="429"/>
         <source>Amplitude</source>
         <translation>Amplitud</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="434"/>
+        <location filename="../src/mainwindow.cpp" line="456"/>
         <source>Potencia</source>
         <translation>Potencia</translation>
     </message>

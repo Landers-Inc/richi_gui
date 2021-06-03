@@ -78,6 +78,7 @@ void MainWindow::switchView() {
 
 void MainWindow::updateData(QVector<double> const &xSeries, QVector<double> const &ySeries) {
     ui->leftPlot->graph(0)->setData(xSeries, ySeries);
+    ui->leftPlot->xAxis->rescale();
 }
 
 void MainWindow::updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries) {
@@ -160,8 +161,8 @@ void MainWindow::startThreads() {
     connect(dataProcessor, &DataProcessor::logSpectrum, dataLogger, &DataLogger::insertSpectrumData, Qt::QueuedConnection);
 
     connect(this, &MainWindow::logConfiguration, dataLogger, &DataLogger::insertConfiguration, Qt::QueuedConnection);
-
     connect(this, &MainWindow::setPeakTimeserie, dataProcessor, &DataProcessor::setPeakToDisplay, Qt::QueuedConnection);
+    connect(this, &MainWindow::setViewAxis, dataProcessor, &DataProcessor::setViewAxis, Qt::QueuedConnection);
     connect(this, &MainWindow::logBeacon, dataProcessor, &DataProcessor::saveBeacon, Qt::QueuedConnection);
 
     stateInstance->peripheralsReady();
@@ -343,12 +344,25 @@ void MainWindow::startNewPostblastLog() {
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
 }
 
+void MainWindow::selectTimeAxis() {
+    ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
+    emit setViewAxis(0);
+}
+
+void MainWindow::selectDistanceAxis() {
+    ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
+    emit setViewAxis(1);
+}
+
 void MainWindow::connectButtons() {
     // Close and Shutdown button
     connect(ui->closeShutdown, &QPushButton::released, this, &QMainWindow::close);
     connect(ui->switchLanguage, &QPushButton::released, this, &MainWindow::switchLanguage);
     connect(ui->saveLog, &QPushButton::released, this, &MainWindow::switchView);
     //
+    connect(ui->selectTimeAxis, &QPushButton::released, this, &MainWindow::selectTimeAxis);
+    connect(ui->selectDistanceAxis, &QPushButton::released, this, &MainWindow::selectDistanceAxis);
+
     connect(ui->selectBeacon, &QPushButton::released, this, &MainWindow::openBeaconInput);
     connect(ui->beaconFound, &QPushButton::released, this, &MainWindow::openBeaconFound);
     connect(ui->selectOneFreq, &QPushButton::released, this, &MainWindow::dispFrequencyOne);
@@ -411,11 +425,13 @@ void MainWindow::setupGUI() {
 
     ui->leftPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
     ui->leftPlot->addGraph();
-    ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time"));
+    ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
     ui->leftPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Amplitude"));
-    ui->leftPlot->xAxis->setRange(0, (double)(N_size / 2.0 / sampleFrequency));
+    ui->leftPlot->xAxis->setRange(0, 1);
     ui->leftPlot->yAxis->setRange(-140, 4);
     ui->leftPlot->graph(0)->setPen(QPen(Qt::blue));
+    ui->leftPlot->graph(0)->setLineStyle(QCPGraph::lsNone);
+    ui->leftPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 2));
 
     ui->barsPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
     ui->barsPlot->setStyleSheet("border: 1px solid #000;");

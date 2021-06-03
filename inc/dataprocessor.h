@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QObject>
 #include <QThread>
+#include <cmath>
 #include <iostream>
 #include <random>
 
@@ -44,6 +45,9 @@ class DataProcessor : public QObject {
     } FrequencyIndex;
 
    private:
+    bool startingAxisPosition = false;
+    // Time = 0, Distance = 1
+    unsigned int timeDistance = 0;
     // GPS object instance
     EMLIDGPS *gpsInstance;
     // Latitude position received from GPS
@@ -54,6 +58,11 @@ class DataProcessor : public QObject {
     unsigned int gpsTime = 0;
     // Number of Space Vehicles used
     unsigned int nSV = 0;
+    // Number of Space Vehicles used
+    unsigned int currentTime = 0;
+    // Number of Space Vehicles used
+    double currentPositionLatitude = 0;
+    double currentPositionLongitude = 0;
     // Accumulator size
     int accumulatorSize = 5;
     // Pointer to the current value value in the accumulator to overwrite
@@ -74,6 +83,8 @@ class DataProcessor : public QObject {
     double processGain = -2.997;
     // X axis time data
     std::vector<double> timeDomain;
+    // X axis time data
+    std::vector<double> distanceDomain;
     // X axis frequency data
     std::vector<double> frequencyDomain;
     // Bins used to search for peaks
@@ -132,6 +143,7 @@ class DataProcessor : public QObject {
     void processGPS(double const &latitude, double const &longitude);
     // Qt Slot used to select peak timeserie to display
     void setPeakToDisplay(int disp);
+    void setViewAxis(int axis);
 
     void saveBeacon(double distance);
 };
