@@ -2,13 +2,23 @@
 
 StateMachine *StateMachine::instance = nullptr;
 
-std::map<State, const char *> StateMachine::stateString = {
-    {State::STARTUP, "Status: Inicializando sistema"},
-    {State::PERIPHERALS, "Status: Inicializando periféricos"},
-    {State::NEWLOG, "Status: Nuevo registro configurado"},
-    {State::IDLE, "Status: Sistema listo"},
-    {State::PREBLAST, "Status: Registro pre-tronadura comenzado"},
-    {State::POSTBLAST, "Status: Registro post-tronadura comenzado"}};
+std::map<State, QString> StateMachine::stateString = {
+    {State::STARTUP, QCoreApplication::translate("MainWindow", "Status: Inicializando sistema")},
+    {State::PERIPHERALS, QCoreApplication::translate("MainWindow", "Status: Inicializando periféricos")},
+    {State::NEWLOG, QCoreApplication::translate("MainWindow", "Status: Nuevo registro configurado")},
+    {State::IDLE, QCoreApplication::translate("MainWindow", "Status: Sistema listo")},
+    {State::PREBLAST, QCoreApplication::translate("MainWindow", "Status: Registro pre-tronadura comenzado")},
+    {State::POSTBLAST, QCoreApplication::translate("MainWindow", "Status: Registro post-tronadura comenzado")}};
+
+void StateMachine::updateString() {
+    StateMachine::stateString = {
+        {State::STARTUP, QCoreApplication::translate("MainWindow", "Status: Inicializando sistema")},
+        {State::PERIPHERALS, QCoreApplication::translate("MainWindow", "Status: Inicializando periféricos")},
+        {State::NEWLOG, QCoreApplication::translate("MainWindow", "Status: Nuevo registro configurado")},
+        {State::IDLE, QCoreApplication::translate("MainWindow", "Status: Sistema listo")},
+        {State::PREBLAST, QCoreApplication::translate("MainWindow", "Status: Registro pre-tronadura comenzado")},
+        {State::POSTBLAST, QCoreApplication::translate("MainWindow", "Status: Registro post-tronadura comenzado")}};
+}
 
 void StateMachine::startingPeripherals() {
     currentState = PERIPHERALS;

@@ -132,4 +132,6 @@ class DataProcessor : public QObject {
     void processGPS(double const &latitude, double const &longitude);
     // Qt Slot used to select peak timeserie to display
     void setPeakToDisplay(int disp);
+
+    void saveBeacon(double distance);
 };

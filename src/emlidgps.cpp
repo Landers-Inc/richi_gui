@@ -2,13 +2,9 @@
 
 EMLIDGPS::EMLIDGPS() {
     do {
-        fd = serialOpen("/dev/ttyACM0", 9600);
+        fd = serialOpen("/dev/ttyUSB-GPSLink", 38400);
         if (fd < 0) {
             fprintf(stderr, "Unable to open serial device /dev/ttyACM0: %s\n", strerror(errno));
-            fd = serialOpen("/dev/ttyACM1", 9600);
-            if (fd < 0) {
-                fprintf(stderr, "Unable to open serial device /dev/ttyACM1: %s\n", strerror(errno));
-            }
         }
         std::this_thread::sleep_for(std::chrono::seconds(2));
     } while (fd < 0);

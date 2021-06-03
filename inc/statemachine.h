@@ -1,6 +1,9 @@
 #pragma once
 
+#include <qcoreapplication.h>
+
 #include <QObject>
+#include <QString>
 #include <iostream>
 #include <string>
 
@@ -22,7 +25,8 @@ class StateMachine : public QObject {
         return instance;
     }
 
-    static std::map<State, const char *> stateString;
+    static std::map<State, QString> stateString;
+    static void updateString();
 
     State getState() {
         return currentState;

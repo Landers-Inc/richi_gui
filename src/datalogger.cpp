@@ -201,13 +201,12 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
         "register_type,"
         "distance,"
         "frequency,"
-        "power,"
-        "lat_position,"
-        "lng_tosition"
+        "power"
         ") VALUES ("
         ":timedata_id,"
         ":configuration_id,"
         ":register_type,"
+        ":distance,"
         ":frequency,"
         ":power"
         ")");
@@ -221,9 +220,9 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
         qDebug() << query.lastError();
 
     query.prepare(
-        "SELECT COUNT(*)"
-        "FROM BeaconData"
-        "WHERE configuration_id=:configuration_id"
+        "SELECT COUNT(*) "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
         "AND register_type=0");
     query.bindValue(":configuration_id", configurationId);
     if (query.exec())
@@ -235,9 +234,9 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
         qDebug() << query.lastError();
 
     query.prepare(
-        "SELECT COUNT(*)"
-        "FROM BeaconData"
-        "WHERE configuration_id=:configuration_id"
+        "SELECT COUNT(*) "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
         "AND register_type=1");
     query.bindValue(":configuration_id", configurationId);
     if (query.exec())

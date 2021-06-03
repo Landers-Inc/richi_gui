@@ -160,12 +160,9 @@ void MainWindow::startThreads() {
     connect(dataProcessor, &DataProcessor::logSpectrum, dataLogger, &DataLogger::insertSpectrumData, Qt::QueuedConnection);
 
     connect(this, &MainWindow::logConfiguration, dataLogger, &DataLogger::insertConfiguration, Qt::QueuedConnection);
-    connect(this, &MainWindow::logBeacon, dataLogger, &DataLogger::insertBeaconData, Qt::QueuedConnection);
-    connect(this, &MainWindow::logTimestamp, dataLogger, &DataLogger::insertTimeData, Qt::QueuedConnection);
-    connect(this, &MainWindow::logPeaks, dataLogger, &DataLogger::insertPeaksData, Qt::QueuedConnection);
-    connect(this, &MainWindow::logSpectrum, dataLogger, &DataLogger::insertSpectrumData, Qt::QueuedConnection);
 
     connect(this, &MainWindow::setPeakTimeserie, dataProcessor, &DataProcessor::setPeakToDisplay, Qt::QueuedConnection);
+    connect(this, &MainWindow::logBeacon, dataProcessor, &DataProcessor::saveBeacon, Qt::QueuedConnection);
 
     stateInstance->peripheralsReady();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
@@ -193,6 +190,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     }
 
     ui->retranslateUi(this);
+    StateMachine::updateString();
 
     peakValues = QVector<double>(3);
 
@@ -212,31 +210,58 @@ void MainWindow::openBeaconInput() {
     if (stateInstance->getState() == PREBLAST) {
         if (!ui->inputBeaconWidget->dialogWidget->isVisible()) {
             ui->inputBeaconWidget->dialogWidget->setVisible(true);
-            ui->inputBeaconWidget->inputBeaconWidget->setVisible(true);
+            ui->inputBeaconWidget->beaconWidget->setVisible(true);
             ui->inputBeaconWidget->keyboardWidget->setVisible(true);
-            ui->inputBeaconWidget->inputBeaconWidget->activateWindow();
-            ui->inputBeaconWidget->inputBeaconWidget->setFocus(Qt::ActiveWindowFocusReason);
+            ui->inputBeaconWidget->beaconWidget->activateWindow();
+            ui->inputBeaconWidget->beaconWidget->setFocus(Qt::ActiveWindowFocusReason);
         }
     }
 }
 
-void MainWindow::beaconFoundLog() {
+void MainWindow::openBeaconFound() {
     if (stateInstance->getState() == POSTBLAST) {
+        if (!ui->foundBeaconWidget->dialogWidget->isVisible()) {
+            ui->foundBeaconWidget->dialogWidget->setVisible(true);
+            ui->foundBeaconWidget->beaconWidget->setVisible(true);
+            ui->foundBeaconWidget->beaconWidget->activateWindow();
+            ui->foundBeaconWidget->beaconWidget->setFocus(Qt::ActiveWindowFocusReason);
+        }
     }
 }
 
-void MainWindow::beaconAccept() {
+void MainWindow::beaconFoundAccept() {
+    if (ui->foundBeaconWidget->dialogWidget->isVisible()) {
+        emit logBeacon(0);
+        ui->foundBeaconWidget->dialogWidget->setVisible(false);
+        ui->foundBeaconWidget->beaconWidget->setVisible(false);
+        warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza post-tronadura registrada"));
+    }
+}
+
+void MainWindow::beaconFoundCancel() {
+    if (ui->foundBeaconWidget->dialogWidget->isVisible()) {
+        ui->foundBeaconWidget->dialogWidget->setVisible(false);
+        ui->foundBeaconWidget->beaconWidget->setVisible(false);
+    }
+}
+
+void MainWindow::beaconInputAccept() {
     if (ui->inputBeaconWidget->dialogWidget->isVisible()) {
+        QString distance = ui->inputBeaconWidget->beaconOneText->text();
+        emit logBeacon(distance.toDouble());
+        ui->inputBeaconWidget->beaconOneText->setText("");
         ui->inputBeaconWidget->dialogWidget->setVisible(false);
-        ui->inputBeaconWidget->inputBeaconWidget->setVisible(false);
+        ui->inputBeaconWidget->beaconWidget->setVisible(false);
         ui->inputBeaconWidget->keyboardWidget->setVisible(false);
+        warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza pre-tronadura registrada"));
     }
 }
 
-void MainWindow::beaconCancel() {
+void MainWindow::beaconInputCancel() {
     if (ui->inputBeaconWidget->dialogWidget->isVisible()) {
+        ui->inputBeaconWidget->beaconOneText->setText("");
         ui->inputBeaconWidget->dialogWidget->setVisible(false);
-        ui->inputBeaconWidget->inputBeaconWidget->setVisible(false);
+        ui->inputBeaconWidget->beaconWidget->setVisible(false);
         ui->inputBeaconWidget->keyboardWidget->setVisible(false);
     }
 }
@@ -304,6 +329,8 @@ void MainWindow::switchLanguage() {
             break;
     }
     ui->retranslateUi(this);
+    StateMachine::updateString();
+    setupGUI();
 }
 
 void MainWindow::startNewPreblastLog() {
@@ -323,7 +350,7 @@ void MainWindow::connectButtons() {
     connect(ui->saveLog, &QPushButton::released, this, &MainWindow::switchView);
     //
     connect(ui->selectBeacon, &QPushButton::released, this, &MainWindow::openBeaconInput);
-    connect(ui->beaconFound, &QPushButton::released, this, &MainWindow::openBeaconInput);
+    connect(ui->beaconFound, &QPushButton::released, this, &MainWindow::openBeaconFound);
     connect(ui->selectOneFreq, &QPushButton::released, this, &MainWindow::dispFrequencyOne);
     connect(ui->selectTwoFreq, &QPushButton::released, this, &MainWindow::dispFrequencyTwo);
     connect(ui->selectThreeFreq, &QPushButton::released, this, &MainWindow::dispFrequencyThree);
@@ -332,8 +359,11 @@ void MainWindow::connectButtons() {
     connect(ui->preblastLog, &QPushButton::released, this, &MainWindow::startNewPreblastLog);
     connect(ui->postblastLog, &QPushButton::released, this, &MainWindow::startNewPostblastLog);
 
-    connect(ui->inputBeaconWidget->inputBeaconAccept, &QPushButton::released, this, &MainWindow::beaconAccept);
-    connect(ui->inputBeaconWidget->inputBeaconCancel, &QPushButton::released, this, &MainWindow::beaconCancel);
+    connect(ui->inputBeaconWidget->beaconAccept, &QPushButton::released, this, &MainWindow::beaconInputAccept);
+    connect(ui->inputBeaconWidget->beaconCancel, &QPushButton::released, this, &MainWindow::beaconInputCancel);
+
+    connect(ui->foundBeaconWidget->beaconAccept, &QPushButton::released, this, &MainWindow::beaconFoundAccept);
+    connect(ui->foundBeaconWidget->beaconCancel, &QPushButton::released, this, &MainWindow::beaconFoundCancel);
 
     connect(ui->warningWidget->warningAccept, &QPushButton::released, this, &MainWindow::warningAccept);
     connect(ui->warningWidget->warningCancel, &QPushButton::released, this, &MainWindow::warningCancel);
@@ -377,7 +407,7 @@ void MainWindow::setupGUI() {
     ui->textLabel->setFont(QFont(font().family(), 10));
     ui->textLabel->setPen(QPen(Qt::black));
     ui->textLabel->setBrush(QBrush(Qt::white));
-    ui->textLabel->setText(QCoreApplication::translate("MainWindow", "Window Hanning \nN = 4096\nFs = 44100.0"));
+    ui->textLabel->setText(QCoreApplication::translate("MainWindow", "Window Hanning\nN = 4096\nFs = 44100.0"));
 
     ui->leftPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
     ui->leftPlot->addGraph();

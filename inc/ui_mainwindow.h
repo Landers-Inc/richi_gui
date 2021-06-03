@@ -12,9 +12,8 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
-#include "inputdialog.h"
+#include "dialogs.h"
 #include "qcustomplot.h"
-#include "warningdialog.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -72,7 +71,8 @@ class Ui_MainWindow {
     QVBoxLayout *beaconLayout;
     QPushButton *selectTimeAxis;
     QPushButton *selectBeacon;
-    InputDialog *inputBeaconWidget;
+    BeaconInputDialog *inputBeaconWidget;
+    BeaconFoundDialog *foundBeaconWidget;
     WarningDialog *warningWidget;
     QPushButton *beaconFound;
     QVBoxLayout *logLayout;
@@ -453,7 +453,8 @@ class Ui_MainWindow {
 
         beaconLayout->addWidget(selectBeacon);
 
-        inputBeaconWidget = new InputDialog(MainWindow);
+        inputBeaconWidget = new BeaconInputDialog(MainWindow);
+        foundBeaconWidget = new BeaconFoundDialog(MainWindow);
 
         warningWidget = new WarningDialog(MainWindow);
 
@@ -649,10 +650,14 @@ class Ui_MainWindow {
         selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
         selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
 
-        inputBeaconWidget->inputBeaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza"));
-        inputBeaconWidget->inputBeaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]"));
-        inputBeaconWidget->inputBeaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
-        inputBeaconWidget->inputBeaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
+        inputBeaconWidget->beaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza"));
+        inputBeaconWidget->beaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]"));
+        inputBeaconWidget->beaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+        inputBeaconWidget->beaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
+
+        foundBeaconWidget->beaconLabel->setText(QCoreApplication::translate("MainWindow", "Una nueva baliza será registrada\n¿Está seguro de la ubicación de esta?"));
+        foundBeaconWidget->beaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+        foundBeaconWidget->beaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
 
         warningWidget->warningLabel->setText(QCoreApplication::translate("MainWindow", "Comenzará un nuevo registro\nLuego de esto no podrá modificar el registro actual"));
         warningWidget->warningAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));

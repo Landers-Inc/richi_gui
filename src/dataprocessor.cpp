@@ -202,3 +202,18 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
     peakTimeserie[2][peakPointer] = 20.0 * log10(peaksData[2].power);
     peakPointer = (++peakPointer) % peakSerieSize;
 }
+
+void DataProcessor::saveBeacon(double distance) {
+    auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    // Save data in an struct
+    DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
+    // Log timestamp data
+    emit logTimestamp(timestamp);
+    if (stateInstance->getState() == PREBLAST) {
+        DataLogger::BeaconData beacon = {0, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+        emit logBeacon(beacon);
+    } else if (stateInstance->getState() == POSTBLAST) {
+        DataLogger::BeaconData beacon = {1, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+        emit logBeacon(beacon);
+    }
+}

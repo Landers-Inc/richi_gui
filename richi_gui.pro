@@ -81,12 +81,11 @@ HEADERS += \
     inc/qcustomplot.h \
     inc/datalogger.h \
     inc/statemachine.h \
-    inc/warningdialog.h \
-    inc/inputdialog.h
+    inc/dialogs.h
 
 LIBS+= -lfftw3 -lpthread -lportaudio -lwiringPi
 
-RESOURCES += resources/richikb/testo.qrc \
+RESOURCES += resources/richikb/richikb.qrc \
     resources.qrc \
     languages/languages.qrc
 

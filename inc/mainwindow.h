@@ -46,14 +46,8 @@ class MainWindow : public QMainWindow {
     void setPeakTimeserie(int disp);
     // Qt Signal used to log a configuration
     void logConfiguration(DataLogger::Configuration const &conf);
-    // Qt Signal used to log a timestamp
-    void logTimestamp(DataLogger::TimeData const &time);
     // Qt Signal used to log a beacon
-    void logBeacon(DataLogger::BeaconData const &beacon);
-    // Qt Signal used to log a spectrum
-    void logSpectrum(DataLogger::SpectrumData const &spectrum);
-    // Qt Signal used to log a peak
-    void logPeaks(DataLogger::PeaksData const &peaks);
+    void logBeacon(double distance);
    public slots:
     // Qt Slot used to change Status label
     void warningStatus(QString message);
@@ -71,12 +65,16 @@ class MainWindow : public QMainWindow {
     void updatePlots();
     // Qt Slot used to;
     void openBeaconInput();
+    // Qt Slot used to;
+    void openBeaconFound();
     // Qt Slot used to
-    void beaconFoundLog();
+    void beaconFoundAccept();
     // Qt Slot used to
-    void beaconAccept();
+    void beaconFoundCancel();
     // Qt Slot used to
-    void beaconCancel();
+    void beaconInputAccept();
+    // Qt Slot used to
+    void beaconInputCancel();
     // Qt Slot used to
     void warningAccept();
     // Qt Slot used to
