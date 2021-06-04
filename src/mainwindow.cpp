@@ -411,10 +411,6 @@ void MainWindow::updateGUI() {
 }
 
 void MainWindow::setupGUI() {
-    QFont pfont("Newyork", 8);
-    pfont.setStyleHint(QFont::SansSerif);
-    pfont.setPointSize(8);
-
     ui->centralWidget->setCursor(Qt::BlankCursor);
 
     ui->rightPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD), Qt::SolidPattern));

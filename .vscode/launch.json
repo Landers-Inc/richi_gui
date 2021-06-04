@@ -12,8 +12,20 @@
             "program": "${workspaceFolder}/build/richi_gui",
             "miDebuggerServerAddress": "10.199.203.180:10000",
             "cwd": "${workspaceFolder}",
-            "miDebuggerPath": "C:/SysGCC/raspberry/bin/arm-linux-gnueabihf-gdb.exe",
-            "preLaunchTask": "Launch GDB Server for debugging"
+            "miDebuggerPath": "C:/SysGCC/mingw64/msys2/mingw64/bin/gdb-multiarch.exe",
+            "preLaunchTask": "Launch GDB Server for debugging",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "python import sys;sys.path.insert(0, 'C:/SysGCC/mingw64/share/gcc-9.1.0/python');from libstdcxx.v6.printers import register_libstdcxx_printers;register_libstdcxx_printers(None)",
+                    "ignoreFailures": false
+                },
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
         }
     ]
 }
