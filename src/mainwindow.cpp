@@ -89,7 +89,7 @@ void MainWindow::updateOnePeak(double freq, double power) {
     ui->peakOneFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakOnePowerValue->setText(QString::number(power, 'f', 2));
 
-    peakValues[0] = power + 150;
+    peakValues[0] = power + 90;
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -100,7 +100,7 @@ void MainWindow::updateTwoPeak(double freq, double power) {
     ui->peakTwoFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakTwoPowerValue->setText(QString::number(power, 'f', 2));
 
-    peakValues[1] = power + 150;
+    peakValues[1] = power + 90;
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -111,7 +111,7 @@ void MainWindow::updateThreePeak(double freq, double power) {
     ui->peakThreeFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakThreePowerValue->setText(QString::number(power, 'f', 2));
 
-    peakValues[2] = power + 150;
+    peakValues[2] = power + 90;
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -331,7 +331,8 @@ void MainWindow::switchLanguage() {
     }
     ui->retranslateUi(this);
     StateMachine::updateString();
-    setupGUI();
+    updateGUI();
+    updatePlots();
 }
 
 void MainWindow::startNewPreblastLog() {
@@ -347,11 +348,13 @@ void MainWindow::startNewPostblastLog() {
 void MainWindow::selectTimeAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
     emit setViewAxis(0);
+    timeDistance = 0;
 }
 
 void MainWindow::selectDistanceAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
     emit setViewAxis(1);
+    timeDistance = 1;
 }
 
 void MainWindow::connectButtons() {
@@ -392,6 +395,21 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+void MainWindow::updateGUI() {
+    ui->rightPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Frequency"));
+    ui->rightPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Power"));
+    ui->textLabel->setText(QCoreApplication::translate("MainWindow", "Window Hanning\nN = 4096\nFs = 44100.0"));
+    if (timeDistance == 0)
+        ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
+    else if (timeDistance == 1)
+        ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
+    ui->leftPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Amplitude"));
+    ui->labels = {QCoreApplication::translate("MainWindow", "Baliza A"),
+                  QCoreApplication::translate("MainWindow", "Baliza B"),
+                  QCoreApplication::translate("MainWindow", "Baliza C")};
+    ui->barsPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Potencia"));
+}
+
 void MainWindow::setupGUI() {
     QFont pfont("Newyork", 8);
     pfont.setStyleHint(QFont::SansSerif);
@@ -425,12 +443,14 @@ void MainWindow::setupGUI() {
 
     ui->leftPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
     ui->leftPlot->addGraph();
-    ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
+    if (timeDistance == 0)
+        ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
+    else if (timeDistance == 1)
+        ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
     ui->leftPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Amplitude"));
     ui->leftPlot->xAxis->setRange(0, 1);
-    ui->leftPlot->yAxis->setRange(-140, 4);
+    ui->leftPlot->yAxis->setRange(-90, 4);
     ui->leftPlot->graph(0)->setPen(QPen(Qt::blue));
-    ui->leftPlot->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->leftPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 2));
 
     ui->barsPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
@@ -438,11 +458,11 @@ void MainWindow::setupGUI() {
     ui->peaksBars = new QCPBars(ui->barsPlot->xAxis, ui->barsPlot->yAxis);
     ui->peaksBars->setAntialiased(false);
     ui->peaksBars->setPen(QPen(Qt::blue));
-    ui->peaksBars->setBaseValue(-150.0);
-    ui->ticks << 1 << 2 << 3;
-    ui->labels << QCoreApplication::translate("MainWindow", "Baliza A")
-               << QCoreApplication::translate("MainWindow", "Baliza B")
-               << QCoreApplication::translate("MainWindow", "Baliza C");
+    ui->peaksBars->setBaseValue(-90.0);
+    ui->ticks = {1, 2, 3};
+    ui->labels = {QCoreApplication::translate("MainWindow", "Baliza A"),
+                  QCoreApplication::translate("MainWindow", "Baliza B"),
+                  QCoreApplication::translate("MainWindow", "Baliza C")};
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
     textTicker->addTicks(ui->ticks, ui->labels);
     ui->barsPlot->xAxis->setTicker(textTicker);
@@ -451,7 +471,7 @@ void MainWindow::setupGUI() {
     ui->barsPlot->xAxis->setRange(0, 4);
     ui->barsPlot->xAxis->grid()->setVisible(false);
 
-    ui->barsPlot->yAxis->setRange(-140, 0);
+    ui->barsPlot->yAxis->setRange(-90, 0);
     ui->barsPlot->yAxis->setPadding(5);
     ui->barsPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Potencia"));
     ui->barsPlot->yAxis->setSubTickPen(QPen(Qt::white));

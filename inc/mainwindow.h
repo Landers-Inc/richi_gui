@@ -26,6 +26,7 @@ class MainWindow : public QMainWindow {
     ~MainWindow();
 
     void setupGUI();
+    void updateGUI();
 
    private:
     void connectButtons();
@@ -40,6 +41,7 @@ class MainWindow : public QMainWindow {
     void startThreads();
     int dispFreqPlot;
     bool simpleView = false;
+    unsigned int timeDistance = 0;
     QVector<double> peakValues;
    signals:
     void peripheralsReady(double freq, double power);

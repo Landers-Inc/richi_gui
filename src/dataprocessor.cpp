@@ -145,9 +145,6 @@ void DataProcessor::initialize() {
     // Initialize FFT accumulator with zeroes
     for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
 
-    // Initialize peak timeserie low value
-    for (int i = 0; i < 3; i++) peakTimeserie.push_back(std::vector<double>(peakSerieSize, -130));
-
     currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     timeDomain = std::vector<double>(peakSerieSize, 0);
     distanceDomain = std::vector<double>(peakSerieSize, 0);
@@ -193,6 +190,10 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
 
     if (!startingAxisPosition) {
         startingAxisPosition = true;
+        // Initialize peak timeserie low value
+        peakTimeserie.push_back(std::vector<double>(peakSerieSize, 20.0 * log10(peaksData[0].power)));
+        peakTimeserie.push_back(std::vector<double>(peakSerieSize, 20.0 * log10(peaksData[1].power)));
+        peakTimeserie.push_back(std::vector<double>(peakSerieSize, 20.0 * log10(peaksData[2].power)));
         currentPositionLatitude = gpsLatitude;
         currentPositionLongitude = gpsLongitude;
     }
