@@ -48,7 +48,6 @@ void MainWindow::switchView() {
         ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
         ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "Baliza C"));
         ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista simple"));
-        ui->selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nBaliza"));
         warningStatus(QCoreApplication::translate("MainWindow", "Status: Vista simple seleccionada"));
     } else {
         ui->barsPlot->setVisible(false);
@@ -71,7 +70,6 @@ void MainWindow::switchView() {
         ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
         ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
         ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
-        ui->selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nFrequencia"));
         warningStatus(QCoreApplication::translate("MainWindow", "Status: Vista avanzada seleccionada"));
     }
 }

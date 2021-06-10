@@ -4,10 +4,10 @@ double measureDistance(double lat1, double lon1, double lat2, double lon2) {
     double R = 6378.137;
     double dLat = lat2 * M_PI / 180.0 - lat1 * M_PI / 180.0;
     double dLon = lon2 * M_PI / 180.0 - lon1 * M_PI / 180.0;
-    double a = sin(dLat / 2) * sin(dLat / 2) + cos(lat1 * M_PI / 180) * cos(lat2 * M_PI / 180) * sin(dLon / 2) * sin(dLon / 2);
-    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    double a = std::sin(dLat / 2.0) * std::sin(dLat / 2.0) + std::cos(lat1 * M_PI / 180.0) * std::cos(lat2 * M_PI / 180.0) * std::sin(dLon / 2.0) * sin(dLon / 2.0);
+    double c = 2.0 * std::atan2(sqrt(a), sqrt(1 - a));
     double d = R * c;
-    return d * 1000;
+    return std::abs(d * 1000.0);
 }
 
 DataProcessor::~DataProcessor() {
@@ -217,7 +217,14 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
     }
 
     timeDomain[peakPointer] = (double)(timeNow - currentTime) / 1000.0;
-    distanceDomain[peakPointer] = measureDistance(gpsLatitude, gpsLongitude, currentPositionLatitude, currentPositionLongitude);
+    double prevData = 0.0;
+    if (peakPointer == 0)
+        prevData = distanceDomain[peakSerieSize - 1];
+    else
+        prevData = distanceDomain[peakPointer - 1];
+    distanceDomain[peakPointer] = measureDistance(gpsLatitude, gpsLongitude, currentPositionLatitude, currentPositionLongitude) + prevData;
+    currentPositionLatitude = gpsLatitude;
+    currentPositionLongitude = gpsLongitude;
     // Update values of peak timeserie
     peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].power);
     peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].power);

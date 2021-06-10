@@ -85,7 +85,6 @@ class Ui_MainWindow {
     QPushButton *saveLog;
     QPushButton *closeShutdown;
     QVBoxLayout *selectLayout;
-    QPushButton *selectDisplayFreq;
     QPushButton *selectOneFreq;
     QPushButton *selectTwoFreq;
     QPushButton *selectThreeFreq;
@@ -560,15 +559,6 @@ class Ui_MainWindow {
         selectLayout->setObjectName("selectLayout");
         selectLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         selectLayout->setContentsMargins(10, 10, 10, 10);
-        selectDisplayFreq = new QPushButton(layoutWidget);
-        selectDisplayFreq->setObjectName("selectDisplayFreq");
-        sizePolicy1.setHeightForWidth(selectDisplayFreq->sizePolicy().hasHeightForWidth());
-        selectDisplayFreq->setSizePolicy(sizePolicy1);
-        selectDisplayFreq->setStyleSheet("");
-        selectDisplayFreq->setFlat(false);
-        selectDisplayFreq->setEnabled(false);
-
-        selectLayout->addWidget(selectDisplayFreq);
 
         selectOneFreq = new QPushButton(layoutWidget);
         selectOneFreq->setObjectName("selectOneFreq");
@@ -645,7 +635,6 @@ class Ui_MainWindow {
         saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
         startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro"));
         closeShutdown->setText(QCoreApplication::translate("MainWindow", "Cerrar y Apagar"));
-        selectDisplayFreq->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nFrecuencia"));
         selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
         selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
         selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));

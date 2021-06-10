@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <random>
 #include <iostream>
 
 // Abstract class for gps acquisition

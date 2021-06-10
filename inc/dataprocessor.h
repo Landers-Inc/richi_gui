@@ -48,8 +48,6 @@ class DataProcessor : public QObject {
     bool startingAxisPosition = false;
     // Time = 0, Distance = 1
     unsigned int timeDistance = 0;
-    // GPS object instance
-    EMLIDGPS *gpsInstance;
     // Latitude position received from GPS
     double gpsLatitude = 0;
     // Longitude position received from GPS
@@ -68,7 +66,7 @@ class DataProcessor : public QObject {
     // Pointer to the current value value in the accumulator to overwrite
     int accumulatorPointer = 0;
     // Peaks serie size
-    int peakSerieSize = 2048;
+    int peakSerieSize = 16;
     // Peak tracking to display in the GUI size
     int peakToDisplay = 0;
     // Pointer to the current value value in the peak to overwrite
