@@ -19,6 +19,9 @@ QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow {
    public:
+    bool simpleView = false;
+    unsigned int timeDistance = 0;
+
     QTranslator *translator_es;
     QTranslator *translator_en;
 
@@ -34,6 +37,8 @@ class Ui_MainWindow {
     QCPGraph *mainGraphThree;
     QCustomPlot *barsPlot;
     QCPBars *peaksBars;
+
+    QQuickWidget *keyboardInputWidget;
 
     QWidget *centralWidget;
     QFrame *statusLine;
@@ -100,39 +105,85 @@ class Ui_MainWindow {
         MainWindow->setSizePolicy(sizePolicy);
         MainWindow->setMinimumSize(QSize(1280, 800));
         MainWindow->setStyleSheet(
-            "QPushButton {\n"
-            "    color: #111;\n"
-            "    border-radius: 10px;\n"
-            "    border-style: outset;\n"
-            "    border-color: black;\n"
-            "    background: #888;\n"
-            "   font: 20px 'Ubuntu';\n"
-            "   font-weight: bold;\n"
-            "}\n"
-            "\n"
-            "QPushButton:hover {\n"
-            "    background: qradialgradient(\n"
-            "        cx: 0.3, cy: -0.4, fx: 0.3, fy: 0.4,\n"
-            "        radius: 1.35, stop: 0 #fff, stop: 1 #bbb\n"
-            "    );\n"
-            "}\n"
-            "\n"
-            "QPushButton:pressed {\n"
-            "    border-style: inset;\n"
-            "    background: qradialgradient(\n"
-            "        cx: 0.4, cy: -0.1, fx: 0.4, fy: 0.1,\n"
-            "        radius: 1.35, stop: 0 #fff, stop: 1 #ddd\n"
-            "    );\n"
-            "}");
+            "QPushButton {"
+            "color: #111;"
+            "border-radius: 20px;"
+            "border-style: outset;"
+            "border-color: black;"
+            "background: #888;"
+            "font: 20px 'Ubuntu';"
+            "font-weight: bold;"
+            "}"
+            "QPushButton#selectTimeAxis {"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
+            "}"
+            "QPushButton#selectBeacon {"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
+            "}"
+            "QPushButton#beaconFound {"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
+            "}"
+            "QPushButton#selectDistanceAxis {"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
+            "}"
+            "QPushButton#preblastLog {"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
+            "}"
+            "QPushButton#postblastLog {"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
+            "}"
+            "QPushButton:hover {"
+            "background: qradialgradient("
+            "cx: 0.3, cy: -0.4, fx: 0.3, fy: 0.4,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 #bbb"
+            ");"
+            "}"
+            "QPushButton:pressed {"
+            "border-style: inset;"
+            "background: qradialgradient("
+            "cx: 0.4, cy: -0.1, fx: 0.4, fy: 0.1,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
+            ");"
+            "}"
+            "QPushButton:focus {}");
+
         centralWidget = new QWidget(MainWindow);
+
+        inputBeaconWidget = new BeaconInputDialog(MainWindow);
+        foundBeaconWidget = new BeaconFoundDialog(MainWindow);
+        warningWidget = new WarningDialog(MainWindow);
+
+        keyboardInputWidget = new QQuickWidget(QUrl("qrc:/main.qml"), MainWindow);
+        keyboardInputWidget->setObjectName("keyboardInputWidget");
+        keyboardInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        keyboardInputWidget->move(200, 300);
+        keyboardInputWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
+        keyboardInputWidget->setAttribute(Qt::WA_TranslucentBackground);
+        keyboardInputWidget->setAttribute(Qt::WA_InputMethodEnabled, true);
+        keyboardInputWidget->setClearColor(Qt::transparent);
+        keyboardInputWidget->setMinimumSize(880, 500);
+        keyboardInputWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+        keyboardInputWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+        keyboardInputWidget->setVisible(false);
+
         centralWidget->setObjectName("centralWidget");
         sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
         centralWidget->setSizePolicy(sizePolicy);
         centralWidget->setMinimumSize(QSize(1280, 800));
         centralWidget->setMaximumSize(QSize(1280, 800));
-        centralWidget->setStyleSheet(
-            "#centralWidget{"
-            "background: #ddd;}");
+        centralWidget->setStyleSheet("#centralWidget{background: #ddd;}");
         layoutWidget = new QWidget(centralWidget);
         layoutWidget->setObjectName("layoutWidget");
         layoutWidget->setGeometry(QRect(10, 10, 1260, 780));
@@ -175,10 +226,10 @@ class Ui_MainWindow {
         verticalLayout->addLayout(plotsLayout);
 
         panelLayout = new QHBoxLayout();
-        panelLayout->setSpacing(10);
         panelLayout->setObjectName("panelLayout");
         panelLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         panelLayout->setContentsMargins(10, 10, 10, 10);
+        panelLayout->setSpacing(0);
         dataLayout = new QVBoxLayout();
         dataLayout->setObjectName("dataLayout");
         miscLayout = new QHBoxLayout();
@@ -436,12 +487,16 @@ class Ui_MainWindow {
         beaconLayout = new QVBoxLayout();
         beaconLayout->setObjectName("beaconLayout");
         beaconLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        beaconLayout->setContentsMargins(10, 10, 10, 10);
+        beaconLayout->setContentsMargins(10, 10, 0, 10);
+        beaconLayout->setSpacing(10);
 
         selectTimeAxis = new QPushButton(layoutWidget);
         selectTimeAxis->setObjectName("selectTimeAxis");
         sizePolicy1.setHeightForWidth(selectTimeAxis->sizePolicy().hasHeightForWidth());
         selectTimeAxis->setSizePolicy(sizePolicy1);
+        selectTimeAxis->setFocusPolicy(Qt::NoFocus);
+        selectTimeAxis->setStyleSheet(
+            "background-color: rgba(46, 204, 113, 0.4);");
 
         beaconLayout->addWidget(selectTimeAxis);
 
@@ -449,18 +504,19 @@ class Ui_MainWindow {
         selectBeacon->setObjectName("selectBeacon");
         sizePolicy1.setHeightForWidth(selectBeacon->sizePolicy().hasHeightForWidth());
         selectBeacon->setSizePolicy(sizePolicy1);
+        selectBeacon->setFocusPolicy(Qt::NoFocus);
+        selectBeacon->setStyleSheet(
+            "background-color: rgba(204, 46, 113, 0.4);");
 
         beaconLayout->addWidget(selectBeacon);
-
-        inputBeaconWidget = new BeaconInputDialog(MainWindow);
-        foundBeaconWidget = new BeaconFoundDialog(MainWindow);
-
-        warningWidget = new WarningDialog(MainWindow);
 
         beaconFound = new QPushButton(layoutWidget);
         beaconFound->setObjectName("beaconFound");
         sizePolicy1.setHeightForWidth(beaconFound->sizePolicy().hasHeightForWidth());
         beaconFound->setSizePolicy(sizePolicy1);
+        beaconFound->setFocusPolicy(Qt::NoFocus);
+        beaconFound->setStyleSheet(
+            "background-color: rgba(204, 46, 113, 0.4);");
 
         beaconLayout->addWidget(beaconFound);
 
@@ -473,12 +529,16 @@ class Ui_MainWindow {
         logLayout = new QVBoxLayout();
         logLayout->setObjectName("logLayout");
         logLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        logLayout->setContentsMargins(10, 10, 10, 10);
+        logLayout->setContentsMargins(0, 10, 10, 10);
+        logLayout->setSpacing(10);
 
         selectDistanceAxis = new QPushButton(layoutWidget);
         selectDistanceAxis->setObjectName("selectDistanceAxis");
         sizePolicy1.setHeightForWidth(selectDistanceAxis->sizePolicy().hasHeightForWidth());
         selectDistanceAxis->setSizePolicy(sizePolicy1);
+        selectDistanceAxis->setFocusPolicy(Qt::NoFocus);
+        selectDistanceAxis->setStyleSheet(
+            "background-color: rgba(204, 46, 113, 0.4);");
 
         logLayout->addWidget(selectDistanceAxis);
 
@@ -486,6 +546,9 @@ class Ui_MainWindow {
         preblastLog->setObjectName("preblastLog");
         sizePolicy1.setHeightForWidth(preblastLog->sizePolicy().hasHeightForWidth());
         preblastLog->setSizePolicy(sizePolicy1);
+        preblastLog->setFocusPolicy(Qt::NoFocus);
+        preblastLog->setStyleSheet(
+            "background-color: rgba(204, 46, 113, 0.4);");
 
         logLayout->addWidget(preblastLog);
 
@@ -493,6 +556,9 @@ class Ui_MainWindow {
         postblastLog->setObjectName("postblastLog");
         sizePolicy1.setHeightForWidth(postblastLog->sizePolicy().hasHeightForWidth());
         postblastLog->setSizePolicy(sizePolicy1);
+        postblastLog->setFocusPolicy(Qt::NoFocus);
+        postblastLog->setStyleSheet(
+            "background-color: rgba(204, 46, 113, 0.4);");
 
         logLayout->addWidget(postblastLog);
 
@@ -511,10 +577,12 @@ class Ui_MainWindow {
         saveLayout = new QHBoxLayout();
         saveLayout->setObjectName("saveLayout");
         saveLayout->setContentsMargins(10, 10, 10, 10);
+        saveLayout->setSpacing(10);
 
         switchLanguage = new QPushButton(layoutWidget);
         switchLanguage->setObjectName("switchLanguage");
         sizePolicy1.setHeightForWidth(switchLanguage->sizePolicy().hasHeightForWidth());
+        switchLanguage->setFocusPolicy(Qt::NoFocus);
         switchLanguage->setSizePolicy(sizePolicy1);
 
         saveLayout->addWidget(switchLanguage);
@@ -522,6 +590,7 @@ class Ui_MainWindow {
         saveLog = new QPushButton(layoutWidget);
         saveLog->setObjectName("simpleView");
         sizePolicy1.setHeightForWidth(saveLog->sizePolicy().hasHeightForWidth());
+        saveLog->setFocusPolicy(Qt::NoFocus);
         saveLog->setSizePolicy(sizePolicy1);
 
         saveLayout->addWidget(saveLog);
@@ -529,6 +598,7 @@ class Ui_MainWindow {
         startLog = new QPushButton(layoutWidget);
         startLog->setObjectName("startLog");
         sizePolicy1.setHeightForWidth(startLog->sizePolicy().hasHeightForWidth());
+        startLog->setFocusPolicy(Qt::NoFocus);
         startLog->setSizePolicy(sizePolicy1);
 
         startLog->setCheckable(false);
@@ -538,6 +608,7 @@ class Ui_MainWindow {
         closeShutdown = new QPushButton(layoutWidget);
         closeShutdown->setObjectName("closeShutdown");
         sizePolicy1.setHeightForWidth(closeShutdown->sizePolicy().hasHeightForWidth());
+        closeShutdown->setFocusPolicy(Qt::NoFocus);
         closeShutdown->setSizePolicy(sizePolicy1);
 
         saveLayout->addWidget(closeShutdown);
@@ -563,6 +634,7 @@ class Ui_MainWindow {
         selectOneFreq = new QPushButton(layoutWidget);
         selectOneFreq->setObjectName("selectOneFreq");
         sizePolicy1.setHeightForWidth(selectOneFreq->sizePolicy().hasHeightForWidth());
+        selectOneFreq->setFocusPolicy(Qt::NoFocus);
         selectOneFreq->setSizePolicy(sizePolicy1);
 
         selectLayout->addWidget(selectOneFreq);
@@ -570,6 +642,7 @@ class Ui_MainWindow {
         selectTwoFreq = new QPushButton(layoutWidget);
         selectTwoFreq->setObjectName("selectTwoFreq");
         sizePolicy1.setHeightForWidth(selectTwoFreq->sizePolicy().hasHeightForWidth());
+        selectTwoFreq->setFocusPolicy(Qt::NoFocus);
         selectTwoFreq->setSizePolicy(sizePolicy1);
 
         selectLayout->addWidget(selectTwoFreq);
@@ -577,6 +650,7 @@ class Ui_MainWindow {
         selectThreeFreq = new QPushButton(layoutWidget);
         selectThreeFreq->setObjectName("selectThreeFreq");
         sizePolicy1.setHeightForWidth(selectThreeFreq->sizePolicy().hasHeightForWidth());
+        selectThreeFreq->setFocusPolicy(Qt::NoFocus);
         selectThreeFreq->setSizePolicy(sizePolicy1);
 
         selectLayout->addWidget(selectThreeFreq);
@@ -602,6 +676,7 @@ class Ui_MainWindow {
 
         verticalLayout->setStretch(0, 1);
         verticalLayout->setStretch(1, 1);
+
         MainWindow->setCentralWidget(centralWidget);
 
         retranslateUi(MainWindow);
@@ -635,18 +710,27 @@ class Ui_MainWindow {
         saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
         startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro"));
         closeShutdown->setText(QCoreApplication::translate("MainWindow", "Cerrar y Apagar"));
-        selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
-        selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
-        selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
 
-        inputBeaconWidget->beaconTopLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza"));
-        inputBeaconWidget->beaconOneLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]"));
-        inputBeaconWidget->beaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
-        inputBeaconWidget->beaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
+        if (!simpleView) {
+            selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
+            selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
+            selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
+        } else {
+            selectOneFreq->setText(QCoreApplication::translate("MainWindow", "Baliza A"));
+            selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
+            selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "Baliza C"));
+        }
 
-        foundBeaconWidget->beaconLabel->setText(QCoreApplication::translate("MainWindow", "Una nueva baliza será registrada\n¿Está seguro de la ubicación de esta?"));
-        foundBeaconWidget->beaconAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
-        foundBeaconWidget->beaconCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
+        inputBeaconWidget->beaconTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza"));
+        inputBeaconWidget->beaconOneInputLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]"));
+        inputBeaconWidget->beaconInputAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+        inputBeaconWidget->beaconInputCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
+
+        foundBeaconWidget->beaconFoundLabel->setText(QCoreApplication::translate("MainWindow", "Una nueva baliza será registrada\n¿Está seguro de la ubicación de esta?"));
+        foundBeaconWidget->beaconOneFoundLabel->setText(QCoreApplication::translate("MainWindow", "Identificador Baliza [ID]"));
+        foundBeaconWidget->beaconFoundAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+        foundBeaconWidget->beaconFoundNotFound->setText(QCoreApplication::translate("MainWindow", "No encontrada"));
+        foundBeaconWidget->beaconFoundCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
 
         warningWidget->warningLabel->setText(QCoreApplication::translate("MainWindow", "Comenzará un nuevo registro\nLuego de esto no podrá modificar el registro actual"));
         warningWidget->warningAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));

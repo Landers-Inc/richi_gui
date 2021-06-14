@@ -37,7 +37,6 @@ class WarningDialog : public QDialog {
         warningWidget = new QDialog(dialogWidget);
         warningWidget->setObjectName("warningWidget");
         warningWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        warningWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
         warningWidget->move(300, 100);
         warningWidget->setMinimumSize(680, 200);
         warningWidget->setWindowFlags(Qt::Dialog);

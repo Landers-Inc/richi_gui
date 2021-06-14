@@ -1,18 +1,22 @@
 #pragma once
 
 #include <portaudio.h>
+
+#include <QObject>
+#include <chrono>
 #include <iostream>
 #include <random>
-#include <chrono>
 #include <thread>
 
-#include "abstract/datareader.h"
-
-class USBADC : public DataReader {
+class AudioPlayer : public QObject {
     Q_OBJECT
    private:
-    std::default_random_engine generator_amp_noise;
-    std::default_random_engine generator_freq_noise;
+    // Buffer size to process data
+    int dataSize;
+    // Sample frequency for data acquisition
+    double sampleFrequency;
+
+    double period;
     PaStream *stream;
 
     bool open();
@@ -27,8 +31,8 @@ class USBADC : public DataReader {
     void paStreamFinishedMethod();
 
    public:
-    USBADC(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0);
-    ~USBADC();
+    AudioPlayer(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0);
+    ~AudioPlayer();
 
     static int paCallback(const void *inputBuffer, void *outputBuffer,
                           unsigned long framesPerBuffer,
@@ -38,6 +42,6 @@ class USBADC : public DataReader {
 
     static void paStreamFinished(void *userData);
    public slots:
-    void getData() Q_DECL_OVERRIDE;
-    void startStream() Q_DECL_OVERRIDE;
+    void changePeriod(double newPeriod);
+    void startStream();
 };

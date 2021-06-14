@@ -14,6 +14,8 @@ DataProcessor::~DataProcessor() {
     std::cout << "Closing DataProcessor instance" << std::endl;
     dataAcquiring->quit();
     dataAcquiring->wait();
+    // audioPlaying->quit();
+    // audioPlaying->wait();
     emit gpsQuit();
     gpsAcquiring->quit();
     gpsAcquiring->wait();
@@ -63,7 +65,8 @@ std::vector<DataProcessor::Peak> DataProcessor::getPeaks(std::vector<std::vector
                 max_val = fft[0][i];
             }
         }
-        Peak peakData = getWeightedFrequency(fft, max_index);
+        // Peak peakData = getWeightedFrequency(fft, max_index);
+        Peak peakData = {max_index * sampleFrequency / dataSize, max_val, max_index};
         out.push_back(peakData);
     }
     return out;
@@ -93,6 +96,17 @@ double DataProcessor::calculateEntropy(std::vector<std::vector<double>> data) {
     return out;
 }
 
+// Function to calculate noise floor of the FFT
+double DataProcessor::calculateNoiseFloor(std::vector<double> data) {
+    double out = 0.0;
+    FrequencyIndex freqRange = {(int)floor(dataSize * (8000.0) / sampleFrequency),
+                                (int)ceil(dataSize * (10000.0) / sampleFrequency)};
+    for (int i = freqRange.begin; i < freqRange.end; i++)
+        out += data[i];
+
+    return out / (freqRange.end - freqRange.begin);
+}
+
 // Qt Slot used to receive the data from DataAcquisition
 void DataProcessor::processData(std::vector<double> amplitudeData) {
     // Apply Hanning Window to data
@@ -114,8 +128,10 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
 
     // Calculate peaks on FFT
     peaksData = getPeaks(averageFFT);
+    double noiseFloor = calculateNoiseFloor(averageFFT[0]);
 
     // Emit signal to MainWindow to update peak frequency and power
+    emit setNoiseFloor(noiseFloor);
     emit peakOneReady(peaksData[0].frequency, 20.0 * log10(peaksData[0].power));
     emit peakTwoReady(peaksData[1].frequency, 20.0 * log10(peaksData[1].power));
     emit peakThreeReady(peaksData[2].frequency, 20.0 * log10(peaksData[2].power));
@@ -149,13 +165,24 @@ void DataProcessor::initialize() {
     timeDomain = std::vector<double>(peakSerieSize, 0);
     distanceDomain = std::vector<double>(peakSerieSize, 0);
 
+    // audioPlaying = new QThread();
+    // audioPlaying->setObjectName("playing thread");
+    // audioPlayer = new AudioPlayer(dataSize, sampleFrequency);
+    // audioPlayer->moveToThread(audioPlaying);
+
+    // connect(audioPlaying, &QThread::finished, audioPlayer, &QObject::deleteLater);
+    // connect(audioPlaying, &QThread::started, audioPlayer, &AudioPlayer::startStream);
+    // audioPlaying->start();
+
     dataAcquiring = new QThread();
     dataAcquiring->setObjectName("acquiring thread");
     dataAcquisition = new USBADC(dataSize, sampleFrequency);
     dataAcquisition->moveToThread(dataAcquiring);
 
     connect(dataAcquiring, &QThread::finished, dataAcquisition, &QObject::deleteLater);
+    connect(dataAcquiring, &QThread::started, dataAcquisition, &DataReader::startStream);
     connect(dataAcquisition, &DataReader::dataReady, this, &DataProcessor::processData, Qt::QueuedConnection);
+    dataAcquiring->start();
 
     stateInstance = StateMachine::getInstance();
     // Initialize GPS instance
@@ -169,7 +196,6 @@ void DataProcessor::initialize() {
     connect(gpsAcquisition, &GPSReader::dataReady, this, &DataProcessor::processGPS, Qt::QueuedConnection);
     connect(this, &DataProcessor::gpsQuit, gpsAcquisition, &GPSReader::quit, Qt::DirectConnection);
     // Start GPS thread
-    dataAcquiring->start();
     gpsAcquiring->start();
 }
 

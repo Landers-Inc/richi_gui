@@ -8,6 +8,7 @@ void DataLogger::setDatabaseTables() {
     query.prepare(
         "CREATE TABLE IF NOT EXISTS Configuration ("
         "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        "date_start DATETIME NOT NULL,"
         "data_size INT UNSIGNED NOT NULL,"
         "sample_frequency DOUBLE NOT NULL"
         ")");
@@ -141,12 +142,15 @@ void DataLogger::insertConfiguration(Configuration const &conf) {
 
     query.prepare(
         "INSERT INTO Configuration ("
+        "date_start,"
         "data_size,"
         "sample_frequency"
         ") VALUES ("
+        ":date_start,"
         ":data_size,"
         ":sample_frequency"
         ")");
+    query.bindValue(":date_start", conf.datetime);
     query.bindValue(":data_size", conf.dataSize);
     query.bindValue(":sample_frequency", conf.sampleFrequency);
     if (!query.exec())

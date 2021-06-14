@@ -7,6 +7,7 @@
 #include <iostream>
 #include <random>
 
+#include "audioplayer.h"
 #include "datalogger.h"
 #include "datawindow.h"
 #include "emlidgps.h"
@@ -21,6 +22,8 @@ class DataProcessor : public QObject {
    private:
     QThread *dataAcquiring;
     QThread *gpsAcquiring;
+    QThread *audioPlaying;
+    AudioPlayer *audioPlayer;
     DataReader *dataAcquisition;
     GPSReader *gpsAcquisition;
     StateMachine *stateInstance;
@@ -66,7 +69,7 @@ class DataProcessor : public QObject {
     // Pointer to the current value value in the accumulator to overwrite
     int accumulatorPointer = 0;
     // Peaks serie size
-    int peakSerieSize = 16;
+    int peakSerieSize = 2048;
     // Peak tracking to display in the GUI size
     int peakToDisplay = 0;
     // Pointer to the current value value in the peak to overwrite
@@ -104,6 +107,8 @@ class DataProcessor : public QObject {
     DataProcessor::Peak getWeightedFrequency(std::vector<std::vector<double>> fft, int index);
     // Function to calculate the entropy of the FFT - Unused right now
     double calculateEntropy(std::vector<std::vector<double>> data);
+    // Function to calculate noise floor of the FFT
+    double calculateNoiseFloor(std::vector<double> data);
     // Function to initialize the vector members
     void initialize();
    signals:
@@ -116,6 +121,8 @@ class DataProcessor : public QObject {
     // Qt Signal used to stop GPS running thread
     void gpsQuit();
 
+    // Qt Signal used to update the noise floor in the GUI thread
+    void setNoiseFloor(double noiseFloor);
     // Qt Signal used to update the first peak data in the GUI thread
     void peakOneReady(double freq, double power);
     // Qt Signal used to update the second peak data in the GUI thread

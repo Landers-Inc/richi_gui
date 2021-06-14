@@ -1,15 +1,16 @@
-#include "usbadc.h"
+#include "audioplayer.h"
 
-USBADC::USBADC(int dataSizeArg, double sampleFrequencyArg, QObject *parent) : DataReader(dataSizeArg, sampleFrequencyArg, parent) {
+AudioPlayer::AudioPlayer(int dataSizeArg, double sampleFrequencyArg, QObject *parent) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg) {
+    period = 0.0;
     this->open();
 };
 
-USBADC::~USBADC() {
+AudioPlayer::~AudioPlayer() {
     this->stop();
     this->close();
 };
 
-bool USBADC::open() {
+bool AudioPlayer::open() {
     PaError err;
 
     err = Pa_Initialize();
@@ -31,7 +32,7 @@ bool USBADC::open() {
     for (deviceIndex = 0; deviceIndex < numDevices; deviceIndex++) {
         deviceInfo = Pa_GetDeviceInfo(deviceIndex);
         const std::string name(deviceInfo->name);
-        if (name.find("USB") != std::string::npos)
+        if (name.find("HDMI") != std::string::npos)
             break;
     }
 
@@ -39,9 +40,9 @@ bool USBADC::open() {
     if (outputParameters.device == paNoDevice)
         return false;
 
-    outputParameters.channelCount = 1;
+    outputParameters.channelCount = 2;
     outputParameters.sampleFormat = paFloat32;
-    outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
+    outputParameters.suggestedLatency = deviceInfo->defaultLowOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = nullptr;
 
     // In case Alsa fails at the beginning, try several times
@@ -49,16 +50,16 @@ bool USBADC::open() {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         err = Pa_OpenStream(
             &stream,
-            &outputParameters,
             nullptr,
+            &outputParameters,
             sampleFrequency,
             dataSize,
             paClipOff,
-            &USBADC::paCallback,
+            &AudioPlayer::paCallback,
             this);
     } while (err != paNoError);
 
-    err = Pa_SetStreamFinishedCallback(stream, &USBADC::paStreamFinished);
+    err = Pa_SetStreamFinishedCallback(stream, &AudioPlayer::paStreamFinished);
     if (err != paNoError) {
         Pa_CloseStream(stream);
         stream = nullptr;
@@ -67,7 +68,7 @@ bool USBADC::open() {
     return true;
 }
 
-bool USBADC::close() {
+bool AudioPlayer::close() {
     if (stream == nullptr)
         return false;
 
@@ -77,7 +78,7 @@ bool USBADC::close() {
     return (err == paNoError);
 }
 
-bool USBADC::start() {
+bool AudioPlayer::start() {
     if (stream == nullptr)
         return false;
     PaError err = Pa_StartStream(stream);
@@ -85,7 +86,7 @@ bool USBADC::start() {
     return (err == paNoError);
 }
 
-bool USBADC::stop() {
+bool AudioPlayer::stop() {
     if (stream == nullptr)
         return false;
 
@@ -94,10 +95,10 @@ bool USBADC::stop() {
     return (err == paNoError);
 }
 
-int USBADC::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
-                             unsigned long framesPerBuffer,
-                             const PaStreamCallbackTimeInfo *timeInfo,
-                             PaStreamCallbackFlags statusFlags) {
+int AudioPlayer::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
+                                  unsigned long framesPerBuffer,
+                                  const PaStreamCallbackTimeInfo *timeInfo,
+                                  PaStreamCallbackFlags statusFlags) {
     float *out = (float *)outputBuffer;
     float *in = (float *)inputBuffer;
     unsigned long i;
@@ -106,35 +107,35 @@ int USBADC::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
     (void)statusFlags;
     (void)inputBuffer;
 
-    for (i = 0; i < framesPerBuffer; i++)
-        amplitudeData[i] = *in++;
-
-    this->getData();
+    for (i = 0; i < framesPerBuffer; i++) {
+        *out++ = std::sin(2.0 * M_PI * 100.0 / sampleFrequency * i);
+        *out++ = std::sin(2.0 * M_PI * 100.0 / sampleFrequency * i);
+    }
 
     return paContinue;
 }
 
-int USBADC::paCallback(const void *inputBuffer, void *outputBuffer,
-                       unsigned long framesPerBuffer,
-                       const PaStreamCallbackTimeInfo *timeInfo,
-                       PaStreamCallbackFlags statusFlags,
-                       void *userData) {
-    return ((USBADC *)userData)->paCallbackMethod(inputBuffer, outputBuffer, framesPerBuffer, timeInfo, statusFlags);
+int AudioPlayer::paCallback(const void *inputBuffer, void *outputBuffer,
+                            unsigned long framesPerBuffer,
+                            const PaStreamCallbackTimeInfo *timeInfo,
+                            PaStreamCallbackFlags statusFlags,
+                            void *userData) {
+    std::cout << "Playiiing" << std::endl;
+    return ((AudioPlayer *)userData)->paCallbackMethod(inputBuffer, outputBuffer, framesPerBuffer, timeInfo, statusFlags);
 }
 
-void USBADC::paStreamFinishedMethod() {
+void AudioPlayer::paStreamFinishedMethod() {
     std::cout << "Stream Completed" << std::endl;
 }
 
-void USBADC::paStreamFinished(void *userData) {
-    return ((USBADC *)userData)->paStreamFinishedMethod();
+void AudioPlayer::paStreamFinished(void *userData) {
+    return ((AudioPlayer *)userData)->paStreamFinishedMethod();
 }
 
-void USBADC::getData() {
-    emit dataReady(amplitudeData);
+void AudioPlayer::changePeriod(double newPeriod) {
+    period = newPeriod;
 }
 
-void USBADC::startStream() {
-    std::cout << "USBADC stream started" << std::endl;
+void AudioPlayer::startStream() {
     this->start();
 }

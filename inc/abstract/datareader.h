@@ -37,4 +37,5 @@ class DataReader : public QObject {
    public slots:
     // Qt Slot used to start reading data from converter
     virtual void getData() = 0;
+    virtual void startStream() = 0;
 };

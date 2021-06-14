@@ -54,8 +54,12 @@ class DataLogger : public QObject {
         return instance;
     }
 
+    unsigned int getPreblastCount() { return beaconPreCount; };
+    unsigned int getPostblastCount() { return beaconPostCount; };
+
     // We define an structure to save the current configuration
     typedef struct Configuration {
+        char *datetime;
         unsigned int dataSize;   // Buffer used to process Spectrum
         double sampleFrequency;  // Frequency sampling for this configuration
     } Configuration;

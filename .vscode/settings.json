@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.ts": "plaintext",
         "cmath": "cpp",
         "qobject": "cpp",
         "qtcore": "cpp",
@@ -95,7 +96,9 @@
         "qdebug": "cpp",
         "qvirtualkeyboardinputengine": "cpp",
         "cstdarg": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "optional": "cpp",
+        "iomanip": "cpp"
     },
     "editor.tabSize": 4,
     "editor.detectIndentation": false,

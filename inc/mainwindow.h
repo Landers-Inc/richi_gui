@@ -8,6 +8,7 @@
 #include "dataprocessor.h"
 #include "qcustomplot.h"
 #include "statemachine.h"
+#include "ui_mainwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -40,9 +41,8 @@ class MainWindow : public QMainWindow {
     StateMachine *stateInstance;
     void startThreads();
     int dispFreqPlot;
-    bool simpleView = false;
-    unsigned int timeDistance = 0;
     QVector<double> peakValues;
+    double noiseFloor = -120.0;
    signals:
     void peripheralsReady(double freq, double power);
     void setPeakTimeserie(int disp);
@@ -58,6 +58,8 @@ class MainWindow : public QMainWindow {
     void updateData(QVector<double> const &xSeries, QVector<double> const &ySeries);
     // Qt Slot used to update FFT data
     void updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries);
+    // Qt Slot used to update Noise Floor
+    void updateNoiseFloor(double noiseFloor);
     // Qt Slot used to update Peak
     void updateOnePeak(double freq, double power);
     // Qt Slot used to
@@ -76,6 +78,8 @@ class MainWindow : public QMainWindow {
     void openBeaconFound();
     // Qt Slot used to
     void beaconFoundAccept();
+    // Qt Slot used to
+    void beaconFoundNotFound();
     // Qt Slot used to
     void beaconFoundCancel();
     // Qt Slot used to

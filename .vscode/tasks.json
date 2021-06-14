@@ -10,7 +10,7 @@
             "args": [
                 "-p",
                 "22",
-                "pi@10.199.203.180",
+                "pi@192.168.1.139",
                 "export DISPLAY=:0;",
                 "export QT_QPA_EGLFS_HIDECURSOR=1;",
                 "export QT_QPA_EGLFS_WIDTH=1280;",
@@ -44,7 +44,7 @@
                 "-X",
                 "-p",
                 "22",
-                "pi@10.199.203.180",
+                "pi@192.168.1.139",
                 "export DISPLAY=localhost:10.0;",
                 "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
@@ -95,6 +95,14 @@
                     "qmake_all"
                 ]
             },
+            "linux": {
+                "command": "make",
+                "args": [
+                    "-f",
+                    "Makefile",
+                    "qmake_all"
+                ]
+            },
             // "dependsOn": [
             //     "Run qmake release"
             // ],
@@ -112,6 +120,12 @@
                     "-j8",
                 ]
             },
+            "linux": {
+                "command": "make",
+                "args": [
+                    "-j8",
+                ]
+            },
             "dependsOn": [
                 "Build debug"
             ],
@@ -125,6 +139,14 @@
             "type": "shell",
             "windows": {
                 "command": "C:/SysGCC/raspberry/bin/make.exe",
+                "args": [
+                    "-f",
+                    "Makefile",
+                    "qmake_all"
+                ]
+            },
+            "linux": {
+                "command": "make",
                 "args": [
                     "-f",
                     "Makefile",
@@ -151,11 +173,11 @@
                 ]
             },
             "linux": {
-                "command": "qmake",
+                "command": "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/bin/qmake",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
-                    "linux-g++"
+                    "devices/linux-rasp-pi4-v3d-g++"
                 ]
             },
             "options": {
@@ -177,11 +199,11 @@
                 ]
             },
             "linux": {
-                "command": "qmake",
+                "command": "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/bin/qmake",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
-                    "linux-g++",
+                    "devices/linux-rasp-pi4-v3d-g++",
                     "CONFIG+=debug",
                     "CONFIG+=qml_debug"
                 ]
@@ -195,6 +217,13 @@
             "type": "shell",
             "windows": {
                 "command": "C:/SysGCC/raspberry/bin/make.exe",
+                "args": [
+                    "distclean",
+                    "-j8"
+                ]
+            },
+            "linux": {
+                "command": "make",
                 "args": [
                     "distclean",
                     "-j8"
@@ -215,7 +244,16 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "linux": {
+                "command": "scp",
+                "args": [
+                    "-P",
+                    "22",
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {
@@ -236,7 +274,16 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@10.199.203.180:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "linux": {
+                "command": "scp",
+                "args": [
+                    "-P",
+                    "22",
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {

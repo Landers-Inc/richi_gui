@@ -10,22 +10,45 @@
             "request": "launch",
             "MIMode": "gdb",
             "program": "${workspaceFolder}/build/richi_gui",
-            "miDebuggerServerAddress": "10.199.203.180:10000",
+            "miDebuggerServerAddress": "192.168.1.139:10000",
             "cwd": "${workspaceFolder}",
-            "miDebuggerPath": "C:/SysGCC/mingw64/msys2/mingw64/bin/gdb-multiarch.exe",
-            "preLaunchTask": "Launch GDB Server for debugging",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "python import sys;sys.path.insert(0, 'C:/SysGCC/mingw64/share/gcc-9.1.0/python');from libstdcxx.v6.printers import register_libstdcxx_printers;register_libstdcxx_printers(None)",
-                    "ignoreFailures": false
-                },
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ],
+            "linux": {
+                "miDebuggerPath": "gdb-multiarch",
+                "preLaunchTask": "Launch GDB Server for debugging",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "python import sys;sys.path.insert(0, '/usr/share/gcc-10/python');from libstdcxx.v6.printers import register_libstdcxx_printers;register_libstdcxx_printers(None)",
+                        "ignoreFailures": false
+                    },
+                    {
+                        "description": "Set sysroot",
+                        "text": "set sysroot /home/chmunozpardo/Programming/raspberrypi/sysroot",
+                        "ignoreFailures": true
+                    },
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],
+            },
+            "windows": {
+                "miDebuggerPath": "C:/SysGCC/mingw64/msys2/mingw64/bin/gdb-multiarch.exe",
+                "preLaunchTask": "Launch GDB Server for debugging",
+                "setupCommands": [
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "python import sys;sys.path.insert(0, 'C:/SysGCC/mingw64/share/gcc-9.1.0/python');from libstdcxx.v6.printers import register_libstdcxx_printers;register_libstdcxx_printers(None)",
+                        "ignoreFailures": false
+                    },
+                    {
+                        "description": "Enable pretty-printing for gdb",
+                        "text": "-enable-pretty-printing",
+                        "ignoreFailures": true
+                    }
+                ],
+            }
         }
     ]
 }

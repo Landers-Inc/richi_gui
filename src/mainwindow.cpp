@@ -11,10 +11,6 @@
 #include <iterator>
 #include <random>
 
-#include "dataprocessor.h"
-#include "qcustomplot.h"
-#include "ui_mainwindow.h"
-
 int N_size = 4096;
 double sampleFrequency = 44100.0;
 
@@ -26,8 +22,8 @@ void MainWindow::warningStatus(QString message) {
 }
 
 void MainWindow::switchView() {
-    simpleView = !simpleView;
-    if (simpleView) {
+    ui->simpleView = !ui->simpleView;
+    if (ui->simpleView) {
         ui->barsPlot->setVisible(true);
         ui->peakOneFreqValue->setVisible(false);
         ui->peakOneFreqUnit->setVisible(false);
@@ -80,14 +76,18 @@ void MainWindow::updateData(QVector<double> const &xSeries, QVector<double> cons
 }
 
 void MainWindow::updateFFT(QVector<double> const &xSeries, QVector<double> const &ySeries) {
-    if (!simpleView) ui->rightPlot->graph(0)->setData(xSeries, ySeries);
+    if (!ui->simpleView) ui->rightPlot->graph(0)->setData(xSeries, ySeries);
+}
+
+void MainWindow::updateNoiseFloor(double newNoiseFloor) {
+    noiseFloor = newNoiseFloor;
 }
 
 void MainWindow::updateOnePeak(double freq, double power) {
     ui->peakOneFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakOnePowerValue->setText(QString::number(power, 'f', 2));
 
-    peakValues[0] = power + 90;
+    peakValues[0] = power - noiseFloor;
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -98,7 +98,7 @@ void MainWindow::updateTwoPeak(double freq, double power) {
     ui->peakTwoFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakTwoPowerValue->setText(QString::number(power, 'f', 2));
 
-    peakValues[1] = power + 90;
+    peakValues[1] = power - noiseFloor;
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -109,7 +109,7 @@ void MainWindow::updateThreePeak(double freq, double power) {
     ui->peakThreeFreqValue->setText(QString::number(freq, 'f', 1));
     ui->peakThreePowerValue->setText(QString::number(power, 'f', 2));
 
-    peakValues[2] = power + 90;
+    peakValues[2] = power - noiseFloor;
 
     QVector<double> peakOneLineX = {freq, freq};
     QVector<double> peakOneLineY = {-140, 4};
@@ -117,10 +117,12 @@ void MainWindow::updateThreePeak(double freq, double power) {
 }
 
 void MainWindow::updatePlots() {
-    if (!simpleView) {
+    if (!ui->simpleView) {
         ui->rightPlot->replot();
     } else {
         ui->peaksBars->setData(ui->ticks, peakValues);
+        ui->peaksBars->setBaseValue(noiseFloor);
+        ui->barsPlot->yAxis->setRange(noiseFloor, 0);
         ui->barsPlot->replot();
     }
     ui->leftPlot->replot();
@@ -207,61 +209,79 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 void MainWindow::openBeaconInput() {
     if (stateInstance->getState() == PREBLAST) {
-        if (!ui->inputBeaconWidget->dialogWidget->isVisible()) {
-            ui->inputBeaconWidget->dialogWidget->setVisible(true);
-            ui->inputBeaconWidget->beaconWidget->setVisible(true);
-            ui->inputBeaconWidget->keyboardWidget->setVisible(true);
-            ui->inputBeaconWidget->beaconWidget->activateWindow();
-            ui->inputBeaconWidget->beaconWidget->setFocus(Qt::ActiveWindowFocusReason);
+        if (!ui->inputBeaconWidget->dialogInputWidget->isVisible()) {
+            ui->inputBeaconWidget->dialogInputWidget->setVisible(true);
+            ui->inputBeaconWidget->beaconInputWidget->setVisible(true);
+            ui->inputBeaconWidget->beaconTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza") + ": " + QString::number(dataLogger->getPreblastCount() + 1));
+            ui->keyboardInputWidget->setVisible(true);
+            ui->inputBeaconWidget->beaconInputWidget->activateWindow();
+            ui->inputBeaconWidget->beaconInputWidget->setFocus(Qt::ActiveWindowFocusReason);
         }
     }
 }
 
 void MainWindow::openBeaconFound() {
     if (stateInstance->getState() == POSTBLAST) {
-        if (!ui->foundBeaconWidget->dialogWidget->isVisible()) {
-            ui->foundBeaconWidget->dialogWidget->setVisible(true);
-            ui->foundBeaconWidget->beaconWidget->setVisible(true);
-            ui->foundBeaconWidget->beaconWidget->activateWindow();
-            ui->foundBeaconWidget->beaconWidget->setFocus(Qt::ActiveWindowFocusReason);
+        if (!ui->foundBeaconWidget->dialogFoundWidget->isVisible()) {
+            ui->foundBeaconWidget->dialogFoundWidget->setVisible(true);
+            ui->foundBeaconWidget->beaconFoundWidget->setVisible(true);
+            ui->keyboardInputWidget->setVisible(true);
+            ui->foundBeaconWidget->beaconFoundWidget->activateWindow();
+            ui->foundBeaconWidget->beaconFoundWidget->setFocus(Qt::ActiveWindowFocusReason);
         }
     }
 }
 
 void MainWindow::beaconFoundAccept() {
-    if (ui->foundBeaconWidget->dialogWidget->isVisible()) {
-        emit logBeacon(0);
-        ui->foundBeaconWidget->dialogWidget->setVisible(false);
-        ui->foundBeaconWidget->beaconWidget->setVisible(false);
+    if (ui->foundBeaconWidget->dialogFoundWidget->isVisible()) {
+        QString id = ui->foundBeaconWidget->beaconOneFoundText->text();
+        emit logBeacon(id.toDouble());
+        ui->foundBeaconWidget->beaconOneFoundText->setText("");
+        ui->foundBeaconWidget->dialogFoundWidget->setVisible(false);
+        ui->foundBeaconWidget->beaconFoundWidget->setVisible(false);
+        ui->keyboardInputWidget->setVisible(false);
+        warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza post-tronadura registrada"));
+    }
+}
+
+void MainWindow::beaconFoundNotFound() {
+    if (ui->foundBeaconWidget->dialogFoundWidget->isVisible()) {
+        emit logBeacon(-1);
+        ui->foundBeaconWidget->beaconOneFoundText->setText("");
+        ui->foundBeaconWidget->dialogFoundWidget->setVisible(false);
+        ui->foundBeaconWidget->beaconFoundWidget->setVisible(false);
+        ui->keyboardInputWidget->setVisible(false);
         warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza post-tronadura registrada"));
     }
 }
 
 void MainWindow::beaconFoundCancel() {
-    if (ui->foundBeaconWidget->dialogWidget->isVisible()) {
-        ui->foundBeaconWidget->dialogWidget->setVisible(false);
-        ui->foundBeaconWidget->beaconWidget->setVisible(false);
+    if (ui->foundBeaconWidget->dialogFoundWidget->isVisible()) {
+        ui->foundBeaconWidget->beaconOneFoundText->setText("");
+        ui->foundBeaconWidget->dialogFoundWidget->setVisible(false);
+        ui->foundBeaconWidget->beaconFoundWidget->setVisible(false);
+        ui->keyboardInputWidget->setVisible(false);
     }
 }
 
 void MainWindow::beaconInputAccept() {
-    if (ui->inputBeaconWidget->dialogWidget->isVisible()) {
-        QString distance = ui->inputBeaconWidget->beaconOneText->text();
+    if (ui->inputBeaconWidget->dialogInputWidget->isVisible()) {
+        QString distance = ui->inputBeaconWidget->beaconOneInputText->text();
         emit logBeacon(distance.toDouble());
-        ui->inputBeaconWidget->beaconOneText->setText("");
-        ui->inputBeaconWidget->dialogWidget->setVisible(false);
-        ui->inputBeaconWidget->beaconWidget->setVisible(false);
-        ui->inputBeaconWidget->keyboardWidget->setVisible(false);
+        ui->inputBeaconWidget->beaconOneInputText->setText("");
+        ui->inputBeaconWidget->dialogInputWidget->setVisible(false);
+        ui->inputBeaconWidget->beaconInputWidget->setVisible(false);
+        ui->keyboardInputWidget->setVisible(false);
         warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza pre-tronadura registrada"));
     }
 }
 
 void MainWindow::beaconInputCancel() {
-    if (ui->inputBeaconWidget->dialogWidget->isVisible()) {
-        ui->inputBeaconWidget->beaconOneText->setText("");
-        ui->inputBeaconWidget->dialogWidget->setVisible(false);
-        ui->inputBeaconWidget->beaconWidget->setVisible(false);
-        ui->inputBeaconWidget->keyboardWidget->setVisible(false);
+    if (ui->inputBeaconWidget->dialogInputWidget->isVisible()) {
+        ui->inputBeaconWidget->beaconOneInputText->setText("");
+        ui->inputBeaconWidget->dialogInputWidget->setVisible(false);
+        ui->inputBeaconWidget->beaconInputWidget->setVisible(false);
+        ui->keyboardInputWidget->setVisible(false);
     }
 }
 
@@ -270,10 +290,19 @@ void MainWindow::warningAccept() {
         ui->warningWidget->dialogWidget->setVisible(false);
         ui->warningWidget->warningWidget->setVisible(false);
     }
-    DataLogger::Configuration conf = {N_size, sampleFrequency};
+    auto currentTime = std::chrono::system_clock::now();
+    std::time_t currentDatetime = std::chrono::system_clock::to_time_t(currentTime);
+
+    char datetimeString[40];
+    std::strftime(datetimeString, sizeof(datetimeString), "%Y-%m-%d %H:%M:%S", std::gmtime(&currentDatetime));
+    DataLogger::Configuration conf = {datetimeString, N_size, sampleFrequency};
     emit logConfiguration(conf);
     stateInstance->newLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
+    ui->preblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectBeacon->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->postblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->beaconFound->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
 }
 
 void MainWindow::warningCancel() {
@@ -285,23 +314,23 @@ void MainWindow::warningCancel() {
 
 void MainWindow::dispFrequencyOne() {
     emit setPeakTimeserie(0);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4); border: none;");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
 }
 
 void MainWindow::dispFrequencyTwo() {
     emit setPeakTimeserie(1);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4); border: none;");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
 }
 
 void MainWindow::dispFrequencyThree() {
     emit setPeakTimeserie(2);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4); border: none;");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
 }
 
 void MainWindow::startNewLog() {
@@ -336,23 +365,35 @@ void MainWindow::switchLanguage() {
 void MainWindow::startNewPreblastLog() {
     stateInstance->preblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
+    ui->preblastLog->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->selectBeacon->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->postblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->beaconFound->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
 }
 
 void MainWindow::startNewPostblastLog() {
     stateInstance->postblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
+    ui->preblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectBeacon->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->postblastLog->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->beaconFound->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
 }
 
 void MainWindow::selectTimeAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
+    ui->selectTimeAxis->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
     emit setViewAxis(0);
-    timeDistance = 0;
+    ui->timeDistance = 0;
 }
 
 void MainWindow::selectDistanceAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
+    ui->selectTimeAxis->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
     emit setViewAxis(1);
-    timeDistance = 1;
+    ui->timeDistance = 1;
 }
 
 void MainWindow::connectButtons() {
@@ -374,11 +415,12 @@ void MainWindow::connectButtons() {
     connect(ui->preblastLog, &QPushButton::released, this, &MainWindow::startNewPreblastLog);
     connect(ui->postblastLog, &QPushButton::released, this, &MainWindow::startNewPostblastLog);
 
-    connect(ui->inputBeaconWidget->beaconAccept, &QPushButton::released, this, &MainWindow::beaconInputAccept);
-    connect(ui->inputBeaconWidget->beaconCancel, &QPushButton::released, this, &MainWindow::beaconInputCancel);
+    connect(ui->inputBeaconWidget->beaconInputAccept, &QPushButton::released, this, &MainWindow::beaconInputAccept);
+    connect(ui->inputBeaconWidget->beaconInputCancel, &QPushButton::released, this, &MainWindow::beaconInputCancel);
 
-    connect(ui->foundBeaconWidget->beaconAccept, &QPushButton::released, this, &MainWindow::beaconFoundAccept);
-    connect(ui->foundBeaconWidget->beaconCancel, &QPushButton::released, this, &MainWindow::beaconFoundCancel);
+    connect(ui->foundBeaconWidget->beaconFoundAccept, &QPushButton::released, this, &MainWindow::beaconFoundAccept);
+    connect(ui->foundBeaconWidget->beaconFoundNotFound, &QPushButton::released, this, &MainWindow::beaconFoundNotFound);
+    connect(ui->foundBeaconWidget->beaconFoundCancel, &QPushButton::released, this, &MainWindow::beaconFoundCancel);
 
     connect(ui->warningWidget->warningAccept, &QPushButton::released, this, &MainWindow::warningAccept);
     connect(ui->warningWidget->warningCancel, &QPushButton::released, this, &MainWindow::warningCancel);
@@ -397,10 +439,11 @@ void MainWindow::updateGUI() {
     ui->rightPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Frequency"));
     ui->rightPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Power"));
     ui->textLabel->setText(QCoreApplication::translate("MainWindow", "Window Hanning\nN = 4096\nFs = 44100.0"));
-    if (timeDistance == 0)
+    if (ui->timeDistance == 0) {
         ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
-    else if (timeDistance == 1)
+    } else if (ui->timeDistance == 1) {
         ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
+    }
     ui->leftPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Amplitude"));
     ui->labels = {QCoreApplication::translate("MainWindow", "Baliza A"),
                   QCoreApplication::translate("MainWindow", "Baliza B"),
@@ -437,13 +480,13 @@ void MainWindow::setupGUI() {
 
     ui->leftPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
     ui->leftPlot->addGraph();
-    if (timeDistance == 0)
+    if (ui->timeDistance == 0)
         ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
-    else if (timeDistance == 1)
+    else if (ui->timeDistance == 1)
         ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
     ui->leftPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Amplitude"));
     ui->leftPlot->xAxis->setRange(0, 1);
-    ui->leftPlot->yAxis->setRange(-90, 4);
+    ui->leftPlot->yAxis->setRange(-140, 4);
     ui->leftPlot->graph(0)->setPen(QPen(Qt::blue));
     ui->leftPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssDisc, 2));
 
@@ -452,7 +495,7 @@ void MainWindow::setupGUI() {
     ui->peaksBars = new QCPBars(ui->barsPlot->xAxis, ui->barsPlot->yAxis);
     ui->peaksBars->setAntialiased(false);
     ui->peaksBars->setPen(QPen(Qt::blue));
-    ui->peaksBars->setBaseValue(-90.0);
+    ui->peaksBars->setBaseValue(noiseFloor);
     ui->ticks = {1, 2, 3};
     ui->labels = {QCoreApplication::translate("MainWindow", "Baliza A"),
                   QCoreApplication::translate("MainWindow", "Baliza B"),
@@ -465,14 +508,14 @@ void MainWindow::setupGUI() {
     ui->barsPlot->xAxis->setRange(0, 4);
     ui->barsPlot->xAxis->grid()->setVisible(false);
 
-    ui->barsPlot->yAxis->setRange(-90, 0);
+    ui->barsPlot->yAxis->setRange(noiseFloor, 0);
     ui->barsPlot->yAxis->setPadding(5);
     ui->barsPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Potencia"));
-    ui->barsPlot->yAxis->setSubTickPen(QPen(Qt::white));
-    ui->barsPlot->yAxis->grid()->setVisible(false);
-    ui->barsPlot->yAxis->grid()->setSubGridVisible(false);
+    // ui->barsPlot->yAxis->setSubTickPen(QPen(Qt::white));
+    ui->barsPlot->yAxis->grid()->setVisible(true);
+    ui->barsPlot->yAxis->grid()->setSubGridVisible(true);
 
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4); border: none;");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4); border: none;");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
 }

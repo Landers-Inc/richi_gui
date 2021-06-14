@@ -31,19 +31,16 @@ class InputWidget : public QDialog {
 class BeaconInputDialog : public QDialog {
     Q_OBJECT
    public:
-    QWidget *dialogWidget;
-    QQuickWidget *keyboardWidget;
-    QWidget *beaconWidget;
-    QVBoxLayout *beaconLayout;
-    QHBoxLayout *beaconOneLayout;
-    QHBoxLayout *beaconTwoLayout;
-    QLabel *beaconTopLabel;
-    QLabel *beaconOneLabel;
-    QLabel *beaconTwoLabel;
-    QLineEdit *beaconOneText;
-    QLineEdit *beaconTwoText;
-    QPushButton *beaconAccept;
-    QPushButton *beaconCancel;
+    QWidget *dialogInputWidget;
+    QWidget *beaconInputWidget;
+    QVBoxLayout *beaconInputLayout;
+    QHBoxLayout *beaconOneInputLayout;
+    QHBoxLayout *beaconTwoInputLayout;
+    QLabel *beaconTopInputLabel;
+    QLabel *beaconOneInputLabel;
+    QLineEdit *beaconOneInputText;
+    QPushButton *beaconInputAccept;
+    QPushButton *beaconInputCancel;
 
     explicit BeaconInputDialog(QWidget *parent = 0) {
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -55,23 +52,22 @@ class BeaconInputDialog : public QDialog {
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
 
-        dialogWidget = new QWidget(parent);
-        dialogWidget->setObjectName("dialogWidget");
-        sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
-        dialogWidget->setSizePolicy(sizePolicy);
-        dialogWidget->setMinimumSize(QSize(1280, 800));
-        dialogWidget->setMaximumSize(QSize(1280, 800));
-        dialogWidget->setVisible(false);
+        dialogInputWidget = new QWidget(parent);
+        dialogInputWidget->setObjectName("dialogInputWidget");
+        sizePolicy.setHeightForWidth(dialogInputWidget->sizePolicy().hasHeightForWidth());
+        dialogInputWidget->setSizePolicy(sizePolicy);
+        dialogInputWidget->setMinimumSize(QSize(1280, 800));
+        dialogInputWidget->setMaximumSize(QSize(1280, 800));
+        dialogInputWidget->setVisible(false);
 
-        beaconWidget = new InputWidget(dialogWidget);
-        beaconWidget->setObjectName("beaconWidget");
-        beaconWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        beaconWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
-        beaconWidget->move(400, 100);
-        beaconWidget->setMinimumSize(480, 200);
-        beaconWidget->setWindowFlags(Qt::Dialog);
-        beaconWidget->setStyleSheet(
-            "#beaconWidget{"
+        beaconInputWidget = new InputWidget(dialogInputWidget);
+        beaconInputWidget->setObjectName("beaconInputWidget");
+        beaconInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        beaconInputWidget->move(400, 100);
+        beaconInputWidget->setMinimumSize(480, 200);
+        beaconInputWidget->setWindowFlags(Qt::Dialog);
+        beaconInputWidget->setStyleSheet(
+            "#beaconInputWidget{"
             "background: #ddd;"
             "border-radius: 10px;"
             "border-style: solid;"
@@ -79,88 +75,84 @@ class BeaconInputDialog : public QDialog {
             "border-radius: 7px;"
             "border-color: black;}");
 
-        beaconLayout = new QVBoxLayout(beaconWidget);
-        beaconLayout->setObjectName("beaconLayout");
-        beaconLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        beaconLayout->setContentsMargins(10, 10, 10, 10);
-        beaconTopLabel = new QLabel(beaconWidget);
-        beaconTopLabel->setObjectName("beaconTopLabel");
-        beaconTopLabel->setContentsMargins(10, 10, 10, 10);
-        beaconTopLabel->setAlignment(Qt::AlignCenter);
-        beaconTopLabel->setStyleSheet(
+        beaconInputLayout = new QVBoxLayout(beaconInputWidget);
+        beaconInputLayout->setObjectName("beaconInputLayout");
+        beaconInputLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        beaconInputLayout->setContentsMargins(10, 10, 10, 10);
+        beaconTopInputLabel = new QLabel(beaconInputWidget);
+        beaconTopInputLabel->setObjectName("beaconTopInputLabel");
+        beaconTopInputLabel->setContentsMargins(10, 10, 10, 10);
+        beaconTopInputLabel->setAlignment(Qt::AlignCenter);
+        beaconTopInputLabel->setStyleSheet(
             "border: 1px solid #000;"
             "font: 30px 'Ubuntu';"
             "font-weight: bold;");
 
-        keyboardWidget = new QQuickWidget(QUrl("qrc:/main.qml"), dialogWidget);
-        keyboardWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        keyboardWidget->move(200, 300);
-        keyboardWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
-        keyboardWidget->setAttribute(Qt::WA_TranslucentBackground);
-        keyboardWidget->setAttribute(Qt::WA_InputMethodEnabled, true);
-        keyboardWidget->setClearColor(Qt::transparent);
-        keyboardWidget->setMinimumSize(880, 500);
-        keyboardWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+        beaconInputLayout->addWidget(beaconTopInputLabel);
 
-        beaconLayout->addWidget(beaconTopLabel);
-
-        beaconOneLayout = new QHBoxLayout();
-        beaconOneLayout->setObjectName("beaconOneLayout");
-        beaconOneLayout->setContentsMargins(10, 10, 10, 10);
-        beaconOneLabel = new QLabel(beaconWidget);
-        beaconOneLabel->setObjectName("beaconOneLabel");
-        beaconOneLabel->setAlignment(Qt::AlignCenter);
-        beaconOneLabel->setStyleSheet(
+        beaconOneInputLayout = new QHBoxLayout();
+        beaconOneInputLayout->setObjectName("beaconOneInputLayout");
+        beaconOneInputLayout->setContentsMargins(10, 10, 10, 10);
+        beaconOneInputLabel = new QLabel(beaconInputWidget);
+        beaconOneInputLabel->setObjectName("beaconOneInputLabel");
+        beaconOneInputLabel->setAlignment(Qt::AlignCenter);
+        beaconOneInputLabel->setStyleSheet(
             "font: 18px 'Ubuntu';"
             "font-weight: bold;");
-        beaconOneText = new QLineEdit(beaconWidget);
-        beaconOneText->setObjectName("beaconOneText");
-        beaconOneText->setInputMethodHints(Qt::ImhDigitsOnly);
+        beaconOneInputText = new QLineEdit(beaconInputWidget);
+        beaconOneInputText->setObjectName("beaconOneInputText");
+        beaconOneInputText->setInputMethodHints(Qt::ImhDigitsOnly);
 
-        beaconOneLayout->addWidget(beaconOneLabel);
-        beaconOneLayout->addWidget(beaconOneText);
+        beaconOneInputLayout->addWidget(beaconOneInputLabel);
+        beaconOneInputLayout->addWidget(beaconOneInputText);
 
-        beaconLayout->addLayout(beaconOneLayout);
+        beaconInputLayout->addLayout(beaconOneInputLayout);
 
-        beaconOneLayout->setStretch(0, 1);
-        beaconOneLayout->setStretch(1, 1);
+        beaconOneInputLayout->setStretch(0, 1);
+        beaconOneInputLayout->setStretch(1, 1);
 
-        beaconTwoLayout = new QHBoxLayout();
-        beaconTwoLayout->setObjectName("beaconTwoLayout");
-        beaconTwoLayout->setContentsMargins(10, 10, 10, 10);
-        beaconAccept = new QPushButton(beaconWidget);
-        beaconAccept->setObjectName("beaconAccept");
-        sizePolicy1.setHeightForWidth(beaconAccept->sizePolicy().hasHeightForWidth());
-        beaconAccept->setSizePolicy(sizePolicy1);
-        beaconCancel = new QPushButton(beaconWidget);
-        beaconCancel->setObjectName("beaconCancel");
-        sizePolicy1.setHeightForWidth(beaconCancel->sizePolicy().hasHeightForWidth());
-        beaconCancel->setSizePolicy(sizePolicy1);
+        beaconTwoInputLayout = new QHBoxLayout();
+        beaconTwoInputLayout->setObjectName("beaconTwoInputLayout");
+        beaconTwoInputLayout->setContentsMargins(10, 10, 10, 10);
+        beaconInputAccept = new QPushButton(beaconInputWidget);
+        beaconInputAccept->setObjectName("beaconInputAccept");
+        sizePolicy1.setHeightForWidth(beaconInputAccept->sizePolicy().hasHeightForWidth());
+        beaconInputAccept->setFocusPolicy(Qt::NoFocus);
+        beaconInputAccept->setSizePolicy(sizePolicy1);
+        beaconInputCancel = new QPushButton(beaconInputWidget);
+        beaconInputCancel->setObjectName("beaconInputCancel");
+        sizePolicy1.setHeightForWidth(beaconInputCancel->sizePolicy().hasHeightForWidth());
+        beaconInputCancel->setFocusPolicy(Qt::NoFocus);
+        beaconInputCancel->setSizePolicy(sizePolicy1);
 
-        beaconTwoLayout->addWidget(beaconAccept);
-        beaconTwoLayout->addWidget(beaconCancel);
+        beaconTwoInputLayout->addWidget(beaconInputAccept);
+        beaconTwoInputLayout->addWidget(beaconInputCancel);
 
-        beaconLayout->addLayout(beaconTwoLayout);
+        beaconInputLayout->addLayout(beaconTwoInputLayout);
 
-        beaconTwoLayout->setStretch(0, 1);
-        beaconTwoLayout->setStretch(1, 1);
+        beaconTwoInputLayout->setStretch(0, 1);
+        beaconTwoInputLayout->setStretch(1, 1);
 
-        beaconLayout->setStretch(0, 1);
-        beaconLayout->setStretch(1, 1);
-        beaconLayout->setStretch(2, 1);
+        beaconInputLayout->setStretch(0, 1);
+        beaconInputLayout->setStretch(1, 1);
+        beaconInputLayout->setStretch(2, 1);
     }
 };
 
 class BeaconFoundDialog : public QDialog {
     Q_OBJECT
    public:
-    QWidget *dialogWidget;
-    QWidget *beaconWidget;
-    QVBoxLayout *beaconLayout;
-    QHBoxLayout *beaconOneLayout;
-    QLabel *beaconLabel;
-    QPushButton *beaconAccept;
-    QPushButton *beaconCancel;
+    QWidget *dialogFoundWidget;
+    QWidget *beaconFoundWidget;
+    QVBoxLayout *beaconFoundLayout;
+    QHBoxLayout *beaconOneFoundLayout;
+    QHBoxLayout *beaconTwoFoundLayout;
+    QLabel *beaconFoundLabel;
+    QLabel *beaconOneFoundLabel;
+    QLineEdit *beaconOneFoundText;
+    QPushButton *beaconFoundAccept;
+    QPushButton *beaconFoundNotFound;
+    QPushButton *beaconFoundCancel;
 
     explicit BeaconFoundDialog(QWidget *parent = 0) {
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -172,23 +164,22 @@ class BeaconFoundDialog : public QDialog {
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
 
-        dialogWidget = new QWidget(parent);
-        dialogWidget->setObjectName("dialogWidget");
-        sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
-        dialogWidget->setSizePolicy(sizePolicy);
-        dialogWidget->setMinimumSize(QSize(1280, 800));
-        dialogWidget->setMaximumSize(QSize(1280, 800));
-        dialogWidget->setVisible(false);
+        dialogFoundWidget = new QWidget(parent);
+        dialogFoundWidget->setObjectName("dialogFoundWidget");
+        sizePolicy.setHeightForWidth(dialogFoundWidget->sizePolicy().hasHeightForWidth());
+        dialogFoundWidget->setSizePolicy(sizePolicy);
+        dialogFoundWidget->setMinimumSize(QSize(1280, 800));
+        dialogFoundWidget->setMaximumSize(QSize(1280, 800));
+        dialogFoundWidget->setVisible(false);
 
-        beaconWidget = new QDialog(dialogWidget);
-        beaconWidget->setObjectName("beaconWidget");
-        beaconWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        beaconWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
-        beaconWidget->move(300, 100);
-        beaconWidget->setMinimumSize(680, 200);
-        beaconWidget->setWindowFlags(Qt::Dialog);
-        beaconWidget->setStyleSheet(
-            "#warningWidget{"
+        beaconFoundWidget = new InputWidget(dialogFoundWidget);
+        beaconFoundWidget->setObjectName("beaconFoundWidget");
+        beaconFoundWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        beaconFoundWidget->move(300, 100);
+        beaconFoundWidget->setMinimumSize(680, 220);
+        beaconFoundWidget->setWindowFlags(Qt::Dialog);
+        beaconFoundWidget->setStyleSheet(
+            "#beaconFoundWidget{"
             "background: #ddd;"
             "border-radius: 10px;"
             "border-style: solid;"
@@ -196,44 +187,74 @@ class BeaconFoundDialog : public QDialog {
             "border-radius: 7px;"
             "border-color: black;}");
 
-        beaconLayout = new QVBoxLayout(beaconWidget);
-        beaconLayout->setObjectName("beaconLayout");
-        beaconLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        beaconLayout->setContentsMargins(10, 10, 10, 10);
-        beaconLabel = new QLabel(beaconWidget);
-        beaconLabel->setObjectName("beaconLabel");
-        beaconLabel->setContentsMargins(10, 10, 10, 10);
-        beaconLabel->setAlignment(Qt::AlignCenter);
-        beaconLabel->setStyleSheet(
+        beaconFoundLayout = new QVBoxLayout(beaconFoundWidget);
+        beaconFoundLayout->setObjectName("beaconFoundLayout");
+        beaconFoundLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        beaconFoundLayout->setContentsMargins(10, 10, 10, 10);
+        beaconFoundLabel = new QLabel(beaconFoundWidget);
+        beaconFoundLabel->setObjectName("beaconFoundLabel");
+        beaconFoundLabel->setContentsMargins(10, 10, 10, 10);
+        beaconFoundLabel->setAlignment(Qt::AlignCenter);
+        beaconFoundLabel->setStyleSheet(
             "border: 1px solid #000;"
             "font: 20px 'Ubuntu';"
             "font-weight: bold;");
 
-        beaconLayout->addWidget(beaconLabel);
+        beaconFoundLayout->addWidget(beaconFoundLabel);
 
-        beaconOneLayout = new QHBoxLayout();
-        beaconOneLayout->setObjectName("beaconOneLayout");
-        beaconOneLayout->setContentsMargins(10, 10, 10, 10);
-        beaconAccept = new QPushButton(beaconWidget);
-        beaconAccept->setObjectName("beaconAccept");
-        sizePolicy1.setHeightForWidth(beaconAccept->sizePolicy().hasHeightForWidth());
-        beaconAccept->setSizePolicy(sizePolicy1);
-        beaconCancel = new QPushButton(beaconWidget);
-        beaconCancel->setObjectName("beaconCancel");
-        sizePolicy1.setHeightForWidth(beaconCancel->sizePolicy().hasHeightForWidth());
-        beaconCancel->setSizePolicy(sizePolicy1);
+        beaconOneFoundLayout = new QHBoxLayout();
+        beaconOneFoundLayout->setObjectName("beaconOneFoundLayout");
+        beaconOneFoundLayout->setContentsMargins(10, 10, 10, 10);
+        beaconOneFoundLabel = new QLabel(beaconFoundWidget);
+        beaconOneFoundLabel->setObjectName("beaconOneFoundLabel");
+        beaconOneFoundLabel->setAlignment(Qt::AlignCenter);
+        beaconOneFoundLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        beaconOneFoundText = new QLineEdit(beaconFoundWidget);
+        beaconOneFoundText->setObjectName("beaconOneFoundText");
+        beaconOneFoundText->setInputMethodHints(Qt::ImhDigitsOnly);
 
-        beaconOneLayout->addWidget(beaconAccept);
-        beaconOneLayout->addWidget(beaconCancel);
+        beaconOneFoundLayout->addWidget(beaconOneFoundLabel);
+        beaconOneFoundLayout->addWidget(beaconOneFoundText);
 
-        beaconLayout->addLayout(beaconOneLayout);
+        beaconFoundLayout->addLayout(beaconOneFoundLayout);
 
-        beaconOneLayout->setStretch(0, 1);
-        beaconOneLayout->setStretch(1, 1);
+        beaconOneFoundLayout->setStretch(0, 1);
+        beaconOneFoundLayout->setStretch(1, 1);
 
-        beaconLayout->setStretch(0, 1);
-        beaconLayout->setStretch(1, 1);
-        beaconLayout->setStretch(2, 1);
+        beaconTwoFoundLayout = new QHBoxLayout();
+        beaconTwoFoundLayout->setObjectName("beaconTwoFoundLayout");
+        beaconTwoFoundLayout->setContentsMargins(10, 10, 10, 10);
+        beaconFoundAccept = new QPushButton(beaconFoundWidget);
+        beaconFoundAccept->setObjectName("beaconFoundAccept");
+        sizePolicy1.setHeightForWidth(beaconFoundAccept->sizePolicy().hasHeightForWidth());
+        beaconFoundAccept->setFocusPolicy(Qt::NoFocus);
+        beaconFoundAccept->setSizePolicy(sizePolicy1);
+        beaconFoundNotFound = new QPushButton(beaconFoundWidget);
+        beaconFoundNotFound->setObjectName("beaconFoundNotFound");
+        sizePolicy1.setHeightForWidth(beaconFoundNotFound->sizePolicy().hasHeightForWidth());
+        beaconFoundNotFound->setFocusPolicy(Qt::NoFocus);
+        beaconFoundNotFound->setSizePolicy(sizePolicy1);
+        beaconFoundCancel = new QPushButton(beaconFoundWidget);
+        beaconFoundCancel->setObjectName("beaconFoundCancel");
+        sizePolicy1.setHeightForWidth(beaconFoundCancel->sizePolicy().hasHeightForWidth());
+        beaconFoundCancel->setFocusPolicy(Qt::NoFocus);
+        beaconFoundCancel->setSizePolicy(sizePolicy1);
+
+        beaconTwoFoundLayout->addWidget(beaconFoundAccept);
+        beaconTwoFoundLayout->addWidget(beaconFoundNotFound);
+        beaconTwoFoundLayout->addWidget(beaconFoundCancel);
+
+        beaconFoundLayout->addLayout(beaconTwoFoundLayout);
+
+        beaconTwoFoundLayout->setStretch(0, 1);
+        beaconTwoFoundLayout->setStretch(1, 1);
+        beaconTwoFoundLayout->setStretch(2, 1);
+
+        beaconFoundLayout->setStretch(0, 1);
+        beaconFoundLayout->setStretch(1, 1);
+        beaconFoundLayout->setStretch(2, 1);
     }
 };
 
@@ -269,7 +290,6 @@ class WarningDialog : public QDialog {
         warningWidget = new QDialog(dialogWidget);
         warningWidget->setObjectName("warningWidget");
         warningWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        warningWidget->setFocusPolicy(Qt::FocusPolicy::ClickFocus);
         warningWidget->move(300, 100);
         warningWidget->setMinimumSize(680, 200);
         warningWidget->setWindowFlags(Qt::Dialog);
@@ -303,10 +323,12 @@ class WarningDialog : public QDialog {
         warningAccept = new QPushButton(warningWidget);
         warningAccept->setObjectName("warningAccept");
         sizePolicy1.setHeightForWidth(warningAccept->sizePolicy().hasHeightForWidth());
+        warningAccept->setFocusPolicy(Qt::NoFocus);
         warningAccept->setSizePolicy(sizePolicy1);
         warningCancel = new QPushButton(warningWidget);
         warningCancel->setObjectName("warningCancel");
         sizePolicy1.setHeightForWidth(warningCancel->sizePolicy().hasHeightForWidth());
+        warningCancel->setFocusPolicy(Qt::NoFocus);
         warningCancel->setSizePolicy(sizePolicy1);
 
         warningOneLayout->addWidget(warningAccept);

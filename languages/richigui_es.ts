@@ -4,78 +4,89 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/mainwindow.cpp" line="47"/>
-        <location filename="../src/mainwindow.cpp" line="443"/>
+        <location filename="../inc/ui_mainwindow.h" line="686"/>
+        <location filename="../src/mainwindow.cpp" line="43"/>
+        <location filename="../src/mainwindow.cpp" line="423"/>
+        <location filename="../src/mainwindow.cpp" line="475"/>
         <source>Baliza A</source>
         <translation>Baliza A</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="48"/>
-        <location filename="../src/mainwindow.cpp" line="444"/>
+        <location filename="../inc/ui_mainwindow.h" line="687"/>
+        <location filename="../src/mainwindow.cpp" line="44"/>
+        <location filename="../src/mainwindow.cpp" line="424"/>
+        <location filename="../src/mainwindow.cpp" line="476"/>
         <source>Baliza B</source>
         <translation>Baliza B</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="49"/>
-        <location filename="../src/mainwindow.cpp" line="445"/>
+        <location filename="../inc/ui_mainwindow.h" line="688"/>
+        <location filename="../src/mainwindow.cpp" line="45"/>
+        <location filename="../src/mainwindow.cpp" line="425"/>
+        <location filename="../src/mainwindow.cpp" line="477"/>
         <source>Baliza C</source>
         <translation>Baliza C</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="50"/>
+        <location filename="../src/mainwindow.cpp" line="46"/>
         <source>Vista simple</source>
         <translation>Vista simple</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="52"/>
+        <location filename="../src/mainwindow.cpp" line="47"/>
         <source>Status: Vista simple seleccionada</source>
         <translation>Status: Vista simple seleccionada</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="74"/>
         <source>Seleccionar
 Frequencia</source>
-        <translation>Seleccionar
+        <translation type="vanished">Seleccionar
 Frequencia</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="75"/>
+        <location filename="../src/mainwindow.cpp" line="69"/>
         <source>Status: Vista avanzada seleccionada</source>
         <translation>Status: Vista avanzada seleccionada</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="238"/>
+        <location filename="../src/mainwindow.cpp" line="237"/>
         <source>Status: Nueva baliza post-tronadura registrada</source>
         <translation>Status: Nueva baliza post-tronadura registrada</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="257"/>
+        <location filename="../src/mainwindow.cpp" line="256"/>
         <source>Status: Nueva baliza pre-tronadura registrada</source>
         <translation>Status: Nueva baliza pre-tronadura registrada</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="348"/>
-        <location filename="../src/mainwindow.cpp" line="428"/>
+        <location filename="../src/mainwindow.cpp" line="360"/>
+        <location filename="../src/mainwindow.cpp" line="418"/>
+        <location filename="../src/mainwindow.cpp" line="459"/>
         <source>Time [seconds]</source>
         <translation>Tiempo [segundos]</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="353"/>
+        <location filename="../src/mainwindow.cpp" line="368"/>
+        <location filename="../src/mainwindow.cpp" line="420"/>
+        <location filename="../src/mainwindow.cpp" line="461"/>
         <source>Distance [meters]</source>
         <translation>Distancia [metros]</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="407"/>
+        <location filename="../src/mainwindow.cpp" line="414"/>
+        <location filename="../src/mainwindow.cpp" line="437"/>
         <source>Frequency</source>
         <translation>Frecuencia</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="408"/>
+        <location filename="../src/mainwindow.cpp" line="415"/>
+        <location filename="../src/mainwindow.cpp" line="438"/>
         <source>Power</source>
         <translation>Potencia</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="424"/>
+        <location filename="../src/mainwindow.cpp" line="416"/>
+        <location filename="../src/mainwindow.cpp" line="454"/>
         <source>Window Hanning
 N = 4096
 Fs = 44100.0</source>
@@ -84,174 +95,176 @@ N = 4096
 Fs = 44100.0</translation>
     </message>
     <message>
-        <source>Window Hanning 
-N = 4096
-Fs = 44100.0</source>
-        <translation type="obsolete">Ventana Hanning
-N = 4096
-Fs = 44100.0</translation>
-    </message>
-    <message>
         <source>Time</source>
         <translation type="vanished">Tiempo</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="429"/>
+        <location filename="../src/mainwindow.cpp" line="422"/>
+        <location filename="../src/mainwindow.cpp" line="462"/>
         <source>Amplitude</source>
         <translation>Amplitud</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="456"/>
+        <location filename="../src/mainwindow.cpp" line="426"/>
+        <location filename="../src/mainwindow.cpp" line="488"/>
         <source>Potencia</source>
         <translation>Potencia</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="623"/>
+        <location filename="../inc/ui_mainwindow.h" line="655"/>
         <source>MainWindow</source>
         <translation>MainWindow</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="624"/>
+        <location filename="../inc/ui_mainwindow.h" line="656"/>
         <source>Status: Inicializando</source>
         <translation>Status: Inicializando</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="625"/>
+        <location filename="../inc/ui_mainwindow.h" line="657"/>
         <source>Peaks Detectados</source>
         <translation>Peaks Detectados</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="627"/>
-        <location filename="../inc/ui_mainwindow.h" line="629"/>
-        <location filename="../inc/ui_mainwindow.h" line="631"/>
+        <location filename="../inc/ui_mainwindow.h" line="659"/>
+        <location filename="../inc/ui_mainwindow.h" line="661"/>
+        <location filename="../inc/ui_mainwindow.h" line="663"/>
         <source>kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="633"/>
-        <location filename="../inc/ui_mainwindow.h" line="635"/>
-        <location filename="../inc/ui_mainwindow.h" line="637"/>
+        <location filename="../inc/ui_mainwindow.h" line="665"/>
+        <location filename="../inc/ui_mainwindow.h" line="667"/>
+        <location filename="../inc/ui_mainwindow.h" line="669"/>
         <source>dBFS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="638"/>
+        <location filename="../inc/ui_mainwindow.h" line="670"/>
         <source>Versus
 Tiempo</source>
         <translation>Versus
 Tiempo</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="639"/>
+        <location filename="../inc/ui_mainwindow.h" line="671"/>
         <source>Versus
 Distancia</source>
         <translation>Versus
 Distancia</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="640"/>
-        <location filename="../src/mainwindow.cpp" line="51"/>
+        <location filename="../inc/ui_mainwindow.h" line="672"/>
         <source>Seleccionar
 Baliza</source>
         <translation>Seleccionar
 Baliza</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="641"/>
+        <location filename="../inc/ui_mainwindow.h" line="673"/>
         <source>Baliza
 Encontrada</source>
         <translation>Baliza
 Encontrada</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="642"/>
+        <location filename="../inc/ui_mainwindow.h" line="674"/>
         <source>Registro
 Pre-Tronadura</source>
         <translation>Registro
 Pre-Tronadura</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="643"/>
+        <location filename="../inc/ui_mainwindow.h" line="675"/>
         <source>Registro
 Post-Tronadura</source>
         <translation>Registro
 Post-Tronadura</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="644"/>
+        <location filename="../inc/ui_mainwindow.h" line="676"/>
         <source>Español</source>
         <translation>Español</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="646"/>
+        <location filename="../inc/ui_mainwindow.h" line="678"/>
         <source>Empezar Nuevo
 Registro</source>
         <translation>Empezar Nuevo
 Registro</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="647"/>
+        <location filename="../inc/ui_mainwindow.h" line="679"/>
         <source>Cerrar y Apagar</source>
         <translation>Cerrar y Apagar</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="648"/>
         <source>Seleccionar
 Frecuencia</source>
-        <translation>Seleccionar
+        <translation type="vanished">Seleccionar
 Frecuencia</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="649"/>
-        <location filename="../src/mainwindow.cpp" line="70"/>
+        <location filename="../inc/ui_mainwindow.h" line="682"/>
+        <location filename="../src/mainwindow.cpp" line="65"/>
         <source>13.75 kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="650"/>
-        <location filename="../src/mainwindow.cpp" line="71"/>
+        <location filename="../inc/ui_mainwindow.h" line="683"/>
+        <location filename="../src/mainwindow.cpp" line="66"/>
         <source>14.00 kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="651"/>
-        <location filename="../src/mainwindow.cpp" line="72"/>
+        <location filename="../inc/ui_mainwindow.h" line="684"/>
+        <location filename="../src/mainwindow.cpp" line="67"/>
         <source>14.25 kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="653"/>
+        <location filename="../inc/ui_mainwindow.h" line="691"/>
         <source>Ingreso Nueva Baliza</source>
         <translation>Ingreso Nueva Baliza</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="654"/>
+        <location filename="../inc/ui_mainwindow.h" line="692"/>
         <source>Distancia Baliza [metros]</source>
-        <translation>Distancia Baliza [metros]</translation>
+        <translation>Profundidad Baliza [metros]</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="655"/>
-        <location filename="../inc/ui_mainwindow.h" line="659"/>
-        <location filename="../inc/ui_mainwindow.h" line="663"/>
+        <location filename="../inc/ui_mainwindow.h" line="693"/>
+        <location filename="../inc/ui_mainwindow.h" line="698"/>
+        <location filename="../inc/ui_mainwindow.h" line="703"/>
         <source>Aceptar</source>
-        <translation>AceptE</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="656"/>
-        <location filename="../inc/ui_mainwindow.h" line="660"/>
-        <location filename="../inc/ui_mainwindow.h" line="664"/>
+        <location filename="../inc/ui_mainwindow.h" line="694"/>
+        <location filename="../inc/ui_mainwindow.h" line="700"/>
+        <location filename="../inc/ui_mainwindow.h" line="704"/>
         <source>Cancelar</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="658"/>
+        <location filename="../inc/ui_mainwindow.h" line="696"/>
         <source>Una nueva baliza será registrada
 ¿Está seguro de la ubicación de esta?</source>
         <translation>Una nueva baliza será registrada
 ¿Está seguro de la ubicación de esta?</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="662"/>
+        <location filename="../inc/ui_mainwindow.h" line="697"/>
+        <source>Identificador Baliza [ID]</source>
+        <translation>Identificador Baliza [ID]</translation>
+    </message>
+    <message>
+        <location filename="../inc/ui_mainwindow.h" line="699"/>
+        <source>No encontrada</source>
+        <translation>No encontrada</translation>
+    </message>
+    <message>
+        <location filename="../inc/ui_mainwindow.h" line="702"/>
         <source>Comenzará un nuevo registro
 Luego de esto no podrá modificar el registro actual</source>
         <translation>Comenzará un nuevo registro
@@ -264,8 +277,8 @@ Luego de esto no podrá modificar el registro atual</source>
 Luego de esto no podrá modificar el registro actual</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="645"/>
-        <location filename="../src/mainwindow.cpp" line="73"/>
+        <location filename="../inc/ui_mainwindow.h" line="677"/>
+        <location filename="../src/mainwindow.cpp" line="68"/>
         <source>Vista avanzada</source>
         <translation>Vista avanzada</translation>
     </message>
