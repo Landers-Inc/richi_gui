@@ -40,6 +40,7 @@ void MainWindow::switchView() {
         ui->rightPlot->setVisible(false);
         ui->selectDistanceAxis->setVisible(false);
         ui->selectTimeAxis->setVisible(false);
+        ui->beaconLayout->setStretch(0, 0);
         ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "Baliza A"));
         ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
         ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "Baliza C"));
@@ -62,6 +63,7 @@ void MainWindow::switchView() {
         ui->rightPlot->setVisible(true);
         ui->selectDistanceAxis->setVisible(true);
         ui->selectTimeAxis->setVisible(true);
+        ui->beaconLayout->setStretch(0, 1);
         ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
         ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
         ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
@@ -146,7 +148,7 @@ void MainWindow::startThreads() {
 
     connect(dataProcessing, &QThread::finished, dataProcessor, &QObject::deleteLater);
     connect(dataLogging, &QThread::finished, dataLogger, &QObject::deleteLater);
-    //TODO Possible Queue infinitely increment
+
     connect(dataProcessor, &DataProcessor::dataReady, this, &MainWindow::updateData, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::fftReady, this, &MainWindow::updateFFT, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::plotData, this, &MainWindow::updatePlots, Qt::QueuedConnection);
@@ -173,7 +175,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     appLanguage = new Ui::Language;
-    *appLanguage = Ui::Language::ENGLISH;
+    *appLanguage = Ui::Language::SPANISH;
 
     ui->translator_es = new QTranslator;
     ui->translator_en = new QTranslator;
@@ -299,10 +301,10 @@ void MainWindow::warningAccept() {
     emit logConfiguration(conf);
     stateInstance->newLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
-    ui->preblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectBeacon->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->postblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->beaconFound->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->preblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectBeacon->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->postblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->beaconFound->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
 }
 
 void MainWindow::warningCancel() {
@@ -314,23 +316,23 @@ void MainWindow::warningCancel() {
 
 void MainWindow::dispFrequencyOne() {
     emit setPeakTimeserie(0);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
 }
 
 void MainWindow::dispFrequencyTwo() {
     emit setPeakTimeserie(1);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
 }
 
 void MainWindow::dispFrequencyThree() {
     emit setPeakTimeserie(2);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
 }
 
 void MainWindow::startNewLog() {
@@ -365,33 +367,45 @@ void MainWindow::switchLanguage() {
 void MainWindow::startNewPreblastLog() {
     stateInstance->preblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
-    ui->preblastLog->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
-    ui->selectBeacon->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
-    ui->postblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->beaconFound->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->preblastLog->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->selectBeacon->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->postblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->beaconFound->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->standbyLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
 }
 
 void MainWindow::startNewPostblastLog() {
     stateInstance->postblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
-    ui->preblastLog->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectBeacon->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->postblastLog->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
-    ui->beaconFound->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->preblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectBeacon->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->postblastLog->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->beaconFound->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->standbyLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+}
+
+void MainWindow::standbyLog() {
+    stateInstance->gotoIdle();
+    ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
+    ui->preblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectBeacon->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->postblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->beaconFound->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->standbyLog->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
 }
 
 void MainWindow::selectTimeAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
-    ui->selectTimeAxis->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
-    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectTimeAxis->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
     emit setViewAxis(0);
     ui->timeDistance = 0;
 }
 
 void MainWindow::selectDistanceAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
-    ui->selectTimeAxis->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
+    ui->selectTimeAxis->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
     emit setViewAxis(1);
     ui->timeDistance = 1;
 }
@@ -414,6 +428,7 @@ void MainWindow::connectButtons() {
     connect(ui->startLog, &QPushButton::released, this, &MainWindow::startNewLog);
     connect(ui->preblastLog, &QPushButton::released, this, &MainWindow::startNewPreblastLog);
     connect(ui->postblastLog, &QPushButton::released, this, &MainWindow::startNewPostblastLog);
+    connect(ui->standbyLog, &QPushButton::released, this, &MainWindow::standbyLog);
 
     connect(ui->inputBeaconWidget->beaconInputAccept, &QPushButton::released, this, &MainWindow::beaconInputAccept);
     connect(ui->inputBeaconWidget->beaconInputCancel, &QPushButton::released, this, &MainWindow::beaconInputCancel);
@@ -515,7 +530,7 @@ void MainWindow::setupGUI() {
     ui->barsPlot->yAxis->grid()->setVisible(true);
     ui->barsPlot->yAxis->grid()->setSubGridVisible(true);
 
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 204, 113, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(204, 46, 113, 0.4);");
+    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->selectTwoFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectThreeFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
 }

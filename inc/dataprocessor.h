@@ -2,12 +2,12 @@
 
 #include <QDebug>
 #include <QObject>
+#include <QSound>
 #include <QThread>
 #include <cmath>
 #include <iostream>
 #include <random>
 
-#include "audioplayer.h"
 #include "datalogger.h"
 #include "datawindow.h"
 #include "emlidgps.h"
@@ -22,11 +22,14 @@ class DataProcessor : public QObject {
    private:
     QThread *dataAcquiring;
     QThread *gpsAcquiring;
-    QThread *audioPlaying;
-    AudioPlayer *audioPlayer;
+    QThread *beepPlaying;
     DataReader *dataAcquisition;
     GPSReader *gpsAcquisition;
     StateMachine *stateInstance;
+    QSound *beepWav;
+    QTimer *beepTimer;
+
+    signed int currentBeepLevel = -120;
 
    public:
     explicit DataProcessor(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg) {
@@ -120,6 +123,10 @@ class DataProcessor : public QObject {
     void plotData();
     // Qt Signal used to stop GPS running thread
     void gpsQuit();
+    // Qt Signal used to start QTimer for beep
+    void beepStart();
+    // Qt Signal used to stop QTimer for beep
+    void beepStop();
 
     // Qt Signal used to update the noise floor in the GUI thread
     void setNoiseFloor(double noiseFloor);

@@ -81,9 +81,13 @@ class Ui_MainWindow {
     WarningDialog *warningWidget;
     QPushButton *beaconFound;
     QVBoxLayout *logLayout;
+    QHBoxLayout *axisSelectLayout;
+    QHBoxLayout *preblastLayout;
+    QHBoxLayout *postblastLayout;
     QPushButton *selectDistanceAxis;
     QPushButton *preblastLog;
     QPushButton *postblastLog;
+    QPushButton *standbyLog;
     QHBoxLayout *saveLayout;
     QPushButton *switchLanguage;
     QPushButton *startLog;
@@ -486,91 +490,111 @@ class Ui_MainWindow {
 
         beaconLayout = new QVBoxLayout();
         beaconLayout->setObjectName("beaconLayout");
-        beaconLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        beaconLayout->setContentsMargins(10, 10, 0, 10);
         beaconLayout->setSpacing(10);
+
+        axisSelectLayout = new QHBoxLayout();
+        axisSelectLayout->setObjectName("axisSelectLayout");
+        axisSelectLayout->setContentsMargins(0, 0, 0, 0);
+        axisSelectLayout->setSpacing(0);
 
         selectTimeAxis = new QPushButton(layoutWidget);
         selectTimeAxis->setObjectName("selectTimeAxis");
-        sizePolicy1.setHeightForWidth(selectTimeAxis->sizePolicy().hasHeightForWidth());
-        selectTimeAxis->setSizePolicy(sizePolicy1);
+        selectTimeAxis->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         selectTimeAxis->setFocusPolicy(Qt::NoFocus);
         selectTimeAxis->setStyleSheet(
-            "background-color: rgba(46, 204, 113, 0.4);");
+            "background-color: rgba(46, 154, 93, 0.4);");
 
-        beaconLayout->addWidget(selectTimeAxis);
+        axisSelectLayout->addWidget(selectTimeAxis);
+
+        selectDistanceAxis = new QPushButton(layoutWidget);
+        selectDistanceAxis->setObjectName("selectDistanceAxis");
+        selectDistanceAxis->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        selectDistanceAxis->setFocusPolicy(Qt::NoFocus);
+        selectDistanceAxis->setStyleSheet(
+            "background-color: rgba(154, 46, 93, 0.4);");
+
+        axisSelectLayout->addWidget(selectDistanceAxis);
+
+        axisSelectLayout->setStretch(0, 1);
+        axisSelectLayout->setStretch(1, 1);
+
+        beaconLayout->addLayout(axisSelectLayout);
+
+        preblastLayout = new QHBoxLayout();
+        preblastLayout->setObjectName("preblastLayout");
+        preblastLayout->setContentsMargins(0, 0, 0, 0);
+        preblastLayout->setSpacing(0);
 
         selectBeacon = new QPushButton(layoutWidget);
         selectBeacon->setObjectName("selectBeacon");
-        sizePolicy1.setHeightForWidth(selectBeacon->sizePolicy().hasHeightForWidth());
-        selectBeacon->setSizePolicy(sizePolicy1);
+        selectBeacon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         selectBeacon->setFocusPolicy(Qt::NoFocus);
         selectBeacon->setStyleSheet(
-            "background-color: rgba(204, 46, 113, 0.4);");
+            "background-color: rgba(154, 46, 93, 0.4);");
 
-        beaconLayout->addWidget(selectBeacon);
+        preblastLayout->addWidget(selectBeacon);
+
+        preblastLog = new QPushButton(layoutWidget);
+        preblastLog->setObjectName("preblastLog");
+        preblastLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        preblastLog->setFocusPolicy(Qt::NoFocus);
+        preblastLog->setStyleSheet(
+            "background-color: rgba(154, 46, 93, 0.4);");
+
+        preblastLayout->addWidget(preblastLog);
+
+        preblastLayout->setStretch(0, 1);
+        preblastLayout->setStretch(1, 1);
+
+        beaconLayout->addLayout(preblastLayout);
+
+        postblastLayout = new QHBoxLayout();
+        postblastLayout->setObjectName("postblastLayout");
+        postblastLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        postblastLayout->setContentsMargins(0, 0, 0, 0);
+        postblastLayout->setSpacing(0);
 
         beaconFound = new QPushButton(layoutWidget);
         beaconFound->setObjectName("beaconFound");
-        sizePolicy1.setHeightForWidth(beaconFound->sizePolicy().hasHeightForWidth());
-        beaconFound->setSizePolicy(sizePolicy1);
+        beaconFound->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         beaconFound->setFocusPolicy(Qt::NoFocus);
         beaconFound->setStyleSheet(
-            "background-color: rgba(204, 46, 113, 0.4);");
+            "background-color: rgba(154, 46, 93, 0.4);");
 
-        beaconLayout->addWidget(beaconFound);
+        postblastLayout->addWidget(beaconFound);
+
+        postblastLog = new QPushButton(layoutWidget);
+        postblastLog->setObjectName("postblastLog");
+        postblastLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        postblastLog->setFocusPolicy(Qt::NoFocus);
+        postblastLog->setStyleSheet(
+            "background-color: rgba(154, 46, 93, 0.4);");
+
+        postblastLayout->addWidget(postblastLog);
+
+        postblastLayout->setStretch(0, 1);
+        postblastLayout->setStretch(1, 1);
+
+        beaconLayout->addLayout(postblastLayout);
+
+        standbyLog = new QPushButton(layoutWidget);
+        standbyLog->setObjectName("standbyLog");
+        standbyLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        standbyLog->setFocusPolicy(Qt::NoFocus);
+        standbyLog->setStyleSheet(
+            "background-color: rgba(46, 154, 93, 0.4);");
+
+        beaconLayout->addWidget(standbyLog);
 
         beaconLayout->setStretch(0, 1);
         beaconLayout->setStretch(1, 1);
         beaconLayout->setStretch(2, 1);
+        beaconLayout->setStretch(3, 1);
 
         miscLayout->addLayout(beaconLayout);
 
-        logLayout = new QVBoxLayout();
-        logLayout->setObjectName("logLayout");
-        logLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        logLayout->setContentsMargins(0, 10, 10, 10);
-        logLayout->setSpacing(10);
-
-        selectDistanceAxis = new QPushButton(layoutWidget);
-        selectDistanceAxis->setObjectName("selectDistanceAxis");
-        sizePolicy1.setHeightForWidth(selectDistanceAxis->sizePolicy().hasHeightForWidth());
-        selectDistanceAxis->setSizePolicy(sizePolicy1);
-        selectDistanceAxis->setFocusPolicy(Qt::NoFocus);
-        selectDistanceAxis->setStyleSheet(
-            "background-color: rgba(204, 46, 113, 0.4);");
-
-        logLayout->addWidget(selectDistanceAxis);
-
-        preblastLog = new QPushButton(layoutWidget);
-        preblastLog->setObjectName("preblastLog");
-        sizePolicy1.setHeightForWidth(preblastLog->sizePolicy().hasHeightForWidth());
-        preblastLog->setSizePolicy(sizePolicy1);
-        preblastLog->setFocusPolicy(Qt::NoFocus);
-        preblastLog->setStyleSheet(
-            "background-color: rgba(204, 46, 113, 0.4);");
-
-        logLayout->addWidget(preblastLog);
-
-        postblastLog = new QPushButton(layoutWidget);
-        postblastLog->setObjectName("postblastLog");
-        sizePolicy1.setHeightForWidth(postblastLog->sizePolicy().hasHeightForWidth());
-        postblastLog->setSizePolicy(sizePolicy1);
-        postblastLog->setFocusPolicy(Qt::NoFocus);
-        postblastLog->setStyleSheet(
-            "background-color: rgba(204, 46, 113, 0.4);");
-
-        logLayout->addWidget(postblastLog);
-
-        logLayout->setStretch(0, 1);
-        logLayout->setStretch(1, 1);
-        logLayout->setStretch(2, 1);
-
-        miscLayout->addLayout(logLayout);
-
         miscLayout->setStretch(0, 2);
-        miscLayout->setStretch(1, 1);
-        miscLayout->setStretch(2, 1);
+        miscLayout->setStretch(1, 2);
 
         dataLayout->addLayout(miscLayout);
 
@@ -706,6 +730,7 @@ class Ui_MainWindow {
         beaconFound->setText(QCoreApplication::translate("MainWindow", "Baliza\nEncontrada"));
         preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPre-Tronadura"));
         postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPost-Tronadura"));
+        standbyLog->setText(QCoreApplication::translate("MainWindow", "Estado inactivo"));
         switchLanguage->setText(QCoreApplication::translate("MainWindow", "Español"));
         saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
         startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro"));

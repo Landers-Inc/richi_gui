@@ -40,7 +40,6 @@ class MainWindow : public QMainWindow {
     DataLogger *dataLogger;
     StateMachine *stateInstance;
     void startThreads();
-    int dispFreqPlot;
     QVector<double> peakValues;
     double noiseFloor = -120.0;
    signals:
@@ -102,6 +101,8 @@ class MainWindow : public QMainWindow {
     void startNewPreblastLog();
     // Qt Slot used to
     void startNewPostblastLog();
+    // Qt Slot used to
+    void standbyLog();
     // Qt Slot used to
     void switchView();
     // Qt Slot used to

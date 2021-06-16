@@ -16,7 +16,7 @@ bool USBADC::open() {
     if (err != paNoError)
         return false;
 
-    PaStreamParameters outputParameters;
+    PaStreamParameters inputParameters;
 
     int numDevices;
     numDevices = Pa_GetDeviceCount();
@@ -35,21 +35,21 @@ bool USBADC::open() {
             break;
     }
 
-    outputParameters.device = deviceIndex;
-    if (outputParameters.device == paNoDevice)
+    inputParameters.device = deviceIndex;
+    if (inputParameters.device == paNoDevice)
         return false;
 
-    outputParameters.channelCount = 1;
-    outputParameters.sampleFormat = paFloat32;
-    outputParameters.suggestedLatency = Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
-    outputParameters.hostApiSpecificStreamInfo = nullptr;
+    inputParameters.channelCount = 1;
+    inputParameters.sampleFormat = paFloat32;
+    inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultLowOutputLatency;
+    inputParameters.hostApiSpecificStreamInfo = nullptr;
 
     // In case Alsa fails at the beginning, try several times
     do {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         err = Pa_OpenStream(
             &stream,
-            &outputParameters,
+            &inputParameters,
             nullptr,
             sampleFrequency,
             dataSize,

@@ -1,4 +1,4 @@
-QT += core gui virtualkeyboard quickwidgets qml quick sql
+QT += core gui virtualkeyboard quickwidgets qml quick sql multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
@@ -63,7 +63,6 @@ DEFINES += PA_USE_OSS=0
 SOURCES += \
     main.cpp \
     src/mainwindow.cpp \
-    src/audioplayer.cpp \
     src/dataprocessor.cpp \
     src/usbadc.cpp \
     src/datalogger.cpp \
@@ -75,7 +74,6 @@ HEADERS += \
     inc/abstract/datareader.h \
     inc/abstract/gpsreader.h \
     inc/mainwindow.h \
-    inc/audioplayer.h \
     inc/dataprocessor.h \
     inc/ui_mainwindow.h \
     inc/usbadc.h \

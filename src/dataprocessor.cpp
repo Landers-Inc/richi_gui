@@ -14,8 +14,6 @@ DataProcessor::~DataProcessor() {
     std::cout << "Closing DataProcessor instance" << std::endl;
     dataAcquiring->quit();
     dataAcquiring->wait();
-    // audioPlaying->quit();
-    // audioPlaying->wait();
     emit gpsQuit();
     gpsAcquiring->quit();
     gpsAcquiring->wait();
@@ -161,18 +159,22 @@ void DataProcessor::initialize() {
     // Initialize FFT accumulator with zeroes
     for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
 
-    currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     timeDomain = std::vector<double>(peakSerieSize, 0);
     distanceDomain = std::vector<double>(peakSerieSize, 0);
 
-    // audioPlaying = new QThread();
-    // audioPlaying->setObjectName("playing thread");
-    // audioPlayer = new AudioPlayer(dataSize, sampleFrequency);
-    // audioPlayer->moveToThread(audioPlaying);
-
-    // connect(audioPlaying, &QThread::finished, audioPlayer, &QObject::deleteLater);
-    // connect(audioPlaying, &QThread::started, audioPlayer, &AudioPlayer::startStream);
-    // audioPlaying->start();
+    beepPlaying = new QThread();
+    beepPlaying->setObjectName("playing thread");
+    beepWav = new QSound("qrc:/censor-beep-1.wav");
+    beepWav->moveToThread(beepPlaying);
+    beepTimer = new QTimer;
+    beepTimer->setInterval(2000);
+    beepTimer->moveToThread(beepPlaying);
+    connect(beepPlaying, &QThread::finished, beepWav, &QObject::deleteLater);
+    connect(beepPlaying, &QThread::finished, beepTimer, &QObject::deleteLater);
+    connect(this, &DataProcessor::beepStart, beepTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
+    connect(this, &DataProcessor::beepStop, beepTimer, &QTimer::stop);
+    connect(beepTimer, &QTimer::timeout, beepWav, static_cast<void (QSound::*)()>(&QSound::play));
+    beepPlaying->start();
 
     dataAcquiring = new QThread();
     dataAcquiring->setObjectName("acquiring thread");
@@ -222,10 +224,63 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
         peakTimeserie.push_back(std::vector<double>(peakSerieSize, 20.0 * log10(peaksData[2].power)));
         currentPositionLatitude = gpsLatitude;
         currentPositionLongitude = gpsLongitude;
+        currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     }
 
     // Get timestamp in milliseconds from system
     unsigned int timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+    if (stateInstance->getState() == PREBLAST || stateInstance->getState() == POSTBLAST) {
+        double currentPower = 20.0 * log10(peaksData[peakToDisplay].power);
+        signed int nextBeepLevel = 0;
+        if (currentPower < -100.0)
+            nextBeepLevel = -120;
+        else if (-100.0 <= currentPower && currentPower < -90.0)
+            nextBeepLevel = -100;
+        else if (-90.0 <= currentPower && currentPower < -86.0)
+            nextBeepLevel = -90;
+        else if (-86.0 <= currentPower && currentPower < -83.0)
+            nextBeepLevel = -86;
+        else if (-83.0 <= currentPower && currentPower < -80.0)
+            nextBeepLevel = -83;
+        else if (-80.0 <= currentPower && currentPower < -70.0)
+            nextBeepLevel = -80;
+        else if (-70.0 < currentPower)
+            nextBeepLevel = -70;
+
+        if (nextBeepLevel != currentBeepLevel) {
+            currentBeepLevel = nextBeepLevel;
+            switch (currentBeepLevel) {
+                case -120:
+                    emit beepStop();
+                    break;
+                case -100:
+                    beepTimer->setInterval(2000);
+                    emit beepStart();
+                    break;
+                case -90:
+                    beepTimer->setInterval(1500);
+                    emit beepStart();
+                    break;
+                case -86:
+                    beepTimer->setInterval(1250);
+                    emit beepStart();
+                    break;
+                case -83:
+                    beepTimer->setInterval(1000);
+                    emit beepStart();
+                    break;
+                case -80:
+                    beepTimer->setInterval(750);
+                    emit beepStart();
+                    break;
+                case -70:
+                    beepTimer->setInterval(500);
+                    emit beepStart();
+                    break;
+            }
+        }
+    }
 
     if (stateInstance->getState() == POSTBLAST) {
         // Save data in an struct
