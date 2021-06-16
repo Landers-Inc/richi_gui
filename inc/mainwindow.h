@@ -28,6 +28,7 @@ class MainWindow : public QMainWindow {
 
     void setupGUI();
     void updateGUI();
+    void startProcessing();
 
    private:
     void connectButtons();

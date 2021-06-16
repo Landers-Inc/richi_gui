@@ -64,7 +64,7 @@ class BeaconInputDialog : public QDialog {
         beaconInputWidget->setObjectName("beaconInputWidget");
         beaconInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         beaconInputWidget->move(400, 100);
-        beaconInputWidget->setMinimumSize(480, 200);
+        beaconInputWidget->setMinimumSize(480, 220);
         beaconInputWidget->setWindowFlags(Qt::Dialog);
         beaconInputWidget->setStyleSheet(
             "#beaconInputWidget{"

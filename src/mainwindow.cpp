@@ -204,7 +204,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connectButtons();
 
     startPeripherals->join();
+}
 
+void MainWindow::startProcessing() {
     dataProcessing->start();
     dataLogging->start();
 }
