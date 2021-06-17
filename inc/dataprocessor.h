@@ -11,6 +11,7 @@
 #include "datalogger.h"
 #include "datawindow.h"
 #include "emlidgps.h"
+#include "fakegps.h"
 #include "fftw3.h"
 #include "qcustomplot.h"
 #include "statemachine.h"
@@ -124,7 +125,7 @@ class DataProcessor : public QObject {
     // Qt Signal used to stop GPS running thread
     void gpsQuit();
     // Qt Signal used to start QTimer for beep
-    void beepStart();
+    void beepStart(unsigned int milliseconds);
     // Qt Signal used to stop QTimer for beep
     void beepStop();
 

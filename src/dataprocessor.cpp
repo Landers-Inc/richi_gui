@@ -119,8 +119,8 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     averageFFT = fftAverage(fftAccumulator);
 
     // Cast FFT from std::vector to QVector. Necessary to plot data on QCustomPlot
-    QVector<double> Qoutx = QVector<double>(frequencyDomain.begin(), frequencyDomain.end());
-    QVector<double> Qouty = QVector<double>(averageFFT[1].begin(), averageFFT[1].end());
+    QVector<double> Qoutx = QVector<double>::fromStdVector(frequencyDomain);
+    QVector<double> Qouty = QVector<double>::fromStdVector(averageFFT[1]);
     // Emit signal to MainWindow to update frequency data
     emit fftReady(Qoutx, Qouty);
 
@@ -171,7 +171,7 @@ void DataProcessor::initialize() {
     beepTimer->moveToThread(beepPlaying);
     connect(beepPlaying, &QThread::finished, beepWav, &QObject::deleteLater);
     connect(beepPlaying, &QThread::finished, beepTimer, &QObject::deleteLater);
-    connect(this, &DataProcessor::beepStart, beepTimer, static_cast<void (QTimer::*)()>(&QTimer::start));
+    connect(this, &DataProcessor::beepStart, beepTimer, static_cast<void (QTimer::*)(int)>(&QTimer::start));
     connect(this, &DataProcessor::beepStop, beepTimer, &QTimer::stop);
     connect(beepTimer, &QTimer::timeout, beepWav, static_cast<void (QSound::*)()>(&QSound::play));
     beepPlaying->start();
@@ -228,7 +228,7 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
     }
 
     // Get timestamp in milliseconds from system
-    unsigned int timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     if (stateInstance->getState() == PREBLAST || stateInstance->getState() == POSTBLAST) {
         double currentPower = 20.0 * log10(peaksData[peakToDisplay].power);
@@ -255,31 +255,28 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
                     emit beepStop();
                     break;
                 case -100:
-                    beepTimer->setInterval(2000);
-                    emit beepStart();
+                    emit beepStart(2000);
                     break;
                 case -90:
-                    beepTimer->setInterval(1500);
-                    emit beepStart();
+                    emit beepStart(1500);
                     break;
                 case -86:
-                    beepTimer->setInterval(1250);
-                    emit beepStart();
+                    emit beepStart(1250);
                     break;
                 case -83:
-                    beepTimer->setInterval(1000);
-                    emit beepStart();
+                    emit beepStart(1000);
                     break;
                 case -80:
-                    beepTimer->setInterval(750);
-                    emit beepStart();
+                    emit beepStart(750);
                     break;
                 case -70:
-                    beepTimer->setInterval(500);
-                    emit beepStart();
+                    emit beepStart(500);
                     break;
             }
         }
+    } else if (stateInstance->getState() == IDLE) {
+        currentBeepLevel = -120;
+        emit beepStop();
     }
 
     if (stateInstance->getState() == POSTBLAST) {
@@ -315,10 +312,10 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
     // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
     QVector<double> Qoutx;
     if (timeDistance == 0)
-        Qoutx = QVector<double>(timeDomain.begin(), timeDomain.end());
+        Qoutx = QVector<double>::fromStdVector(timeDomain);
     else if (timeDistance == 1)
-        Qoutx = QVector<double>(distanceDomain.begin(), distanceDomain.end());
-    QVector<double> Qouty = QVector<double>(peakTimeserie[peakToDisplay].begin(), peakTimeserie[peakToDisplay].end());
+        Qoutx = QVector<double>::fromStdVector(distanceDomain);
+    QVector<double> Qouty = QVector<double>::fromStdVector(peakTimeserie[peakToDisplay]);
     // Emit signal to MainWindow to update time data
     emit dataReady(Qoutx, Qouty);
 }

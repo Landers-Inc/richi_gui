@@ -66,6 +66,7 @@ SOURCES += \
     src/dataprocessor.cpp \
     src/usbadc.cpp \
     src/datalogger.cpp \
+    src/fakegps.cpp \
     src/emlidgps.cpp \
     src/statemachine.cpp \
     src/qcustomplot.cpp
@@ -77,6 +78,7 @@ HEADERS += \
     inc/dataprocessor.h \
     inc/ui_mainwindow.h \
     inc/usbadc.h \
+    inc/fakegps.h \
     inc/emlidgps.h \
     inc/qcustomplot.h \
     inc/datalogger.h \

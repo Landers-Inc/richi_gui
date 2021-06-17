@@ -164,6 +164,34 @@ void DataLogger::insertConfiguration(Configuration const &conf) {
             qDebug() << query.lastError();
     else
         qDebug() << query.lastError();
+
+    query.prepare(
+        "SELECT COUNT(*) "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
+        "AND register_type=0");
+    query.bindValue(":configuration_id", configurationId);
+    if (query.exec())
+        if (query.next())
+            beaconPreCount = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
+
+    query.prepare(
+        "SELECT COUNT(*) "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
+        "AND register_type=1");
+    query.bindValue(":configuration_id", configurationId);
+    if (query.exec())
+        if (query.next())
+            beaconPostCount = query.value(0).toUInt();
+        else
+            qDebug() << query.lastError();
+    else
+        qDebug() << query.lastError();
 }
 
 void DataLogger::insertTimeData(TimeData const &time) {
