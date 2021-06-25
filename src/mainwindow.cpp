@@ -11,7 +11,7 @@
 #include <iterator>
 #include <random>
 
-int N_size = 4096;
+unsigned int N_size = 4096;
 double sampleFrequency = 44100.0;
 
 void MainWindow::warningStatus(QString message) {

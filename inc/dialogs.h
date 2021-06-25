@@ -25,6 +25,7 @@ class InputWidget : public QDialog {
     }
     bool eventFilter(QObject *object, QEvent *event) {
         std::cout << "Funcionaaaa Event" << std::endl;
+        return true;
     }
 };
 

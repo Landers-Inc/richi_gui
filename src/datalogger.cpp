@@ -85,6 +85,65 @@ void DataLogger::setDatabaseTables() {
         qDebug() << query.lastError();
 }
 
+void DataLogger::getLastBeacons() {
+    QSqlQuery query(loggerDatabase);
+
+    query.clear();
+    query.prepare(
+        "SELECT id, "
+        "register_type, "
+        "distance, "
+        "frequency, "
+        "power "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
+        "AND register_type=0 "
+        "ORDER BY id ASC");
+    query.bindValue(":configuration_id", configurationId);
+    beaconPreCount = 0;
+    beaconPreData.clear();
+    if (query.exec()) {
+        while (query.next()) {
+            ++beaconPreCount;
+            BeaconData tmp;
+            tmp.id = query.value(0).toUInt();
+            tmp.registerType = query.value(1).toUInt();
+            tmp.distance = query.value(2).toDouble();
+            tmp.frequency = query.value(3).toDouble();
+            tmp.power = query.value(4).toDouble();
+            beaconPreData.push_back(tmp);
+        }
+    } else
+        qDebug() << query.lastError();
+
+    query.clear();
+    query.prepare(
+        "SELECT id, "
+        "register_type, "
+        "distance, "
+        "frequency, "
+        "power "
+        "FROM BeaconData "
+        "WHERE configuration_id=:configuration_id "
+        "AND register_type=1 "
+        "ORDER BY id ASC");
+    query.bindValue(":configuration_id", configurationId);
+    beaconPostCount = 0;
+    beaconPostData.clear();
+    if (query.exec()) {
+        while (query.next()) {
+            ++beaconPostCount;
+            BeaconData tmp;
+            tmp.id = query.value(0).toUInt();
+            tmp.registerType = query.value(1).toUInt();
+            tmp.distance = query.value(2).toDouble();
+            tmp.frequency = query.value(3).toDouble();
+            tmp.power = query.value(4).toDouble();
+            beaconPostData.push_back(tmp);
+        }
+    } else
+        qDebug() << query.lastError();
+}
 void DataLogger::getLastIDs() {
     QSqlQuery query(loggerDatabase);
     query.prepare("SELECT MAX(id) FROM TimeData");
@@ -101,36 +160,6 @@ void DataLogger::getLastIDs() {
     if (query.exec())
         if (query.next())
             configurationId = query.value(0).toUInt();
-        else
-            qDebug() << query.lastError();
-    else
-        qDebug() << query.lastError();
-
-    query.clear();
-    query.prepare(
-        "SELECT COUNT(*) "
-        "FROM BeaconData "
-        "WHERE configuration_id=:configuration_id "
-        "AND register_type=0");
-    query.bindValue(":configuration_id", configurationId);
-    if (query.exec())
-        if (query.next())
-            beaconPreCount = query.value(0).toUInt();
-        else
-            qDebug() << query.lastError();
-    else
-        qDebug() << query.lastError();
-
-    query.clear();
-    query.prepare(
-        "SELECT COUNT(*) "
-        "FROM BeaconData "
-        "WHERE configuration_id=:configuration_id "
-        "AND register_type=1");
-    query.bindValue(":configuration_id", configurationId);
-    if (query.exec())
-        if (query.next())
-            beaconPostCount = query.value(0).toUInt();
         else
             qDebug() << query.lastError();
     else
@@ -251,33 +280,35 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
     if (!query.exec())
         qDebug() << query.lastError();
 
-    query.prepare(
-        "SELECT COUNT(*) "
-        "FROM BeaconData "
-        "WHERE configuration_id=:configuration_id "
-        "AND register_type=0");
-    query.bindValue(":configuration_id", configurationId);
-    if (query.exec())
-        if (query.next())
-            beaconPreCount = query.value(0).toUInt();
-        else
-            qDebug() << query.lastError();
-    else
-        qDebug() << query.lastError();
+    getLastBeacons();
+}
 
-    query.prepare(
-        "SELECT COUNT(*) "
-        "FROM BeaconData "
-        "WHERE configuration_id=:configuration_id "
-        "AND register_type=1");
-    query.bindValue(":configuration_id", configurationId);
-    if (query.exec())
-        if (query.next())
-            beaconPostCount = query.value(0).toUInt();
-        else
+void DataLogger::updateBeaconData() {
+    QSqlQuery query(loggerDatabase);
+
+    for (auto beacon : beaconPreData) {
+        query.prepare(
+            "UPDATE BeaconData "
+            "SET distance = :distance "
+            "WHERE "
+            "id = :id");
+        query.bindValue(":id", beacon.id);
+        query.bindValue(":distance", beacon.distance);
+        if (!query.exec())
             qDebug() << query.lastError();
-    else
-        qDebug() << query.lastError();
+    }
+
+    for (auto beacon : beaconPostData) {
+        query.prepare(
+            "UPDATE BeaconData "
+            "SET distance = :distance "
+            "WHERE "
+            "id = :id");
+        query.bindValue(":id", beacon.id);
+        query.bindValue(":distance", beacon.distance);
+        if (!query.exec())
+            qDebug() << query.lastError();
+    }
 }
 
 void DataLogger::insertPeaksData(PeaksData const &peak) {

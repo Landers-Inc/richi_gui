@@ -167,7 +167,6 @@ void DataProcessor::initialize() {
     beepWav = new QSound("qrc:/censor-beep-1.wav");
     beepWav->moveToThread(beepPlaying);
     beepTimer = new QTimer;
-    beepTimer->setInterval(2000);
     beepTimer->moveToThread(beepPlaying);
     connect(beepPlaying, &QThread::finished, beepWav, &QObject::deleteLater);
     connect(beepPlaying, &QThread::finished, beepTimer, &QObject::deleteLater);
@@ -228,7 +227,7 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
     }
 
     // Get timestamp in milliseconds from system
-    auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    unsigned long long int timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     if (stateInstance->getState() == PREBLAST || stateInstance->getState() == POSTBLAST) {
         double currentPower = 20.0 * log10(peaksData[peakToDisplay].power);
@@ -321,16 +320,16 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
 }
 
 void DataProcessor::saveBeacon(double distance) {
-    auto timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    unsigned long long int timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     // Save data in an struct
     DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
     // Log timestamp data
     emit logTimestamp(timestamp);
     if (stateInstance->getState() == PREBLAST) {
-        DataLogger::BeaconData beacon = {0, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+        DataLogger::BeaconData beacon = {0, 0, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
         emit logBeacon(beacon);
     } else if (stateInstance->getState() == POSTBLAST) {
-        DataLogger::BeaconData beacon = {1, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+        DataLogger::BeaconData beacon = {0, 1, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
         emit logBeacon(beacon);
     }
 }

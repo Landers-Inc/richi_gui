@@ -13,6 +13,7 @@
 #include <QtWidgets/QWidget>
 
 #include "dialogs.h"
+#include "dialogs/beacontable.h"
 #include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
@@ -39,6 +40,11 @@ class Ui_MainWindow {
     QCPBars *peaksBars;
 
     QQuickWidget *keyboardInputWidget;
+
+    BeaconInputDialog *inputBeaconWidget;
+    BeaconFoundDialog *foundBeaconWidget;
+    WarningDialog *warningWidget;
+    BeaconTable *beaconTable;
 
     QWidget *centralWidget;
     QFrame *statusLine;
@@ -76,9 +82,7 @@ class Ui_MainWindow {
     QVBoxLayout *beaconLayout;
     QPushButton *selectTimeAxis;
     QPushButton *selectBeacon;
-    BeaconInputDialog *inputBeaconWidget;
-    BeaconFoundDialog *foundBeaconWidget;
-    WarningDialog *warningWidget;
+
     QPushButton *beaconFound;
     QVBoxLayout *logLayout;
     QHBoxLayout *axisSelectLayout;

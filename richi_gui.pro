@@ -72,6 +72,7 @@ SOURCES += \
     src/qcustomplot.cpp
 
 HEADERS += \
+    inc/dialogs/beacontable.h \
     inc/abstract/datareader.h \
     inc/abstract/gpsreader.h \
     inc/mainwindow.h \

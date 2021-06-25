@@ -18,7 +18,7 @@ class DataReader : public QObject {
     std::vector<double> amplitudeData;
 
     // Class constructor
-    explicit DataReader(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg), amplitudeData(dataSize), timeData(dataSize){};
+    explicit DataReader(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg), timeData(dataSize), amplitudeData(dataSize){};
     // Class destructor
     virtual ~DataReader() {
         std::cout << "Closing DataReader instance" << std::endl;
