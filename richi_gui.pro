@@ -75,6 +75,7 @@ HEADERS += \
     inc/dialogs/beacontable.h \
     inc/abstract/datareader.h \
     inc/abstract/gpsreader.h \
+    inc/stylesheetdefines.h \
     inc/mainwindow.h \
     inc/dataprocessor.h \
     inc/ui_mainwindow.h \

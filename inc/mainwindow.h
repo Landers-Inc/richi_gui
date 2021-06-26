@@ -40,6 +40,7 @@ class MainWindow : public QMainWindow {
     DataProcessor *dataProcessor;
     DataLogger *dataLogger;
     StateMachine *stateInstance;
+    std::vector<BeaconTableItem *> beaconList;
     void startThreads();
     QVector<double> peakValues;
     double noiseFloor = -120.0;
@@ -104,6 +105,12 @@ class MainWindow : public QMainWindow {
     void startNewPostblastLog();
     // Qt Slot used to
     void standbyLog();
+    // Qt Slot used to
+    void tableLog();
+    // Qt Slot used to
+    void tableUpdate();
+    // Qt Slot used to
+    void tableCancel();
     // Qt Slot used to
     void switchView();
     // Qt Slot used to

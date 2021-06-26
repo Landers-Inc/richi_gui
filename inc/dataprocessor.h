@@ -64,7 +64,7 @@ class DataProcessor : public QObject {
     // Number of Space Vehicles used
     unsigned int nSV = 0;
     // Number of Space Vehicles used
-    unsigned int currentTime = 0;
+    unsigned long long int currentTime = 0;
     // Number of Space Vehicles used
     double currentPositionLatitude = 0;
     double currentPositionLongitude = 0;

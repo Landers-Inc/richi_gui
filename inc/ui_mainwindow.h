@@ -15,6 +15,7 @@
 #include "dialogs.h"
 #include "dialogs/beacontable.h"
 #include "qcustomplot.h"
+#include "stylesheetdefines.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -88,10 +89,12 @@ class Ui_MainWindow {
     QHBoxLayout *axisSelectLayout;
     QHBoxLayout *preblastLayout;
     QHBoxLayout *postblastLayout;
+    QHBoxLayout *standbyLayout;
     QPushButton *selectDistanceAxis;
     QPushButton *preblastLog;
     QPushButton *postblastLog;
     QPushButton *standbyLog;
+    QPushButton *tableLog;
     QHBoxLayout *saveLayout;
     QPushButton *switchLanguage;
     QPushButton *startLog;
@@ -122,6 +125,19 @@ class Ui_MainWindow {
             "font: 20px 'Ubuntu';"
             "font-weight: bold;"
             "}"
+            "QPushButton:hover {"
+            "background: qradialgradient("
+            "cx: 0.3, cy: -0.4, fx: 0.3, fy: 0.4,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 #bbb"
+            ");"
+            "}"
+            "QPushButton:pressed {"
+            "border-style: inset;"
+            "background: qradialgradient("
+            "cx: 0.4, cy: -0.1, fx: 0.4, fy: 0.1,"
+            "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
+            ");"
+            "}"
             "QPushButton#selectTimeAxis {"
             "border-top-right-radius: 0px;"
             "border-bottom-right-radius: 0px;"
@@ -133,6 +149,11 @@ class Ui_MainWindow {
             "border-right: 1px solid #000;"
             "}"
             "QPushButton#beaconFound {"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
+            "}"
+            "QPushButton#standbyLog {"
             "border-top-right-radius: 0px;"
             "border-bottom-right-radius: 0px;"
             "border-right: 1px solid #000;"
@@ -152,18 +173,10 @@ class Ui_MainWindow {
             "border-bottom-left-radius: 0px;"
             "border-left: 1px solid #000;"
             "}"
-            "QPushButton:hover {"
-            "background: qradialgradient("
-            "cx: 0.3, cy: -0.4, fx: 0.3, fy: 0.4,"
-            "radius: 1.35, stop: 0 #fff, stop: 1 #bbb"
-            ");"
-            "}"
-            "QPushButton:pressed {"
-            "border-style: inset;"
-            "background: qradialgradient("
-            "cx: 0.4, cy: -0.1, fx: 0.4, fy: 0.1,"
-            "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
-            ");"
+            "QPushButton#tableLog {"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
             "}"
             "QPushButton:focus {}");
 
@@ -172,6 +185,7 @@ class Ui_MainWindow {
         inputBeaconWidget = new BeaconInputDialog(MainWindow);
         foundBeaconWidget = new BeaconFoundDialog(MainWindow);
         warningWidget = new WarningDialog(MainWindow);
+        beaconTable = new BeaconTable(MainWindow);
 
         keyboardInputWidget = new QQuickWidget(QUrl("qrc:/main.qml"), MainWindow);
         keyboardInputWidget->setObjectName("keyboardInputWidget");
@@ -505,8 +519,7 @@ class Ui_MainWindow {
         selectTimeAxis->setObjectName("selectTimeAxis");
         selectTimeAxis->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         selectTimeAxis->setFocusPolicy(Qt::NoFocus);
-        selectTimeAxis->setStyleSheet(
-            "background-color: rgba(46, 154, 93, 0.4);");
+        selectTimeAxis->setStyleSheet(GREEN_BUTTON);
 
         axisSelectLayout->addWidget(selectTimeAxis);
 
@@ -514,8 +527,7 @@ class Ui_MainWindow {
         selectDistanceAxis->setObjectName("selectDistanceAxis");
         selectDistanceAxis->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         selectDistanceAxis->setFocusPolicy(Qt::NoFocus);
-        selectDistanceAxis->setStyleSheet(
-            "background-color: rgba(154, 46, 93, 0.4);");
+        selectDistanceAxis->setStyleSheet(RED_BUTTON);
 
         axisSelectLayout->addWidget(selectDistanceAxis);
 
@@ -533,8 +545,7 @@ class Ui_MainWindow {
         selectBeacon->setObjectName("selectBeacon");
         selectBeacon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         selectBeacon->setFocusPolicy(Qt::NoFocus);
-        selectBeacon->setStyleSheet(
-            "background-color: rgba(154, 46, 93, 0.4);");
+        selectBeacon->setStyleSheet(RED_BUTTON);
 
         preblastLayout->addWidget(selectBeacon);
 
@@ -542,8 +553,7 @@ class Ui_MainWindow {
         preblastLog->setObjectName("preblastLog");
         preblastLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         preblastLog->setFocusPolicy(Qt::NoFocus);
-        preblastLog->setStyleSheet(
-            "background-color: rgba(154, 46, 93, 0.4);");
+        preblastLog->setStyleSheet(RED_BUTTON);
 
         preblastLayout->addWidget(preblastLog);
 
@@ -562,8 +572,7 @@ class Ui_MainWindow {
         beaconFound->setObjectName("beaconFound");
         beaconFound->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         beaconFound->setFocusPolicy(Qt::NoFocus);
-        beaconFound->setStyleSheet(
-            "background-color: rgba(154, 46, 93, 0.4);");
+        beaconFound->setStyleSheet(RED_BUTTON);
 
         postblastLayout->addWidget(beaconFound);
 
@@ -571,8 +580,7 @@ class Ui_MainWindow {
         postblastLog->setObjectName("postblastLog");
         postblastLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         postblastLog->setFocusPolicy(Qt::NoFocus);
-        postblastLog->setStyleSheet(
-            "background-color: rgba(154, 46, 93, 0.4);");
+        postblastLog->setStyleSheet(RED_BUTTON);
 
         postblastLayout->addWidget(postblastLog);
 
@@ -581,14 +589,29 @@ class Ui_MainWindow {
 
         beaconLayout->addLayout(postblastLayout);
 
+        standbyLayout = new QHBoxLayout();
+        standbyLayout->setObjectName("standbyLayout");
+        standbyLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        standbyLayout->setContentsMargins(0, 0, 0, 0);
+        standbyLayout->setSpacing(0);
+
         standbyLog = new QPushButton(layoutWidget);
         standbyLog->setObjectName("standbyLog");
         standbyLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         standbyLog->setFocusPolicy(Qt::NoFocus);
-        standbyLog->setStyleSheet(
-            "background-color: rgba(46, 154, 93, 0.4);");
+        standbyLog->setStyleSheet(GREEN_BUTTON);
 
-        beaconLayout->addWidget(standbyLog);
+        standbyLayout->addWidget(standbyLog);
+
+        tableLog = new QPushButton(layoutWidget);
+        tableLog->setObjectName("tableLog");
+        tableLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        tableLog->setFocusPolicy(Qt::NoFocus);
+        tableLog->setStyleSheet(GREEN_BUTTON);
+
+        standbyLayout->addWidget(tableLog);
+
+        beaconLayout->addLayout(standbyLayout);
 
         beaconLayout->setStretch(0, 1);
         beaconLayout->setStretch(1, 1);
@@ -735,6 +758,7 @@ class Ui_MainWindow {
         preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPre-Tronadura"));
         postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPost-Tronadura"));
         standbyLog->setText(QCoreApplication::translate("MainWindow", "Estado inactivo"));
+        tableLog->setText(QCoreApplication::translate("MainWindow", "Mostrar tabla"));
         switchLanguage->setText(QCoreApplication::translate("MainWindow", "Español"));
         saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
         startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro"));
@@ -764,6 +788,9 @@ class Ui_MainWindow {
         warningWidget->warningLabel->setText(QCoreApplication::translate("MainWindow", "Comenzará un nuevo registro\nLuego de esto no podrá modificar el registro actual"));
         warningWidget->warningAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
         warningWidget->warningCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
+
+        beaconTable->updateButton->setText(QCoreApplication::translate("MainWindow", "Actualizar balizas"));
+        beaconTable->cancelButton->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
     }
 };
 

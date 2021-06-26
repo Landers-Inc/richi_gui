@@ -216,7 +216,7 @@ void MainWindow::openBeaconInput() {
         if (!ui->inputBeaconWidget->dialogInputWidget->isVisible()) {
             ui->inputBeaconWidget->dialogInputWidget->setVisible(true);
             ui->inputBeaconWidget->beaconInputWidget->setVisible(true);
-            ui->inputBeaconWidget->beaconTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza") + ": " + QString::number(dataLogger->getPreblastCount() + 1));
+            ui->inputBeaconWidget->beaconTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza") + ": " + QString::number(dataLogger->beaconPreCount + 1));
             ui->keyboardInputWidget->setVisible(true);
             ui->inputBeaconWidget->beaconInputWidget->activateWindow();
             ui->inputBeaconWidget->beaconInputWidget->setFocus(Qt::ActiveWindowFocusReason);
@@ -303,10 +303,10 @@ void MainWindow::warningAccept() {
     emit logConfiguration(conf);
     stateInstance->newLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
-    ui->preblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectBeacon->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->postblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->beaconFound->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->preblastLog->setStyleSheet(RED_BUTTON);
+    ui->selectBeacon->setStyleSheet(RED_BUTTON);
+    ui->postblastLog->setStyleSheet(RED_BUTTON);
+    ui->beaconFound->setStyleSheet(RED_BUTTON);
 }
 
 void MainWindow::warningCancel() {
@@ -318,23 +318,23 @@ void MainWindow::warningCancel() {
 
 void MainWindow::dispFrequencyOne() {
     emit setPeakTimeserie(0);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectOneFreq->setStyleSheet(GREEN_BUTTON);
+    ui->selectTwoFreq->setStyleSheet(RED_BUTTON);
+    ui->selectThreeFreq->setStyleSheet(RED_BUTTON);
 }
 
 void MainWindow::dispFrequencyTwo() {
     emit setPeakTimeserie(1);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectOneFreq->setStyleSheet(RED_BUTTON);
+    ui->selectTwoFreq->setStyleSheet(GREEN_BUTTON);
+    ui->selectThreeFreq->setStyleSheet(RED_BUTTON);
 }
 
 void MainWindow::dispFrequencyThree() {
     emit setPeakTimeserie(2);
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->selectOneFreq->setStyleSheet(RED_BUTTON);
+    ui->selectTwoFreq->setStyleSheet(RED_BUTTON);
+    ui->selectThreeFreq->setStyleSheet(GREEN_BUTTON);
 }
 
 void MainWindow::startNewLog() {
@@ -343,6 +343,45 @@ void MainWindow::startNewLog() {
         ui->warningWidget->warningWidget->setVisible(true);
         ui->warningWidget->warningWidget->activateWindow();
         ui->warningWidget->warningWidget->setFocus(Qt::ActiveWindowFocusReason);
+    }
+}
+
+void MainWindow::tableLog() {
+    if (!ui->beaconTable->tableWidget->isVisible()) {
+        ui->beaconTable->tableWidget->setVisible(true);
+        ui->beaconTable->tableWidget->activateWindow();
+        ui->beaconTable->tableWidget->setFocus(Qt::ActiveWindowFocusReason);
+        unsigned int rowsCount = std::max(dataLogger->beaconPreCount, dataLogger->beaconPostCount);
+        for (int i = 0; i < rowsCount; i++) {
+            BeaconTableItem *itemLayout = new BeaconTableItem();
+            ui->beaconTable->beaconListLayout->addLayout(itemLayout);
+            beaconList.push_back(itemLayout);
+        }
+        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+            beaconList[i]->id->setText(QString::number(i + 1));
+            beaconList[i]->preDistance->setText(QString::number(dataLogger->beaconPreData[i].distance, 'g'));
+            beaconList[i]->prePower->setText(QString::number(20.0 * log10(dataLogger->beaconPreData[i].power), 'g'));
+        }
+    }
+}
+
+void MainWindow::tableCancel() {
+    if (ui->beaconTable->tableWidget->isVisible()) {
+        ui->beaconTable->tableWidget->setVisible(false);
+        for (int i = 0; i < beaconList.size(); i++) {
+            delete beaconList[i];
+        }
+        beaconList.clear();
+    }
+}
+
+void MainWindow::tableUpdate() {
+    if (ui->beaconTable->tableWidget->isVisible()) {
+        ui->beaconTable->tableWidget->setVisible(false);
+        for (int i = 0; i < beaconList.size(); i++) {
+            delete beaconList[i];
+        }
+        beaconList.clear();
     }
 }
 
@@ -369,45 +408,45 @@ void MainWindow::switchLanguage() {
 void MainWindow::startNewPreblastLog() {
     stateInstance->preblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
-    ui->preblastLog->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->selectBeacon->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->postblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->beaconFound->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->standbyLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->preblastLog->setStyleSheet(GREEN_BUTTON);
+    ui->selectBeacon->setStyleSheet(GREEN_BUTTON);
+    ui->postblastLog->setStyleSheet(RED_BUTTON);
+    ui->beaconFound->setStyleSheet(RED_BUTTON);
+    ui->standbyLog->setStyleSheet(RED_BUTTON);
 }
 
 void MainWindow::startNewPostblastLog() {
     stateInstance->postblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
-    ui->preblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectBeacon->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->postblastLog->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->beaconFound->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->standbyLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->preblastLog->setStyleSheet(RED_BUTTON);
+    ui->selectBeacon->setStyleSheet(RED_BUTTON);
+    ui->postblastLog->setStyleSheet(GREEN_BUTTON);
+    ui->beaconFound->setStyleSheet(GREEN_BUTTON);
+    ui->standbyLog->setStyleSheet(RED_BUTTON);
 }
 
 void MainWindow::standbyLog() {
     stateInstance->gotoIdle();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
-    ui->preblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectBeacon->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->postblastLog->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->beaconFound->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->standbyLog->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->preblastLog->setStyleSheet(RED_BUTTON);
+    ui->selectBeacon->setStyleSheet(RED_BUTTON);
+    ui->postblastLog->setStyleSheet(RED_BUTTON);
+    ui->beaconFound->setStyleSheet(RED_BUTTON);
+    ui->standbyLog->setStyleSheet(GREEN_BUTTON);
 }
 
 void MainWindow::selectTimeAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
-    ui->selectTimeAxis->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectTimeAxis->setStyleSheet(GREEN_BUTTON);
+    ui->selectDistanceAxis->setStyleSheet(RED_BUTTON);
     emit setViewAxis(0);
     ui->timeDistance = 0;
 }
 
 void MainWindow::selectDistanceAxis() {
     ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Distance [meters]"));
-    ui->selectTimeAxis->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectDistanceAxis->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
+    ui->selectTimeAxis->setStyleSheet(RED_BUTTON);
+    ui->selectDistanceAxis->setStyleSheet(GREEN_BUTTON);
     emit setViewAxis(1);
     ui->timeDistance = 1;
 }
@@ -431,6 +470,7 @@ void MainWindow::connectButtons() {
     connect(ui->preblastLog, &QPushButton::released, this, &MainWindow::startNewPreblastLog);
     connect(ui->postblastLog, &QPushButton::released, this, &MainWindow::startNewPostblastLog);
     connect(ui->standbyLog, &QPushButton::released, this, &MainWindow::standbyLog);
+    connect(ui->tableLog, &QPushButton::released, this, &MainWindow::tableLog);
 
     connect(ui->inputBeaconWidget->beaconInputAccept, &QPushButton::released, this, &MainWindow::beaconInputAccept);
     connect(ui->inputBeaconWidget->beaconInputCancel, &QPushButton::released, this, &MainWindow::beaconInputCancel);
@@ -441,6 +481,9 @@ void MainWindow::connectButtons() {
 
     connect(ui->warningWidget->warningAccept, &QPushButton::released, this, &MainWindow::warningAccept);
     connect(ui->warningWidget->warningCancel, &QPushButton::released, this, &MainWindow::warningCancel);
+
+    connect(ui->beaconTable->updateButton, &QPushButton::released, this, &MainWindow::tableUpdate);
+    connect(ui->beaconTable->cancelButton, &QPushButton::released, this, &MainWindow::tableCancel);
 }
 
 MainWindow::~MainWindow() {
@@ -532,7 +575,7 @@ void MainWindow::setupGUI() {
     ui->barsPlot->yAxis->grid()->setVisible(true);
     ui->barsPlot->yAxis->grid()->setSubGridVisible(true);
 
-    ui->selectOneFreq->setStyleSheet("background-color: rgba(46, 154, 93, 0.4);");
-    ui->selectTwoFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
-    ui->selectThreeFreq->setStyleSheet("background-color: rgba(154, 46, 93, 0.4);");
+    ui->selectOneFreq->setStyleSheet(GREEN_BUTTON);
+    ui->selectTwoFreq->setStyleSheet(RED_BUTTON);
+    ui->selectThreeFreq->setStyleSheet(RED_BUTTON);
 }

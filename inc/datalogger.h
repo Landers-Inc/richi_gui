@@ -48,6 +48,14 @@ class DataLogger : public QObject {
     typedef struct SpectrumData {
         std::vector<double> spectrum;  // Here we save the complete spectrum
     } SpectrumData;
+    // Current beacon preblast count
+    unsigned int beaconPreCount = 0;
+    // Current beacon postblast count
+    unsigned int beaconPostCount = 0;
+    // Current beacon postblast count
+    std::vector<BeaconData> beaconPreData;
+    // Current beacon postblast count
+    std::vector<BeaconData> beaconPostData;
 
    private:
     // Static object to store the singleton instance
@@ -58,14 +66,6 @@ class DataLogger : public QObject {
     unsigned int timestampId = 0;
     // Current configuration id
     unsigned int configurationId = 0;
-    // Current beacon preblast count
-    unsigned int beaconPreCount = 0;
-    // Current beacon postblast count
-    unsigned int beaconPostCount = 0;
-    // Current beacon postblast count
-    std::vector<BeaconData> beaconPreData;
-    // Current beacon postblast count
-    std::vector<BeaconData> beaconPostData;
 
     // Private constructor so that no other objects can be created.
     DataLogger() {
@@ -99,9 +99,6 @@ class DataLogger : public QObject {
         if (!instance) instance = new DataLogger;
         return instance;
     }
-
-    unsigned int getPreblastCount() { return beaconPreCount; };
-    unsigned int getPostblastCount() { return beaconPostCount; };
 
    public slots:
     void insertConfiguration(Configuration const &conf);
