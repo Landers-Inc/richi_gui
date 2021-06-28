@@ -1,15 +1,5 @@
 #include "dataprocessor.h"
 
-double measureDistance(double lat1, double lon1, double lat2, double lon2) {
-    double R = 6378.137;
-    double dLat = lat2 * M_PI / 180.0 - lat1 * M_PI / 180.0;
-    double dLon = lon2 * M_PI / 180.0 - lon1 * M_PI / 180.0;
-    double a = std::sin(dLat / 2.0) * std::sin(dLat / 2.0) + std::cos(lat1 * M_PI / 180.0) * std::cos(lat2 * M_PI / 180.0) * std::sin(dLon / 2.0) * sin(dLon / 2.0);
-    double c = 2.0 * std::atan2(sqrt(a), sqrt(1 - a));
-    double d = R * c;
-    return std::abs(d * 1000.0);
-}
-
 DataProcessor::~DataProcessor() {
     std::cout << "Closing DataProcessor instance" << std::endl;
     dataAcquiring->quit();
@@ -129,7 +119,7 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     double noiseFloor = calculateNoiseFloor(averageFFT[0]);
 
     // Emit signal to MainWindow to update peak frequency and power
-    emit setNoiseFloor(noiseFloor);
+    emit setNoiseFloor(20.0 * log10(noiseFloor));
     emit peakOneReady(peaksData[0].frequency, 20.0 * log10(peaksData[0].power));
     emit peakTwoReady(peaksData[1].frequency, 20.0 * log10(peaksData[1].power));
     emit peakThreeReady(peaksData[2].frequency, 20.0 * log10(peaksData[2].power));
@@ -326,10 +316,10 @@ void DataProcessor::saveBeacon(double distance) {
     // Log timestamp data
     emit logTimestamp(timestamp);
     if (stateInstance->getState() == PREBLAST) {
-        DataLogger::BeaconData beacon = {0, 0, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+        DataLogger::BeaconData beacon = {0, 0, peakToDisplay, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
         emit logBeacon(beacon);
     } else if (stateInstance->getState() == POSTBLAST) {
-        DataLogger::BeaconData beacon = {0, 1, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+        DataLogger::BeaconData beacon = {0, 1, peakToDisplay, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
         emit logBeacon(beacon);
     }
 }

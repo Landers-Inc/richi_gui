@@ -31,6 +31,7 @@ void DataLogger::setDatabaseTables() {
         "timedata_id INT UNSIGNED NOT NULL, "
         "configuration_id INT UNSIGNED NOT NULL, "
         "register_type INT UNSIGNED NOT NULL, "
+        "beacon_type INT UNSIGNED NOT NULL, "
         "distance DOUBLE NOT NULL,"
         "frequency DOUBLE NOT NULL,"
         "power DOUBLE NOT NULL,"
@@ -92,6 +93,7 @@ void DataLogger::getLastBeacons() {
     query.prepare(
         "SELECT id, "
         "register_type, "
+        "beacon_type, "
         "distance, "
         "frequency, "
         "power "
@@ -107,10 +109,11 @@ void DataLogger::getLastBeacons() {
             ++beaconPreCount;
             BeaconData tmp;
             tmp.id = query.value(0).toUInt();
-            tmp.registerType = query.value(1).toUInt();
-            tmp.distance = query.value(2).toDouble();
-            tmp.frequency = query.value(3).toDouble();
-            tmp.power = query.value(4).toDouble();
+            tmp.beaconType = query.value(1).toUInt();
+            tmp.registerType = query.value(2).toUInt();
+            tmp.distance = query.value(3).toDouble();
+            tmp.frequency = query.value(4).toDouble();
+            tmp.power = query.value(5).toDouble();
             beaconPreData.push_back(tmp);
         }
     } else
@@ -120,6 +123,7 @@ void DataLogger::getLastBeacons() {
     query.prepare(
         "SELECT id, "
         "register_type, "
+        "beacon_type, "
         "distance, "
         "frequency, "
         "power "
@@ -135,10 +139,11 @@ void DataLogger::getLastBeacons() {
             ++beaconPostCount;
             BeaconData tmp;
             tmp.id = query.value(0).toUInt();
-            tmp.registerType = query.value(1).toUInt();
-            tmp.distance = query.value(2).toDouble();
-            tmp.frequency = query.value(3).toDouble();
-            tmp.power = query.value(4).toDouble();
+            tmp.beaconType = query.value(1).toUInt();
+            tmp.registerType = query.value(2).toUInt();
+            tmp.distance = query.value(3).toDouble();
+            tmp.frequency = query.value(4).toDouble();
+            tmp.power = query.value(5).toDouble();
             beaconPostData.push_back(tmp);
         }
     } else
@@ -260,6 +265,7 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
         "timedata_id,"
         "configuration_id,"
         "register_type,"
+        "beacon_type,"
         "distance,"
         "frequency,"
         "power"
@@ -267,6 +273,7 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
         ":timedata_id,"
         ":configuration_id,"
         ":register_type,"
+        ":beacon_type,"
         ":distance,"
         ":frequency,"
         ":power"
@@ -274,6 +281,7 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
     query.bindValue(":timedata_id", timestampId);
     query.bindValue(":configuration_id", configurationId);
     query.bindValue(":register_type", beacon.registerType);
+    query.bindValue(":beacon_type", beacon.beaconType);
     query.bindValue(":distance", beacon.distance);
     query.bindValue(":frequency", beacon.frequency);
     query.bindValue(":power", beacon.power);

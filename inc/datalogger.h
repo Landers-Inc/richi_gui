@@ -25,6 +25,7 @@ class DataLogger : public QObject {
     typedef struct BeaconData {
         unsigned int id;            // Save id from beacon
         unsigned int registerType;  // Register type for beacon (Pre or Post blast)
+        unsigned int beaconType;    // Beacon type (A, B or C)
         double distance;            // Distance from surface
         double frequency;           // Frequency of the beacon
         double power;               // Frequency of the beacon
@@ -78,7 +79,6 @@ class DataLogger : public QObject {
             setDatabaseTables();
             getLastIDs();
             getLastBeacons();
-            beaconPostData[0].distance = 20;
             updateBeaconData();
         } else {
             qDebug() << loggerDatabase.lastError();

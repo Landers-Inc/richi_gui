@@ -16,6 +16,7 @@
 #include "qcustomplot.h"
 #include "statemachine.h"
 #include "usbadc.h"
+#include "utils.h"
 
 // Class dedicated to process incoming data
 class DataProcessor : public QObject {

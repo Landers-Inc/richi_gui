@@ -62,6 +62,7 @@ DEFINES += PA_USE_OSS=0
 
 SOURCES += \
     main.cpp \
+    src/utils.cpp \
     src/mainwindow.cpp \
     src/dataprocessor.cpp \
     src/usbadc.cpp \
@@ -79,6 +80,7 @@ HEADERS += \
     inc/mainwindow.h \
     inc/dataprocessor.h \
     inc/ui_mainwindow.h \
+    inc/utils.h \
     inc/usbadc.h \
     inc/fakegps.h \
     inc/emlidgps.h \

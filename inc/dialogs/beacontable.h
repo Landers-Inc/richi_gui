@@ -11,6 +11,7 @@ class BeaconTableItem : public QHBoxLayout {
     Q_OBJECT
    public:
     QLabel *id;
+    QLabel *beaconType;
     QLabel *preDistance;
     QLabel *prePower;
     QLabel *postPower;
@@ -23,6 +24,11 @@ class BeaconTableItem : public QHBoxLayout {
         id->setFixedHeight(40);
         id->setAlignment(Qt::AlignCenter);
         id->setStyleSheet(BEACON_TABLE_ITEM);
+        beaconType = new QLabel();
+        beaconType->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        beaconType->setFixedHeight(40);
+        beaconType->setAlignment(Qt::AlignCenter);
+        beaconType->setStyleSheet(BEACON_TABLE_ITEM);
         preDistance = new QLabel();
         preDistance->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         preDistance->setFixedHeight(40);
@@ -39,6 +45,7 @@ class BeaconTableItem : public QHBoxLayout {
         postPower->setAlignment(Qt::AlignCenter);
         postPower->setStyleSheet(BEACON_TABLE_ITEM);
         this->addWidget(id);
+        this->addWidget(beaconType);
         this->addWidget(preDistance);
         this->addWidget(prePower);
         this->addWidget(postPower);
@@ -46,6 +53,7 @@ class BeaconTableItem : public QHBoxLayout {
         this->setStretch(1, 1);
         this->setStretch(2, 1);
         this->setStretch(3, 1);
+        this->setStretch(4, 1);
     }
 };
 
@@ -93,10 +101,6 @@ class BeaconTable : public QDialog {
         beaconListLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
         beaconLabelsLayout = new BeaconTableItem();
-        beaconLabelsLayout->id->setText(QCoreApplication::translate("MainWindow", "Id"));
-        beaconLabelsLayout->preDistance->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza Pre"));
-        beaconLabelsLayout->prePower->setText(QCoreApplication::translate("MainWindow", "Potencia Baliza Pre"));
-        beaconLabelsLayout->postPower->setText(QCoreApplication::translate("MainWindow", "Potencia Baliza Post"));
 
         beaconListLayout->addLayout(beaconLabelsLayout);
 

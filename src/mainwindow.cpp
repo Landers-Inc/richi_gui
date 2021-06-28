@@ -152,6 +152,7 @@ void MainWindow::startThreads() {
     connect(dataProcessor, &DataProcessor::dataReady, this, &MainWindow::updateData, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::fftReady, this, &MainWindow::updateFFT, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::plotData, this, &MainWindow::updatePlots, Qt::QueuedConnection);
+    connect(dataProcessor, &DataProcessor::setNoiseFloor, this, &MainWindow::updateNoiseFloor, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::peakOneReady, this, &MainWindow::updateOnePeak, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::peakTwoReady, this, &MainWindow::updateTwoPeak, Qt::QueuedConnection);
     connect(dataProcessor, &DataProcessor::peakThreeReady, this, &MainWindow::updateThreePeak, Qt::QueuedConnection);
@@ -239,12 +240,27 @@ void MainWindow::openBeaconFound() {
 void MainWindow::beaconFoundAccept() {
     if (ui->foundBeaconWidget->dialogFoundWidget->isVisible()) {
         QString id = ui->foundBeaconWidget->beaconOneFoundText->text();
+        if (id.toUInt() > dataLogger->beaconPreCount) {
+            warningStatus(QCoreApplication::translate("MainWindow", "Status: No puede ingresar baliza no existente"));
+        } else {
+            bool notRepeated = true;
+            for (auto beaconPost : dataLogger->beaconPostData) {
+                if ((unsigned int)beaconPost.distance == id.toUInt()) {
+                    notRepeated = false;
+                    break;
+                }
+            }
+            if (notRepeated) {
         emit logBeacon(id.toDouble());
+                warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza post-tronadura registrada"));
+            } else {
+                warningStatus(QCoreApplication::translate("MainWindow", "Status: La baliza ya fue ingresada"));
+            }
+        }
         ui->foundBeaconWidget->beaconOneFoundText->setText("");
         ui->foundBeaconWidget->dialogFoundWidget->setVisible(false);
         ui->foundBeaconWidget->beaconFoundWidget->setVisible(false);
         ui->keyboardInputWidget->setVisible(false);
-        warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza post-tronadura registrada"));
     }
 }
 
@@ -359,8 +375,13 @@ void MainWindow::tableLog() {
         }
         for (int i = 0; i < dataLogger->beaconPreCount; i++) {
             beaconList[i]->id->setText(QString::number(i + 1));
+            beaconList[i]->beaconType->setText(QString((char)(dataLogger->beaconPreData[i].beaconType + 'A')));
             beaconList[i]->preDistance->setText(QString::number(dataLogger->beaconPreData[i].distance, 'g'));
             beaconList[i]->prePower->setText(QString::number(20.0 * log10(dataLogger->beaconPreData[i].power), 'g'));
+        }
+        for (int i = 0; i < dataLogger->beaconPostCount; i++) {
+            int idPost = (int)dataLogger->beaconPostData[i].distance;
+            beaconList[idPost - 1]->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
         }
     }
 }
@@ -532,7 +553,7 @@ void MainWindow::setupGUI() {
     ui->textLabel->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
     ui->textLabel->setPadding(QMargins(5, 5, 5, 5));
     ui->textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
-    ui->textLabel->position->setCoords(0.75, 0);
+    ui->textLabel->position->setCoords(0.85, 0);
     ui->textLabel->setFont(QFont(font().family(), 10));
     ui->textLabel->setPen(QPen(Qt::black));
     ui->textLabel->setBrush(QBrush(Qt::white));
