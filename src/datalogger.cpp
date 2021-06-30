@@ -91,13 +91,15 @@ void DataLogger::getLastBeacons() {
 
     query.clear();
     query.prepare(
-        "SELECT id, "
-        "register_type, "
-        "beacon_type, "
-        "distance, "
-        "frequency, "
-        "power "
-        "FROM BeaconData "
+        "SELECT t1.id, "
+        "t1.beacon_type, "
+        "t1.distance, "
+        "t1.frequency, "
+        "t1.power, "
+        "t2.lat_position, "
+        "t2.lng_position "
+        "FROM BeaconData t1 "
+        "JOIN TimeData t2 ON t1.timedata_id = t2.id "
         "WHERE configuration_id=:configuration_id "
         "AND register_type=0 "
         "ORDER BY id ASC");
@@ -107,27 +109,31 @@ void DataLogger::getLastBeacons() {
     if (query.exec()) {
         while (query.next()) {
             ++beaconPreCount;
-            BeaconData tmp;
+            BeaconItem tmp;
             tmp.id = query.value(0).toUInt();
             tmp.beaconType = query.value(1).toUInt();
-            tmp.registerType = query.value(2).toUInt();
-            tmp.distance = query.value(3).toDouble();
-            tmp.frequency = query.value(4).toDouble();
-            tmp.power = query.value(5).toDouble();
+            tmp.distance = query.value(2).toDouble();
+            tmp.frequency = query.value(3).toDouble();
+            tmp.power = query.value(4).toDouble();
+            tmp.latPosition = query.value(5).toDouble();
+            tmp.lngPosition = query.value(6).toDouble();
             beaconPreData.push_back(tmp);
         }
-    } else
+    } else {
         qDebug() << query.lastError();
+    }
 
     query.clear();
     query.prepare(
-        "SELECT id, "
-        "register_type, "
-        "beacon_type, "
-        "distance, "
-        "frequency, "
-        "power "
-        "FROM BeaconData "
+        "SELECT t1.id, "
+        "t1.beacon_type, "
+        "t1.distance, "
+        "t1.frequency, "
+        "t1.power, "
+        "t2.lat_position, "
+        "t2.lng_position "
+        "FROM BeaconData t1 "
+        "JOIN TimeData t2 ON t1.timedata_id = t2.id "
         "WHERE configuration_id=:configuration_id "
         "AND register_type=1 "
         "ORDER BY id ASC");
@@ -137,13 +143,14 @@ void DataLogger::getLastBeacons() {
     if (query.exec()) {
         while (query.next()) {
             ++beaconPostCount;
-            BeaconData tmp;
+            BeaconItem tmp;
             tmp.id = query.value(0).toUInt();
             tmp.beaconType = query.value(1).toUInt();
-            tmp.registerType = query.value(2).toUInt();
-            tmp.distance = query.value(3).toDouble();
-            tmp.frequency = query.value(4).toDouble();
-            tmp.power = query.value(5).toDouble();
+            tmp.distance = query.value(2).toDouble();
+            tmp.frequency = query.value(3).toDouble();
+            tmp.power = query.value(4).toDouble();
+            tmp.latPosition = query.value(5).toDouble();
+            tmp.lngPosition = query.value(6).toDouble();
             beaconPostData.push_back(tmp);
         }
     } else

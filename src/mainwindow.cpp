@@ -367,9 +367,10 @@ void MainWindow::tableLog() {
         ui->beaconTable->tableWidget->setVisible(true);
         ui->beaconTable->tableWidget->activateWindow();
         ui->beaconTable->tableWidget->setFocus(Qt::ActiveWindowFocusReason);
+        ui->keyboardInputWidget->setVisible(true);
         unsigned int rowsCount = std::max(dataLogger->beaconPreCount, dataLogger->beaconPostCount);
         for (int i = 0; i < rowsCount; i++) {
-            BeaconTableItem *itemLayout = new BeaconTableItem();
+            BeaconTableItem *itemLayout = new BeaconTableItem(ui->beaconTable->tableWidget);
             ui->beaconTable->beaconListLayout->addLayout(itemLayout);
             beaconList.push_back(itemLayout);
         }
@@ -382,6 +383,13 @@ void MainWindow::tableLog() {
         for (int i = 0; i < dataLogger->beaconPostCount; i++) {
             int idPost = (int)dataLogger->beaconPostData[i].distance;
             beaconList[idPost - 1]->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
+            beaconList[idPost - 1]->diffDistance->setText(
+                QString::number(
+                    measureDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
+                                    dataLogger->beaconPreData[idPost - 1].lngPosition,
+                                    dataLogger->beaconPostData[i].latPosition,
+                                    dataLogger->beaconPostData[i].lngPosition),
+                    'g'));
         }
     }
 }

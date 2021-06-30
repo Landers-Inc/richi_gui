@@ -28,8 +28,19 @@ class DataLogger : public QObject {
         unsigned int beaconType;    // Beacon type (A, B or C)
         double distance;            // Distance from surface
         double frequency;           // Frequency of the beacon
-        double power;               // Frequency of the beacon
+        double power;               // Power received from the beacon
     } BeaconData;
+
+    // We define an structure to save the data from one beacon
+    typedef struct BeaconItem {
+        unsigned int id;          // Save id from beacon
+        unsigned int beaconType;  // Beacon type (A, B or C)
+        double distance;          // Distance from surface
+        double frequency;         // Frequency of the beacon
+        double power;             // Power received from the beacon
+        double latPosition;       // Latitude of the beacon
+        double lngPosition;       // Longitude of the beacon
+    } BeaconItem;
 
     // We define an structure to save the timestamp and position
     typedef struct TimeData {
@@ -53,10 +64,10 @@ class DataLogger : public QObject {
     unsigned int beaconPreCount = 0;
     // Current beacon postblast count
     unsigned int beaconPostCount = 0;
-    // Current beacon postblast count
-    std::vector<BeaconData> beaconPreData;
-    // Current beacon postblast count
-    std::vector<BeaconData> beaconPostData;
+    // Current beacon preblast data
+    std::vector<BeaconItem> beaconPreData;
+    // Current beacon postblast data
+    std::vector<BeaconItem> beaconPostData;
 
    private:
     // Static object to store the singleton instance
