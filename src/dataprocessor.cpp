@@ -154,7 +154,8 @@ void DataProcessor::initialize() {
 
     beepPlaying = new QThread();
     beepPlaying->setObjectName("playing thread");
-    beepWav = new QSound("qrc:/censor-beep-1.wav");
+    beepWav = new QSound("/home/pi/Documents/GUI/censor-beep-1.wav");
+    // beepWav = new QSound("qrc:/censor-beep-1.wav");
     beepWav->moveToThread(beepPlaying);
     beepTimer = new QTimer;
     beepTimer->moveToThread(beepPlaying);
@@ -179,7 +180,11 @@ void DataProcessor::initialize() {
     // Initialize GPS instance
     gpsAcquiring = new QThread();
     gpsAcquiring->setObjectName("gps thread");
-    gpsAcquisition = new EMLIDGPS();
+    try {
+        gpsAcquisition = new EMLIDGPS();
+    } catch (...) {
+        gpsAcquisition = new FakeGPS();
+    }
     gpsAcquisition->moveToThread(gpsAcquiring);
     // Connect this object with GPS instance to receive new position data. DirectConnection since it is high priority
     connect(gpsAcquiring, &QThread::started, gpsAcquisition, &GPSReader::run);
@@ -224,18 +229,26 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
         signed int nextBeepLevel = 0;
         if (currentPower < -100.0)
             nextBeepLevel = -120;
-        else if (-100.0 <= currentPower && currentPower < -90.0)
+        else if (-100.0 <= currentPower && currentPower < -93.33)
             nextBeepLevel = -100;
-        else if (-90.0 <= currentPower && currentPower < -86.0)
-            nextBeepLevel = -90;
-        else if (-86.0 <= currentPower && currentPower < -83.0)
+        else if (-93.33 <= currentPower && currentPower < -86.67)
+            nextBeepLevel = -93;
+        else if (-86.67 <= currentPower && currentPower < -80.00)
             nextBeepLevel = -86;
-        else if (-83.0 <= currentPower && currentPower < -80.0)
-            nextBeepLevel = -83;
-        else if (-80.0 <= currentPower && currentPower < -70.0)
+        else if (-80.00 <= currentPower && currentPower < -73.33)
             nextBeepLevel = -80;
-        else if (-70.0 < currentPower)
-            nextBeepLevel = -70;
+        else if (-73.33 <= currentPower && currentPower < -66.67)
+            nextBeepLevel = -73;
+        else if (-66.67 <= currentPower && currentPower < -60.00)
+            nextBeepLevel = -66;
+        else if (-60.00 <= currentPower && currentPower < -53.33)
+            nextBeepLevel = -60;
+        else if (-53.33 <= currentPower && currentPower < -46.67)
+            nextBeepLevel = -53;
+        else if (-46.67 <= currentPower && currentPower < -40.00)
+            nextBeepLevel = -46;
+        else if (-40.0 < currentPower)
+            nextBeepLevel = -40;
 
         if (nextBeepLevel != currentBeepLevel) {
             currentBeepLevel = nextBeepLevel;
@@ -246,26 +259,40 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
                 case -100:
                     emit beepStart(2000);
                     break;
-                case -90:
-                    emit beepStart(1500);
+                case -93:
+                    emit beepStart(1833);
                     break;
                 case -86:
-                    emit beepStart(1250);
-                    break;
-                case -83:
-                    emit beepStart(1000);
+                    emit beepStart(1666);
                     break;
                 case -80:
-                    emit beepStart(750);
+                    emit beepStart(1500);
                     break;
-                case -70:
+                case -73:
+                    emit beepStart(1333);
+                    break;
+                case -66:
+                    emit beepStart(1166);
+                    break;
+                case -60:
+                    emit beepStart(1000);
+                    break;
+                case -53:
+                    emit beepStart(833);
+                    break;
+                case -46:
+                    emit beepStart(666);
+                    break;
+                case -40:
                     emit beepStart(500);
                     break;
             }
         }
     } else if (stateInstance->getState() == IDLE) {
-        currentBeepLevel = -120;
-        emit beepStop();
+        if (currentBeepLevel != -120) {
+            currentBeepLevel = -120;
+            emit beepStop();
+        }
     }
 
     if (stateInstance->getState() == POSTBLAST) {

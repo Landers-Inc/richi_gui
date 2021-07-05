@@ -35,6 +35,7 @@ class DataProcessor : public QObject {
 
    public:
     explicit DataProcessor(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg) {
+        std::cout << "Starting DataProcessor instance" << std::endl;
         initialize();
     };
     ~DataProcessor();

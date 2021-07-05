@@ -12,6 +12,7 @@ USBADC::~USBADC() {
 bool USBADC::open() {
     PaError err;
 
+    std::cout << "PortAudio initialization" << std::endl;
     err = Pa_Initialize();
     if (err != paNoError)
         return false;
@@ -20,6 +21,7 @@ bool USBADC::open() {
 
     int numDevices;
     numDevices = Pa_GetDeviceCount();
+    std::cout << "PortAudio devices " << numDevices << std::endl;
     if (numDevices < 0) {
         std::cout << "ERROR: Pa_CountDevices returned " << numDevices << std::endl;
         err = numDevices;
@@ -27,13 +29,22 @@ bool USBADC::open() {
 
     const PaDeviceInfo *deviceInfo;
     int deviceIndex = 0;
-
+    bool usbDetected = false;
+    unsigned int tryCount = 0;
+    // do {
+    std::cout << "Trying to detect USB device " << ++tryCount << std::endl;
     for (deviceIndex = 0; deviceIndex < numDevices; deviceIndex++) {
         deviceInfo = Pa_GetDeviceInfo(deviceIndex);
+        std::cout << "Checking " << deviceInfo->name << " device" << std::endl;
         const std::string name(deviceInfo->name);
-        if (name.find("USB") != std::string::npos)
+        if (name.find("USB") != std::string::npos) {
+            usbDetected = true;
             break;
+        }
     }
+    // } while (!usbDetected);
+
+    std::cout << "Device " << deviceInfo->name << " selected" << std::endl;
 
     inputParameters.device = deviceIndex;
     if (inputParameters.device == paNoDevice)
@@ -45,7 +56,9 @@ bool USBADC::open() {
     inputParameters.hostApiSpecificStreamInfo = nullptr;
 
     // In case Alsa fails at the beginning, try several times
+    tryCount = 0;
     do {
+        std::cout << "Trying to open stream " << ++tryCount << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         err = Pa_OpenStream(
             &stream,

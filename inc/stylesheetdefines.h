@@ -25,5 +25,5 @@
 #define BEACON_TABLE_ITEM     \
     "border: 1px solid #000;" \
     "color: black;"           \
-    "font: 20px 'Ubuntu';"    \
+    "font: 18px 'Ubuntu';"    \
     "font-weight: bold;"

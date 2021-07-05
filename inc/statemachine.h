@@ -48,5 +48,7 @@ class StateMachine : public QObject {
     // Current state in the state machine
     State currentState = STARTUP;
 
-    StateMachine(){};
+    StateMachine() {
+        std::cout << "Starting StateMachine instance" << std::endl;
+    };
 };

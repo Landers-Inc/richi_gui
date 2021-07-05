@@ -20,7 +20,9 @@ class GPSReader : public QObject {
     // Loop boolean control
     bool running = true;
     // Class constructor
-    explicit GPSReader(QObject *parent = 0) : QObject(parent){};
+    explicit GPSReader(QObject *parent = 0) : QObject(parent) {
+        std::cout << "Starting GPSReader instance" << std::endl;
+    };
     // Class destructor
     virtual ~GPSReader() {
         std::cout << "Closing GPSReader instance" << std::endl;

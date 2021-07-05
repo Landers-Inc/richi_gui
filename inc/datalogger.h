@@ -81,6 +81,7 @@ class DataLogger : public QObject {
 
     // Private constructor so that no other objects can be created.
     DataLogger() {
+        std::cout << "Starting DataLogger instance" << std::endl;
         // Set MariaDB database
         loggerDatabase.setHostName("127.0.0.1");
         loggerDatabase.setDatabaseName("datalog");

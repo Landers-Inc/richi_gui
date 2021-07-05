@@ -793,10 +793,11 @@ class Ui_MainWindow {
         beaconTable->cancelButton->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
         beaconTable->beaconLabelsLayout->id->setText(QCoreApplication::translate("MainWindow", "Id Baliza"));
         beaconTable->beaconLabelsLayout->beaconType->setText(QCoreApplication::translate("MainWindow", "Tipo de Baliza"));
-        beaconTable->beaconLabelsLayout->preDistance->setText(QCoreApplication::translate("MainWindow", "Profundidad Pre"));
+        beaconTable->beaconLabelsLayout->preDistance->setText(QCoreApplication::translate("MainWindow", "Profund Pre"));
         beaconTable->beaconLabelsLayout->prePower->setText(QCoreApplication::translate("MainWindow", "Potencia Pre"));
         beaconTable->beaconLabelsLayout->postPower->setText(QCoreApplication::translate("MainWindow", "Potencia Post"));
-        beaconTable->beaconLabelsLayout->diffDistance->setText(QCoreApplication::translate("MainWindow", "Distancia"));
+        beaconTable->beaconLabelsLayout->diffNorthDistance->setText(QCoreApplication::translate("MainWindow", "Distancia N"));
+        beaconTable->beaconLabelsLayout->diffEastDistance->setText(QCoreApplication::translate("MainWindow", "Distancia E"));
     }
 };
 

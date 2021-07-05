@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <chrono>
 #include <iostream>
+#include <random>
 #include <thread>
 
 #include "abstract/gpsreader.h"
@@ -13,6 +14,8 @@ class FakeGPS : public GPSReader {
    private:
     QTimer *fakeTimer;
     QThread *fakeThread;
+    std::default_random_engine generator;
+    std::normal_distribution<double> distribution;
 
    public:
     // Class constructor

@@ -251,7 +251,7 @@ void MainWindow::beaconFoundAccept() {
                 }
             }
             if (notRepeated) {
-        emit logBeacon(id.toDouble());
+                emit logBeacon(id.toDouble());
                 warningStatus(QCoreApplication::translate("MainWindow", "Status: Nueva baliza post-tronadura registrada"));
             } else {
                 warningStatus(QCoreApplication::translate("MainWindow", "Status: La baliza ya fue ingresada"));
@@ -363,11 +363,7 @@ void MainWindow::startNewLog() {
 }
 
 void MainWindow::tableLog() {
-    if (!ui->beaconTable->tableWidget->isVisible()) {
-        ui->beaconTable->tableWidget->setVisible(true);
-        ui->beaconTable->tableWidget->activateWindow();
-        ui->beaconTable->tableWidget->setFocus(Qt::ActiveWindowFocusReason);
-        ui->keyboardInputWidget->setVisible(true);
+    if (!ui->beaconTable->dialogInputWidget->isVisible()) {
         unsigned int rowsCount = std::max(dataLogger->beaconPreCount, dataLogger->beaconPostCount);
         for (int i = 0; i < rowsCount; i++) {
             BeaconTableItem *itemLayout = new BeaconTableItem(ui->beaconTable->tableWidget);
@@ -383,34 +379,53 @@ void MainWindow::tableLog() {
         for (int i = 0; i < dataLogger->beaconPostCount; i++) {
             int idPost = (int)dataLogger->beaconPostData[i].distance;
             beaconList[idPost - 1]->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
-            beaconList[idPost - 1]->diffDistance->setText(
+            beaconList[idPost - 1]->diffNorthDistance->setText(
                 QString::number(
-                    measureDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
-                                    dataLogger->beaconPreData[idPost - 1].lngPosition,
-                                    dataLogger->beaconPostData[i].latPosition,
-                                    dataLogger->beaconPostData[i].lngPosition),
+                    measureLatitudeDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
+                                            dataLogger->beaconPreData[idPost - 1].lngPosition,
+                                            dataLogger->beaconPostData[i].latPosition,
+                                            dataLogger->beaconPostData[i].lngPosition),
+                    'g'));
+            beaconList[idPost - 1]->diffEastDistance->setText(
+                QString::number(
+                    measureLongitudeDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
+                                             dataLogger->beaconPreData[idPost - 1].lngPosition,
+                                             dataLogger->beaconPostData[i].latPosition,
+                                             dataLogger->beaconPostData[i].lngPosition),
                     'g'));
         }
+        ui->beaconTable->dialogInputWidget->setVisible(true);
+        ui->beaconTable->tableWidget->setVisible(true);
+        ui->beaconTable->scrollArea->setVisible(true);
+        ui->keyboardInputWidget->setVisible(true);
+        ui->beaconTable->scrollArea->activateWindow();
+        ui->beaconTable->scrollArea->setFocus(Qt::ActiveWindowFocusReason);
     }
 }
 
 void MainWindow::tableCancel() {
-    if (ui->beaconTable->tableWidget->isVisible()) {
-        ui->beaconTable->tableWidget->setVisible(false);
+    if (ui->beaconTable->dialogInputWidget->isVisible()) {
         for (int i = 0; i < beaconList.size(); i++) {
             delete beaconList[i];
         }
         beaconList.clear();
+        ui->beaconTable->dialogInputWidget->setVisible(false);
+        ui->beaconTable->tableWidget->setVisible(false);
+        ui->beaconTable->scrollArea->setVisible(false);
+        ui->keyboardInputWidget->setVisible(false);
     }
 }
 
 void MainWindow::tableUpdate() {
-    if (ui->beaconTable->tableWidget->isVisible()) {
-        ui->beaconTable->tableWidget->setVisible(false);
+    if (ui->beaconTable->dialogInputWidget->isVisible()) {
         for (int i = 0; i < beaconList.size(); i++) {
             delete beaconList[i];
         }
         beaconList.clear();
+        ui->beaconTable->dialogInputWidget->setVisible(false);
+        ui->beaconTable->tableWidget->setVisible(false);
+        ui->beaconTable->scrollArea->setVisible(false);
+        ui->keyboardInputWidget->setVisible(false);
     }
 }
 

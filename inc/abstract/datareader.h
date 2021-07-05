@@ -1,8 +1,8 @@
 #pragma once
 
 #include <QObject>
-#include <random>
 #include <iostream>
+#include <random>
 
 // Abstract class for data acquisition
 class DataReader : public QObject {
@@ -18,7 +18,9 @@ class DataReader : public QObject {
     std::vector<double> amplitudeData;
 
     // Class constructor
-    explicit DataReader(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg), timeData(dataSize), amplitudeData(dataSize){};
+    explicit DataReader(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg), timeData(dataSize), amplitudeData(dataSize) {
+        std::cout << "Starting DataReader instance" << std::endl;
+    };
     // Class destructor
     virtual ~DataReader() {
         std::cout << "Closing DataReader instance" << std::endl;
