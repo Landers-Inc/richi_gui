@@ -92,7 +92,7 @@ void MainWindow::updateOnePeak(double freq, double power) {
     peakValues[0] = power - noiseFloor;
 
     QVector<double> peakOneLineX = {freq, freq};
-    QVector<double> peakOneLineY = {-140, 4};
+    QVector<double> peakOneLineY = {power - 5, power + 5};
     ui->rightPlot->graph(1)->setData(peakOneLineX, peakOneLineY);
 }
 
@@ -103,7 +103,7 @@ void MainWindow::updateTwoPeak(double freq, double power) {
     peakValues[1] = power - noiseFloor;
 
     QVector<double> peakOneLineX = {freq, freq};
-    QVector<double> peakOneLineY = {-140, 4};
+    QVector<double> peakOneLineY = {power - 5, power + 5};
     ui->rightPlot->graph(2)->setData(peakOneLineX, peakOneLineY);
 }
 
@@ -114,7 +114,7 @@ void MainWindow::updateThreePeak(double freq, double power) {
     peakValues[2] = power - noiseFloor;
 
     QVector<double> peakOneLineX = {freq, freq};
-    QVector<double> peakOneLineY = {-140, 4};
+    QVector<double> peakOneLineY = {power - 5, power + 5};
     ui->rightPlot->graph(3)->setData(peakOneLineX, peakOneLineY);
 }
 
@@ -378,53 +378,147 @@ void MainWindow::tableLog() {
         }
         for (int i = 0; i < dataLogger->beaconPostCount; i++) {
             int idPost = (int)dataLogger->beaconPostData[i].distance;
-            beaconList[idPost - 1]->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
-            beaconList[idPost - 1]->diffNorthDistance->setText(
-                QString::number(
-                    measureLatitudeDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
-                                            dataLogger->beaconPreData[idPost - 1].lngPosition,
-                                            dataLogger->beaconPostData[i].latPosition,
-                                            dataLogger->beaconPostData[i].lngPosition),
-                    'g'));
-            beaconList[idPost - 1]->diffEastDistance->setText(
-                QString::number(
-                    measureLongitudeDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
-                                             dataLogger->beaconPreData[idPost - 1].lngPosition,
-                                             dataLogger->beaconPostData[i].latPosition,
-                                             dataLogger->beaconPostData[i].lngPosition),
-                    'g'));
+            if (idPost != -1) {
+                beaconList[idPost - 1]->postId->setText(QString::number(i + 1));
+                beaconList[idPost - 1]->assignedId->setText(QString::number(idPost));
+                beaconList[idPost - 1]->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
+                beaconList[idPost - 1]->diffNorthDistance->setText(
+                    QString::number(
+                        measureDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
+                                        dataLogger->beaconPreData[idPost - 1].lngPosition,
+                                        dataLogger->beaconPostData[i].latPosition,
+                                        dataLogger->beaconPostData[i].lngPosition),
+                        'g'));
+                beaconList[idPost - 1]->diffEastDistance->setText(
+                    QString::number(
+                        measureBearing(dataLogger->beaconPreData[idPost - 1].latPosition,
+                                       dataLogger->beaconPreData[idPost - 1].lngPosition,
+                                       dataLogger->beaconPostData[i].latPosition,
+                                       dataLogger->beaconPostData[i].lngPosition),
+                        'g'));
+            } else {
+                BeaconTableItem *itemLayout = new BeaconTableItem(ui->beaconTable->tableWidget);
+                itemLayout->postId->setText(QString::number(i + 1));
+                itemLayout->assignedId->setText(QString::number(-1));
+                itemLayout->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
+                ui->beaconTable->beaconListLayout->addLayout(itemLayout);
+                beaconList.push_back(itemLayout);
+            }
         }
         ui->beaconTable->dialogInputWidget->setVisible(true);
         ui->beaconTable->tableWidget->setVisible(true);
-        ui->beaconTable->scrollArea->setVisible(true);
         ui->keyboardInputWidget->setVisible(true);
-        ui->beaconTable->scrollArea->activateWindow();
-        ui->beaconTable->scrollArea->setFocus(Qt::ActiveWindowFocusReason);
+        ui->beaconTable->tableWidget->activateWindow();
+        ui->beaconTable->tableWidget->setFocus(Qt::ActiveWindowFocusReason);
     }
 }
 
 void MainWindow::tableCancel() {
     if (ui->beaconTable->dialogInputWidget->isVisible()) {
         for (int i = 0; i < beaconList.size(); i++) {
+            ui->beaconTable->beaconListLayout->removeItem(beaconList[i]);
+            QLayoutItem *child;
+            while ((child = beaconList[i]->takeAt(0)) != 0) {
+                delete child;
+            }
             delete beaconList[i];
         }
+        ui->beaconTable->beaconListLayout->update();
+
         beaconList.clear();
         ui->beaconTable->dialogInputWidget->setVisible(false);
         ui->beaconTable->tableWidget->setVisible(false);
-        ui->beaconTable->scrollArea->setVisible(false);
         ui->keyboardInputWidget->setVisible(false);
+    }
+}
+
+void MainWindow::tableGenerate() {
+    if (ui->beaconTable->dialogInputWidget->isVisible()) {
+        auto currentTime = std::chrono::system_clock::now();
+        std::time_t currentDatetime = std::chrono::system_clock::to_time_t(currentTime);
+
+        char datetimeString[100];
+        std::strftime(datetimeString, sizeof(datetimeString), "/home/pi/table_%Y%m%d_%H%M%S.csv", std::gmtime(&currentDatetime));
+        std::ofstream file(datetimeString);
+        QLayoutItem *child;
+        for (int i = 0; i < ui->beaconTable->beaconLabelsLayout->count(); ++i) {
+            child = ui->beaconTable->beaconLabelsLayout->itemAt(i);
+            QLabel *labelTemp = (QLabel *)child->widget();
+            file << labelTemp->text().toStdString() << ",";
+        }
+        file << std::endl;
+        for (int j = 0; j < beaconList.size(); j++) {
+            for (int i = 0; i < beaconList[j]->count(); ++i) {
+                child = beaconList[j]->itemAt(i);
+                QObject *objTemp = (QObject *)child->widget();
+                if (QLabel *labelTemp = qobject_cast<QLabel *>(objTemp)) {
+                    file << labelTemp->text().toStdString() << ",";
+                } else if (QLineEdit *lineTemp = qobject_cast<QLineEdit *>(objTemp)) {
+                    file << lineTemp->text().toStdString() << ",";
+                }
+            }
+            file << std::endl;
+        }
+        file.close();
     }
 }
 
 void MainWindow::tableUpdate() {
     if (ui->beaconTable->dialogInputWidget->isVisible()) {
+        bool checkRepeated = false;
+        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+            for (int j = 0; j < dataLogger->beaconPreCount; j++) {
+                int iId = beaconList[i]->postId->text().toInt();
+                int jId = beaconList[j]->postId->text().toInt();
+                if (i != j && iId != 0 && jId != 0) {
+                    int iAssignedId = beaconList[i]->assignedId->text().toInt();
+                    int jAssignedId = beaconList[j]->assignedId->text().toInt();
+                    if (iAssignedId == jAssignedId && iAssignedId != -1) checkRepeated = true;
+                }
+            }
+        }
+        bool checkGreater = false;
+        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+            signed int iId = beaconList[i]->assignedId->text().toInt();
+            if (iId >= (signed int)dataLogger->beaconPreCount) checkGreater = true;
+        }
+
+        bool checkNegative = false;
+        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+            double depth = beaconList[i]->preDistance->text().toDouble();
+            if (depth <= 0) checkNegative = true;
+        }
+
+        if (!checkRepeated && !checkGreater && !checkNegative) {
+            for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+                double depth = beaconList[i]->preDistance->text().toDouble();
+                dataLogger->beaconPreData[i].distance = depth;
+            }
+            for (int i = 0; i < beaconList.size(); i++) {
+                int postId = beaconList[i]->postId->text().toInt();
+                if (postId > 0) {
+                    double assignedId = beaconList[i]->assignedId->text().toDouble();
+                    dataLogger->beaconPostData[postId - 1].distance = assignedId;
+                }
+            }
+            dataLogger->updateBeaconData();
+        }
+
         for (int i = 0; i < beaconList.size(); i++) {
+            ui->beaconTable->beaconListLayout->removeItem(beaconList[i]);
+            QLayoutItem *child;
+            while ((child = beaconList[i]->takeAt(0)) != 0) {
+                beaconList[i]->removeItem(child);
+                child->widget()->hide();
+                delete child;
+            }
             delete beaconList[i];
         }
+        ui->beaconTable->beaconListLayout->update();
+
         beaconList.clear();
         ui->beaconTable->dialogInputWidget->setVisible(false);
         ui->beaconTable->tableWidget->setVisible(false);
-        ui->beaconTable->scrollArea->setVisible(false);
         ui->keyboardInputWidget->setVisible(false);
     }
 }
@@ -527,6 +621,7 @@ void MainWindow::connectButtons() {
     connect(ui->warningWidget->warningCancel, &QPushButton::released, this, &MainWindow::warningCancel);
 
     connect(ui->beaconTable->updateButton, &QPushButton::released, this, &MainWindow::tableUpdate);
+    connect(ui->beaconTable->generateButton, &QPushButton::released, this, &MainWindow::tableGenerate);
     connect(ui->beaconTable->cancelButton, &QPushButton::released, this, &MainWindow::tableCancel);
 }
 
@@ -557,6 +652,10 @@ void MainWindow::updateGUI() {
 
 void MainWindow::setupGUI() {
     ui->centralWidget->setCursor(Qt::BlankCursor);
+    ui->inputBeaconWidget->setCursor(Qt::BlankCursor);
+    ui->foundBeaconWidget->setCursor(Qt::BlankCursor);
+    ui->warningWidget->setCursor(Qt::BlankCursor);
+    ui->beaconTable->setCursor(Qt::BlankCursor);
 
     ui->rightPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD), Qt::SolidPattern));
     ui->rightPlot->addGraph();
@@ -576,7 +675,7 @@ void MainWindow::setupGUI() {
     ui->textLabel->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
     ui->textLabel->setPadding(QMargins(5, 5, 5, 5));
     ui->textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
-    ui->textLabel->position->setCoords(0.85, 0);
+    ui->textLabel->position->setCoords(0.25, 0);
     ui->textLabel->setFont(QFont(font().family(), 10));
     ui->textLabel->setPen(QPen(Qt::black));
     ui->textLabel->setBrush(QBrush(Qt::white));

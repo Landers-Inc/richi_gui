@@ -15,6 +15,8 @@ class BeaconTableLabels : public QHBoxLayout {
     QLabel *beaconType;
     QLabel *preDistance;
     QLabel *prePower;
+    QLabel *postId;
+    QLabel *assignedId;
     QLabel *postPower;
     QLabel *diffNorthDistance;
     QLabel *diffEastDistance;
@@ -42,6 +44,16 @@ class BeaconTableLabels : public QHBoxLayout {
         prePower->setFixedHeight(40);
         prePower->setAlignment(Qt::AlignCenter);
         prePower->setStyleSheet(BEACON_TABLE_ITEM);
+        postId = new QLabel();
+        postId->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        postId->setFixedHeight(40);
+        postId->setAlignment(Qt::AlignCenter);
+        postId->setStyleSheet(BEACON_TABLE_ITEM);
+        assignedId = new QLabel();
+        assignedId->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        assignedId->setFixedHeight(40);
+        assignedId->setAlignment(Qt::AlignCenter);
+        assignedId->setStyleSheet(BEACON_TABLE_ITEM);
         postPower = new QLabel();
         postPower->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         postPower->setFixedHeight(40);
@@ -61,6 +73,8 @@ class BeaconTableLabels : public QHBoxLayout {
         this->addWidget(beaconType);
         this->addWidget(preDistance);
         this->addWidget(prePower);
+        this->addWidget(postId);
+        this->addWidget(assignedId);
         this->addWidget(postPower);
         this->addWidget(diffNorthDistance);
         this->addWidget(diffEastDistance);
@@ -71,6 +85,8 @@ class BeaconTableLabels : public QHBoxLayout {
         this->setStretch(4, 1);
         this->setStretch(5, 1);
         this->setStretch(6, 1);
+        this->setStretch(7, 1);
+        this->setStretch(8, 1);
     }
 };
 
@@ -81,6 +97,8 @@ class BeaconTableItem : public QHBoxLayout {
     QLabel *beaconType;
     QLineEdit *preDistance;
     QLabel *prePower;
+    QLabel *postId;
+    QLineEdit *assignedId;
     QLabel *postPower;
     QLabel *diffNorthDistance;
     QLabel *diffEastDistance;
@@ -103,12 +121,23 @@ class BeaconTableItem : public QHBoxLayout {
         preDistance->setFixedHeight(40);
         preDistance->setAlignment(Qt::AlignCenter);
         preDistance->setStyleSheet(BEACON_TABLE_ITEM);
-        preDistance->setInputMethodHints(Qt::ImhDigitsOnly);
+        preDistance->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
         prePower = new QLabel();
         prePower->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         prePower->setFixedHeight(40);
         prePower->setAlignment(Qt::AlignCenter);
         prePower->setStyleSheet(BEACON_TABLE_ITEM);
+        postId = new QLabel();
+        postId->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        postId->setFixedHeight(40);
+        postId->setAlignment(Qt::AlignCenter);
+        postId->setStyleSheet(BEACON_TABLE_ITEM);
+        assignedId = new QLineEdit(parent);
+        assignedId->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        assignedId->setFixedHeight(40);
+        assignedId->setAlignment(Qt::AlignCenter);
+        assignedId->setStyleSheet(BEACON_TABLE_ITEM);
+        assignedId->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
         postPower = new QLabel();
         postPower->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         postPower->setFixedHeight(40);
@@ -128,6 +157,8 @@ class BeaconTableItem : public QHBoxLayout {
         this->addWidget(beaconType);
         this->addWidget(preDistance);
         this->addWidget(prePower);
+        this->addWidget(postId);
+        this->addWidget(assignedId);
         this->addWidget(postPower);
         this->addWidget(diffNorthDistance);
         this->addWidget(diffEastDistance);
@@ -138,6 +169,8 @@ class BeaconTableItem : public QHBoxLayout {
         this->setStretch(4, 1);
         this->setStretch(5, 1);
         this->setStretch(6, 1);
+        this->setStretch(7, 1);
+        this->setStretch(8, 1);
     }
 };
 
@@ -146,12 +179,14 @@ class BeaconTable : public QDialog {
    public:
     QWidget *dialogInputWidget;
     QWidget *tableWidget;
+    QWidget *scrollWidget;
     QVBoxLayout *mainLayout;
     QScrollArea *scrollArea;
     QVBoxLayout *beaconListLayout;
     BeaconTableLabels *beaconLabelsLayout;
     QHBoxLayout *buttonsLayout;
     QPushButton *updateButton;
+    QPushButton *generateButton;
     QPushButton *cancelButton;
 
     explicit BeaconTable(QWidget *parent = 0) {
@@ -175,8 +210,9 @@ class BeaconTable : public QDialog {
         tableWidget = new InputWidget(dialogInputWidget);
         tableWidget->setObjectName("tableWidget");
         tableWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        tableWidget->setMinimumSize(QSize(1280, 800));
-        tableWidget->setMaximumSize(QSize(1280, 800));
+        tableWidget->move(0, 0);
+        tableWidget->setMinimumSize(QSize(1280, 500));
+        tableWidget->setMaximumSize(QSize(1280, 500));
         tableWidget->setWindowFlags(Qt::Dialog);
         tableWidget->setStyleSheet(
             "#tableWidget{"
@@ -203,13 +239,18 @@ class BeaconTable : public QDialog {
 
         beaconListLayout->addLayout(beaconLabelsLayout);
 
+        scrollWidget = new QWidget();
+        scrollWidget->setLayout(beaconListLayout);
+
         scrollArea = new QScrollArea(tableWidget);
         scrollArea->setObjectName("scrollArea");
         scrollArea->setBackgroundRole(QPalette::Dark);
-        scrollArea->setLayout(beaconListLayout);
         scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scrollArea->setWidgetResizable(true);
         scrollArea->setStyleSheet("#scrollArea{background: #ddd;}");
+
+        scrollArea->setWidget(scrollWidget);
 
         buttonsLayout = new QHBoxLayout();
         buttonsLayout->setObjectName("buttonsLayout");
@@ -221,6 +262,12 @@ class BeaconTable : public QDialog {
         updateButton->setFixedHeight(60);
         updateButton->setFocusPolicy(Qt::NoFocus);
 
+        generateButton = new QPushButton(parent);
+        generateButton->setObjectName("generateButton");
+        generateButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        generateButton->setFixedHeight(60);
+        generateButton->setFocusPolicy(Qt::NoFocus);
+
         cancelButton = new QPushButton(parent);
         cancelButton->setObjectName("cancelButton");
         cancelButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -228,10 +275,12 @@ class BeaconTable : public QDialog {
         cancelButton->setFocusPolicy(Qt::NoFocus);
 
         buttonsLayout->addWidget(updateButton);
+        buttonsLayout->addWidget(generateButton);
         buttonsLayout->addWidget(cancelButton);
 
         buttonsLayout->setStretch(0, 1);
         buttonsLayout->setStretch(1, 1);
+        buttonsLayout->setStretch(2, 1);
 
         mainLayout->addWidget(scrollArea);
         mainLayout->addLayout(buttonsLayout);

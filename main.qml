@@ -6,8 +6,8 @@ import QtQuick.VirtualKeyboard 2.15
 InputPanel {
     id: inputPanel
     z: 99
-    y: 500
-    width: 880
+    y: 375
+    width: 440
 
     states: [
         State {
@@ -15,7 +15,7 @@ InputPanel {
             when: inputPanel.active
             PropertyChanges {
                 target: inputPanel
-                y: 500 - inputPanel.height
+                y: 375 - inputPanel.height
             }
         }
     ]

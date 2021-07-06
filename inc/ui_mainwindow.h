@@ -187,17 +187,16 @@ class Ui_MainWindow {
         warningWidget = new WarningDialog(MainWindow);
         beaconTable = new BeaconTable(MainWindow);
 
-        keyboardInputWidget = new QQuickWidget(QUrl("qrc:/main.qml"), MainWindow);
+        keyboardInputWidget = new QQuickWidget(MainWindow);
         keyboardInputWidget->setObjectName("keyboardInputWidget");
         keyboardInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        keyboardInputWidget->move(200, 300);
-        keyboardInputWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
-        keyboardInputWidget->setAttribute(Qt::WA_TranslucentBackground);
-        keyboardInputWidget->setAttribute(Qt::WA_InputMethodEnabled, true);
-        keyboardInputWidget->setClearColor(Qt::transparent);
-        keyboardInputWidget->setMinimumSize(880, 500);
+        keyboardInputWidget->move(310, 425);
         keyboardInputWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-        keyboardInputWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+        keyboardInputWidget->setAttribute(Qt::WA_TranslucentBackground, true);
+        keyboardInputWidget->setAttribute(Qt::WA_AlwaysStackOnTop, true);
+        keyboardInputWidget->setClearColor(Qt::transparent);
+        keyboardInputWidget->setMinimumSize(660, 375);
+        keyboardInputWidget->setSource(QUrl("qrc:/main.qml"));
         keyboardInputWidget->setVisible(false);
 
         centralWidget->setObjectName("centralWidget");
@@ -790,14 +789,17 @@ class Ui_MainWindow {
         warningWidget->warningCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
 
         beaconTable->updateButton->setText(QCoreApplication::translate("MainWindow", "Actualizar balizas"));
+        beaconTable->generateButton->setText(QCoreApplication::translate("MainWindow", "Generar archivo"));
         beaconTable->cancelButton->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
         beaconTable->beaconLabelsLayout->id->setText(QCoreApplication::translate("MainWindow", "Id Baliza"));
-        beaconTable->beaconLabelsLayout->beaconType->setText(QCoreApplication::translate("MainWindow", "Tipo de Baliza"));
+        beaconTable->beaconLabelsLayout->beaconType->setText(QCoreApplication::translate("MainWindow", "Tipo Baliza"));
         beaconTable->beaconLabelsLayout->preDistance->setText(QCoreApplication::translate("MainWindow", "Profund Pre"));
         beaconTable->beaconLabelsLayout->prePower->setText(QCoreApplication::translate("MainWindow", "Potencia Pre"));
+        beaconTable->beaconLabelsLayout->postId->setText(QCoreApplication::translate("MainWindow", "Post Id"));
+        beaconTable->beaconLabelsLayout->assignedId->setText(QCoreApplication::translate("MainWindow", "Asignado"));
         beaconTable->beaconLabelsLayout->postPower->setText(QCoreApplication::translate("MainWindow", "Potencia Post"));
-        beaconTable->beaconLabelsLayout->diffNorthDistance->setText(QCoreApplication::translate("MainWindow", "Distancia N"));
-        beaconTable->beaconLabelsLayout->diffEastDistance->setText(QCoreApplication::translate("MainWindow", "Distancia E"));
+        beaconTable->beaconLabelsLayout->diffNorthDistance->setText(QCoreApplication::translate("MainWindow", "Distancia"));
+        beaconTable->beaconLabelsLayout->diffEastDistance->setText(QCoreApplication::translate("MainWindow", "Rumbo"));
     }
 };
 

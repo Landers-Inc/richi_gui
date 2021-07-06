@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QThread>
 #include <QVector>
+#include <fstream>
 
 #include "datalogger.h"
 #include "dataprocessor.h"
@@ -109,6 +110,8 @@ class MainWindow : public QMainWindow {
     void tableLog();
     // Qt Slot used to
     void tableUpdate();
+    // Qt Slot used to
+    void tableGenerate();
     // Qt Slot used to
     void tableCancel();
     // Qt Slot used to

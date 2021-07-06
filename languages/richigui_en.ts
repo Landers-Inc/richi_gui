@@ -4,26 +4,26 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="772"/>
+        <location filename="../inc/ui_mainwindow.h" line="771"/>
         <location filename="../src/mainwindow.cpp" line="44"/>
-        <location filename="../src/mainwindow.cpp" line="518"/>
-        <location filename="../src/mainwindow.cpp" line="568"/>
+        <location filename="../src/mainwindow.cpp" line="647"/>
+        <location filename="../src/mainwindow.cpp" line="703"/>
         <source>Baliza A</source>
         <translation>Beacon A</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="773"/>
+        <location filename="../inc/ui_mainwindow.h" line="772"/>
         <location filename="../src/mainwindow.cpp" line="45"/>
-        <location filename="../src/mainwindow.cpp" line="519"/>
-        <location filename="../src/mainwindow.cpp" line="569"/>
+        <location filename="../src/mainwindow.cpp" line="648"/>
+        <location filename="../src/mainwindow.cpp" line="704"/>
         <source>Baliza B</source>
         <translation>Beacon B</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="774"/>
+        <location filename="../inc/ui_mainwindow.h" line="773"/>
         <location filename="../src/mainwindow.cpp" line="46"/>
-        <location filename="../src/mainwindow.cpp" line="520"/>
-        <location filename="../src/mainwindow.cpp" line="570"/>
+        <location filename="../src/mainwindow.cpp" line="649"/>
+        <location filename="../src/mainwindow.cpp" line="705"/>
         <source>Baliza C</source>
         <translation>Beacon C</translation>
     </message>
@@ -50,49 +50,54 @@ Frequency</translation>
     </message>
     <message>
         <location filename="../src/mainwindow.cpp" line="244"/>
-        <source>Status: No puede ingresar no existente</source>
-        <translation type="unfinished"></translation>
+        <source>Status: No puede ingresar baliza no existente</source>
+        <translation>Status: Can&apos;t register non-existent beacon</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="252"/>
-        <location filename="../src/mainwindow.cpp" line="263"/>
+        <location filename="../src/mainwindow.cpp" line="255"/>
+        <location filename="../src/mainwindow.cpp" line="274"/>
         <source>Status: Nueva baliza post-tronadura registrada</source>
         <translation>Status:New beacon post-blast registered</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="284"/>
+        <location filename="../src/mainwindow.cpp" line="257"/>
+        <source>Status: La baliza ya fue ingresada</source>
+        <translation>Status: Beacon already registered</translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="295"/>
         <source>Status: Nueva baliza pre-tronadura registrada</source>
         <translation>Status: New beacon pre-blast registered</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="449"/>
-        <location filename="../src/mainwindow.cpp" line="513"/>
-        <location filename="../src/mainwindow.cpp" line="552"/>
+        <location filename="../src/mainwindow.cpp" line="577"/>
+        <location filename="../src/mainwindow.cpp" line="642"/>
+        <location filename="../src/mainwindow.cpp" line="687"/>
         <source>Time [seconds]</source>
         <translation>Time [seconds]</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="457"/>
-        <location filename="../src/mainwindow.cpp" line="515"/>
-        <location filename="../src/mainwindow.cpp" line="554"/>
+        <location filename="../src/mainwindow.cpp" line="585"/>
+        <location filename="../src/mainwindow.cpp" line="644"/>
+        <location filename="../src/mainwindow.cpp" line="689"/>
         <source>Distance [meters]</source>
         <translation>Distance [meters]</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="509"/>
-        <location filename="../src/mainwindow.cpp" line="530"/>
+        <location filename="../src/mainwindow.cpp" line="638"/>
+        <location filename="../src/mainwindow.cpp" line="665"/>
         <source>Frequency</source>
         <translation>Frequency</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="510"/>
-        <location filename="../src/mainwindow.cpp" line="531"/>
+        <location filename="../src/mainwindow.cpp" line="639"/>
+        <location filename="../src/mainwindow.cpp" line="666"/>
         <source>Power</source>
         <translation>Power</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="511"/>
-        <location filename="../src/mainwindow.cpp" line="547"/>
+        <location filename="../src/mainwindow.cpp" line="640"/>
+        <location filename="../src/mainwindow.cpp" line="682"/>
         <source>Window Hanning
 N = 4096
 Fs = 44100.0</source>
@@ -105,144 +110,197 @@ Fs = 44100.0</translation>
         <translation type="vanished">Time</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="517"/>
-        <location filename="../src/mainwindow.cpp" line="555"/>
+        <location filename="../src/mainwindow.cpp" line="646"/>
+        <location filename="../src/mainwindow.cpp" line="690"/>
         <source>Amplitude</source>
         <translation>Amplitude</translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="521"/>
-        <location filename="../src/mainwindow.cpp" line="581"/>
+        <location filename="../src/mainwindow.cpp" line="650"/>
+        <location filename="../src/mainwindow.cpp" line="716"/>
         <source>Potencia</source>
         <translation>Power</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="739"/>
+        <location filename="../inc/ui_mainwindow.h" line="738"/>
         <source>MainWindow</source>
         <translation>MainWindow</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="740"/>
+        <location filename="../inc/ui_mainwindow.h" line="739"/>
         <source>Status: Inicializando</source>
         <translation>Status: Initializing</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="741"/>
+        <location filename="../inc/ui_mainwindow.h" line="740"/>
         <source>Peaks Detectados</source>
         <translation>Peaks Detected</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="743"/>
-        <location filename="../inc/ui_mainwindow.h" line="745"/>
-        <location filename="../inc/ui_mainwindow.h" line="747"/>
+        <location filename="../inc/ui_mainwindow.h" line="742"/>
+        <location filename="../inc/ui_mainwindow.h" line="744"/>
+        <location filename="../inc/ui_mainwindow.h" line="746"/>
         <source>kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="749"/>
-        <location filename="../inc/ui_mainwindow.h" line="751"/>
-        <location filename="../inc/ui_mainwindow.h" line="753"/>
+        <location filename="../inc/ui_mainwindow.h" line="748"/>
+        <location filename="../inc/ui_mainwindow.h" line="750"/>
+        <location filename="../inc/ui_mainwindow.h" line="752"/>
         <source>dBFS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="754"/>
+        <location filename="../inc/ui_mainwindow.h" line="753"/>
         <source>Versus
 Tiempo</source>
         <translation>Versus
 Time</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="755"/>
+        <location filename="../inc/ui_mainwindow.h" line="754"/>
         <source>Versus
 Distancia</source>
         <translation>Versus
 Distance</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="756"/>
+        <location filename="../inc/ui_mainwindow.h" line="755"/>
         <source>Seleccionar
 Baliza</source>
         <translation>Select
 Beacon</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="757"/>
+        <location filename="../inc/ui_mainwindow.h" line="756"/>
         <source>Baliza
 Encontrada</source>
         <translation>Beacon
 Found</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="758"/>
+        <location filename="../inc/ui_mainwindow.h" line="757"/>
         <source>Registro
 Pre-Tronadura</source>
         <translation>Pre-Blast
 Register</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="759"/>
+        <location filename="../inc/ui_mainwindow.h" line="758"/>
         <source>Registro
 Post-Tronadura</source>
         <translation>Post-Blast
 Register</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="760"/>
+        <location filename="../inc/ui_mainwindow.h" line="759"/>
         <source>Estado inactivo</source>
-        <translation>Inactive state</translation>
+        <translation>Register inactive</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="761"/>
+        <location filename="../inc/ui_mainwindow.h" line="760"/>
         <source>Mostrar tabla</source>
         <translation>Show tables</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="762"/>
+        <location filename="../inc/ui_mainwindow.h" line="761"/>
         <source>Español</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="764"/>
+        <location filename="../inc/ui_mainwindow.h" line="763"/>
         <source>Empezar Nuevo
 Registro</source>
         <translation>Start New
 Register</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="765"/>
+        <location filename="../inc/ui_mainwindow.h" line="764"/>
         <source>Cerrar y Apagar</source>
         <translation>Close and Shutdown</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="792"/>
+        <location filename="../inc/ui_mainwindow.h" line="791"/>
         <source>Actualizar balizas</source>
         <translation>Update beacons</translation>
     </message>
     <message>
+        <location filename="../inc/ui_mainwindow.h" line="792"/>
+        <source>Generar archivo</source>
+        <translation>Generate file</translation>
+    </message>
+    <message>
         <location filename="../inc/ui_mainwindow.h" line="794"/>
-        <source>Id</source>
-        <translation>Id</translation>
+        <source>Id Baliza</source>
+        <translation>Beacon Id</translation>
     </message>
     <message>
         <location filename="../inc/ui_mainwindow.h" line="795"/>
-        <source>Tipo de Baliza</source>
-        <translation>Beacon type</translation>
+        <source>Tipo Baliza</source>
+        <translation>Beacon Type</translation>
     </message>
     <message>
         <location filename="../inc/ui_mainwindow.h" line="796"/>
-        <source>Profundidad Baliza Pre</source>
-        <translation>Beacon Depth Pre</translation>
+        <source>Profund Pre</source>
+        <translation>Depth Pre</translation>
     </message>
     <message>
         <location filename="../inc/ui_mainwindow.h" line="797"/>
-        <source>Potencia Baliza Pre</source>
-        <translation>Beacon Power Pre</translation>
+        <source>Potencia Pre</source>
+        <translation>Power Pre</translation>
     </message>
     <message>
         <location filename="../inc/ui_mainwindow.h" line="798"/>
+        <source>Post Id</source>
+        <translation>Id Post</translation>
+    </message>
+    <message>
+        <location filename="../inc/ui_mainwindow.h" line="799"/>
+        <source>Asignado</source>
+        <translation>Assigned</translation>
+    </message>
+    <message>
+        <location filename="../inc/ui_mainwindow.h" line="800"/>
+        <source>Potencia Post</source>
+        <translation>Power Post</translation>
+    </message>
+    <message>
+        <location filename="../inc/ui_mainwindow.h" line="801"/>
+        <source>Distancia</source>
+        <translation>Distance</translation>
+    </message>
+    <message>
+        <location filename="../inc/ui_mainwindow.h" line="802"/>
+        <source>Rumbo</source>
+        <translation>Bearing</translation>
+    </message>
+    <message>
+        <source>Distancia N</source>
+        <translation type="vanished">Distance N</translation>
+    </message>
+    <message>
+        <source>Distancia E</source>
+        <translation type="vanished">Distance E</translation>
+    </message>
+    <message>
+        <source>Id</source>
+        <translation type="vanished">Id</translation>
+    </message>
+    <message>
+        <source>Tipo de Baliza</source>
+        <translation type="vanished">Beacon type</translation>
+    </message>
+    <message>
+        <source>Profundidad Baliza Pre</source>
+        <translation type="vanished">Beacon Depth Pre</translation>
+    </message>
+    <message>
+        <source>Potencia Baliza Pre</source>
+        <translation type="vanished">Beacon Power Pre</translation>
+    </message>
+    <message>
         <source>Potencia Baliza Post</source>
-        <translation>Beacon Power Post</translation>
+        <translation type="vanished">Beacon Power Post</translation>
     </message>
     <message>
         <source>Seleccionar
@@ -251,75 +309,75 @@ Frecuencia</source>
 Frequency</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="768"/>
+        <location filename="../inc/ui_mainwindow.h" line="767"/>
         <location filename="../src/mainwindow.cpp" line="67"/>
         <source>13.75 kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="769"/>
+        <location filename="../inc/ui_mainwindow.h" line="768"/>
         <location filename="../src/mainwindow.cpp" line="68"/>
         <source>14.00 kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="770"/>
+        <location filename="../inc/ui_mainwindow.h" line="769"/>
         <location filename="../src/mainwindow.cpp" line="69"/>
         <source>14.25 kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="777"/>
+        <location filename="../inc/ui_mainwindow.h" line="776"/>
         <location filename="../src/mainwindow.cpp" line="220"/>
         <source>Ingreso Nueva Baliza</source>
         <translation>Enter New Beacon</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="778"/>
+        <location filename="../inc/ui_mainwindow.h" line="777"/>
         <source>Distancia Baliza [metros]</source>
         <translation>Beacon Depth [meters]</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="779"/>
-        <location filename="../inc/ui_mainwindow.h" line="784"/>
-        <location filename="../inc/ui_mainwindow.h" line="789"/>
+        <location filename="../inc/ui_mainwindow.h" line="778"/>
+        <location filename="../inc/ui_mainwindow.h" line="783"/>
+        <location filename="../inc/ui_mainwindow.h" line="788"/>
         <source>Aceptar</source>
         <translation>Accept</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="780"/>
-        <location filename="../inc/ui_mainwindow.h" line="786"/>
-        <location filename="../inc/ui_mainwindow.h" line="790"/>
+        <location filename="../inc/ui_mainwindow.h" line="779"/>
+        <location filename="../inc/ui_mainwindow.h" line="785"/>
+        <location filename="../inc/ui_mainwindow.h" line="789"/>
         <location filename="../inc/ui_mainwindow.h" line="793"/>
         <source>Cancelar</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="782"/>
+        <location filename="../inc/ui_mainwindow.h" line="781"/>
         <source>Una nueva baliza será registrada
 ¿Está seguro de la ubicación de esta?</source>
         <translation>A new beacon will be registered
 Are you about the location of this one?</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="783"/>
+        <location filename="../inc/ui_mainwindow.h" line="782"/>
         <source>Identificador Baliza [ID]</source>
         <translation>Beacon Identifier [ID]</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="785"/>
+        <location filename="../inc/ui_mainwindow.h" line="784"/>
         <source>No encontrada</source>
         <translation>Not found</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="788"/>
+        <location filename="../inc/ui_mainwindow.h" line="787"/>
         <source>Comenzará un nuevo registro
 Luego de esto no podrá modificar el registro actual</source>
         <translation>Starting a new register
 After this you will not be able to modify the current register</translation>
     </message>
     <message>
-        <location filename="../inc/ui_mainwindow.h" line="763"/>
+        <location filename="../inc/ui_mainwindow.h" line="762"/>
         <location filename="../src/mainwindow.cpp" line="70"/>
         <source>Vista avanzada</source>
         <translation>Advanced view</translation>
