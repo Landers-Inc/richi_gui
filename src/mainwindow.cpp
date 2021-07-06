@@ -419,6 +419,8 @@ void MainWindow::tableCancel() {
             ui->beaconTable->beaconListLayout->removeItem(beaconList[i]);
             QLayoutItem *child;
             while ((child = beaconList[i]->takeAt(0)) != 0) {
+                beaconList[i]->removeItem(child);
+                child->widget()->hide();
                 delete child;
             }
             delete beaconList[i];
