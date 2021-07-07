@@ -19,3 +19,7 @@ double measureBearing(double lat1, double lon1, double lat2, double lon2) {
     double theta = std::atan2(y, x);
     return std::fmod((theta * 180.0 / M_PI + 360.0), 360.0);
 }
+
+double measureHeight(double hgt1, double hgt2) {
+    return hgt2 - hgt1;
+}

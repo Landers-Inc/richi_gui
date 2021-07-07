@@ -206,9 +206,10 @@ void DataProcessor::setViewAxis(int axis) {
 }
 
 // Qt Slot used to receive the data from GPSReader
-void DataProcessor::processGPS(double const &latitude, double const &longitude) {
+void DataProcessor::processGPS(double const &latitude, double const &longitude, double const &height) {
     gpsLatitude = latitude;
     gpsLongitude = longitude;
+    gpsHeight = height;
 
     if (!startingAxisPosition) {
         startingAxisPosition = true;
@@ -218,6 +219,7 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
         peakTimeserie.push_back(std::vector<double>(peakSerieSize, 20.0 * log10(peaksData[2].power)));
         currentPositionLatitude = gpsLatitude;
         currentPositionLongitude = gpsLongitude;
+        currentPositionHeight = gpsHeight;
         currentTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     }
 
@@ -297,7 +299,7 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
 
     if (stateInstance->getState() == POSTBLAST) {
         // Save data in an struct
-        DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
+        DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude, gpsHeight};
         // Log timestamp data
         emit logTimestamp(timestamp);
         // Log spectrum in logarithm scale
@@ -319,6 +321,7 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
     distanceDomain[peakPointer] = measureDistance(gpsLatitude, gpsLongitude, currentPositionLatitude, currentPositionLongitude) + prevData;
     currentPositionLatitude = gpsLatitude;
     currentPositionLongitude = gpsLongitude;
+    currentPositionHeight = gpsHeight;
     // Update values of peak timeserie
     peakTimeserie[0][peakPointer] = 20.0 * log10(peaksData[0].power);
     peakTimeserie[1][peakPointer] = 20.0 * log10(peaksData[1].power);
@@ -339,7 +342,7 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude) 
 void DataProcessor::saveBeacon(double distance) {
     unsigned long long int timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     // Save data in an struct
-    DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude};
+    DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude, gpsHeight};
     // Log timestamp data
     emit logTimestamp(timestamp);
     if (stateInstance->getState() == PREBLAST) {

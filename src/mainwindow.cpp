@@ -373,34 +373,39 @@ void MainWindow::tableLog() {
         for (int i = 0; i < dataLogger->beaconPreCount; i++) {
             beaconList[i]->id->setText(QString::number(i + 1));
             beaconList[i]->beaconType->setText(QString((char)(dataLogger->beaconPreData[i].beaconType + 'A')));
-            beaconList[i]->preDistance->setText(QString::number(dataLogger->beaconPreData[i].distance, 'g'));
-            beaconList[i]->prePower->setText(QString::number(20.0 * log10(dataLogger->beaconPreData[i].power), 'g'));
+            beaconList[i]->preDistance->setText(QString::number(dataLogger->beaconPreData[i].distance, 'f', 1));
+            beaconList[i]->prePower->setText(QString::number(20.0 * log10(dataLogger->beaconPreData[i].power), 'f', 1));
         }
         for (int i = 0; i < dataLogger->beaconPostCount; i++) {
             int idPost = (int)dataLogger->beaconPostData[i].distance;
             if (idPost != -1) {
                 beaconList[idPost - 1]->postId->setText(QString::number(i + 1));
                 beaconList[idPost - 1]->assignedId->setText(QString::number(idPost));
-                beaconList[idPost - 1]->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
+                beaconList[idPost - 1]->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'f', 1));
                 beaconList[idPost - 1]->diffNorthDistance->setText(
                     QString::number(
                         measureDistance(dataLogger->beaconPreData[idPost - 1].latPosition,
                                         dataLogger->beaconPreData[idPost - 1].lngPosition,
                                         dataLogger->beaconPostData[i].latPosition,
                                         dataLogger->beaconPostData[i].lngPosition),
-                        'g'));
+                        'f', 1));
                 beaconList[idPost - 1]->diffEastDistance->setText(
                     QString::number(
                         measureBearing(dataLogger->beaconPreData[idPost - 1].latPosition,
                                        dataLogger->beaconPreData[idPost - 1].lngPosition,
                                        dataLogger->beaconPostData[i].latPosition,
                                        dataLogger->beaconPostData[i].lngPosition),
-                        'g'));
+                        'f', 1));
+                beaconList[idPost - 1]->diffHeight->setText(
+                    QString::number(
+                        measureHeight(dataLogger->beaconPreData[idPost - 1].hgtPosition,
+                                      dataLogger->beaconPostData[i].hgtPosition),
+                        'f', 1));
             } else {
                 BeaconTableItem *itemLayout = new BeaconTableItem(ui->beaconTable->tableWidget);
                 itemLayout->postId->setText(QString::number(i + 1));
                 itemLayout->assignedId->setText(QString::number(-1));
-                itemLayout->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'g'));
+                itemLayout->postPower->setText(QString::number(20.0 * log10(dataLogger->beaconPostData[i].power), 'f', 1));
                 ui->beaconTable->beaconListLayout->addLayout(itemLayout);
                 beaconList.push_back(itemLayout);
             }
@@ -553,6 +558,7 @@ void MainWindow::startNewPreblastLog() {
     ui->postblastLog->setStyleSheet(RED_BUTTON);
     ui->beaconFound->setStyleSheet(RED_BUTTON);
     ui->standbyLog->setStyleSheet(RED_BUTTON);
+    ui->standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro activo"));
 }
 
 void MainWindow::startNewPostblastLog() {
@@ -563,6 +569,7 @@ void MainWindow::startNewPostblastLog() {
     ui->postblastLog->setStyleSheet(GREEN_BUTTON);
     ui->beaconFound->setStyleSheet(GREEN_BUTTON);
     ui->standbyLog->setStyleSheet(RED_BUTTON);
+    ui->standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro activo"));
 }
 
 void MainWindow::standbyLog() {
@@ -573,6 +580,7 @@ void MainWindow::standbyLog() {
     ui->postblastLog->setStyleSheet(RED_BUTTON);
     ui->beaconFound->setStyleSheet(RED_BUTTON);
     ui->standbyLog->setStyleSheet(GREEN_BUTTON);
+    ui->standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro inactivo"));
 }
 
 void MainWindow::selectTimeAxis() {

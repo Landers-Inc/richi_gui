@@ -13,6 +13,8 @@ class GPSReader : public QObject {
     double latValue;
     // Vector to store converted data
     double lngValue;
+    // Vector to store converted data
+    double hgtValue;
     // Vector to store time data
     double gpsTime;
     // Vector to store converted data
@@ -29,7 +31,7 @@ class GPSReader : public QObject {
     };
    signals:
     // Qt Signal used to transfer data to DataProcessor thread
-    virtual void dataReady(double const &latitude, double const &longitude);
+    virtual void dataReady(double const &latitude, double const &longitude, double const &height);
    public slots:
     // Qt Slot used to
     virtual void run() = 0;

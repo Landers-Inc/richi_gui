@@ -20,7 +20,8 @@ void DataLogger::setDatabaseTables() {
         "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
         "timestamp BIGINT UNSIGNED NOT NULL,"
         "lat_position DOUBLE NOT NULL,"
-        "lng_position DOUBLE NOT NULL"
+        "lng_position DOUBLE NOT NULL,"
+        "hgt_position DOUBLE NOT NULL"
         ")");
     if (!query.exec())
         qDebug() << query.lastError();
@@ -97,7 +98,8 @@ void DataLogger::getLastBeacons() {
         "t1.frequency, "
         "t1.power, "
         "t2.lat_position, "
-        "t2.lng_position "
+        "t2.lng_position, "
+        "t2.hgt_position "
         "FROM BeaconData t1 "
         "JOIN TimeData t2 ON t1.timedata_id = t2.id "
         "WHERE configuration_id=:configuration_id "
@@ -117,6 +119,7 @@ void DataLogger::getLastBeacons() {
             tmp.power = query.value(4).toDouble();
             tmp.latPosition = query.value(5).toDouble();
             tmp.lngPosition = query.value(6).toDouble();
+            tmp.hgtPosition = query.value(7).toDouble();
             beaconPreData.push_back(tmp);
         }
     } else {
@@ -131,7 +134,8 @@ void DataLogger::getLastBeacons() {
         "t1.frequency, "
         "t1.power, "
         "t2.lat_position, "
-        "t2.lng_position "
+        "t2.lng_position, "
+        "t2.hgt_position "
         "FROM BeaconData t1 "
         "JOIN TimeData t2 ON t1.timedata_id = t2.id "
         "WHERE configuration_id=:configuration_id "
@@ -151,6 +155,7 @@ void DataLogger::getLastBeacons() {
             tmp.power = query.value(4).toDouble();
             tmp.latPosition = query.value(5).toDouble();
             tmp.lngPosition = query.value(6).toDouble();
+            tmp.hgtPosition = query.value(7).toDouble();
             beaconPostData.push_back(tmp);
         }
     } else
@@ -242,15 +247,18 @@ void DataLogger::insertTimeData(TimeData const &time) {
         "INSERT INTO TimeData ("
         "timestamp,"
         "lat_position,"
-        "lng_position"
+        "lng_position,"
+        "hgt_position"
         ") VALUES ("
         ":timestamp,"
         ":lat_position,"
-        ":lng_position"
+        ":lng_position,"
+        ":hgt_position"
         ")");
     query.bindValue(":timestamp", time.timestamp);
     query.bindValue(":lat_position", time.latPosition);
     query.bindValue(":lng_position", time.lngPosition);
+    query.bindValue(":hgt_position", time.hgtPosition);
     if (!query.exec())
         qDebug() << query.lastError();
 

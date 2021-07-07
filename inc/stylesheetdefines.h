@@ -22,8 +22,14 @@
     ");"                                                                              \
     "}"
 
+#define BEACON_LABEL_ITEM     \
+    "border: 1px solid #000;" \
+    "color: black;"           \
+    "font: 14px 'Ubuntu';"    \
+    "font-weight: bold;"
+
 #define BEACON_TABLE_ITEM     \
     "border: 1px solid #000;" \
     "color: black;"           \
-    "font: 16px 'Ubuntu';"    \
+    "font: 18px 'Ubuntu';"    \
     "font-weight: bold;"

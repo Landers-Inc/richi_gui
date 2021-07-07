@@ -51,7 +51,8 @@ void EMLIDGPS::run() {
                     unsigned int* accVer = reinterpret_cast<unsigned int*>(buff + 40);
                     latValue = *latVal;
                     lngValue = *lngVal;
-                    emit dataReady(latValue, lngValue);
+                    hgtValue = *altMsl;
+                    emit dataReady(latValue, lngValue, hgtValue);
                 } break;
                 case ERBID::STAT: {
                     unsigned int* timeGPS = reinterpret_cast<unsigned int*>(buff + 0);

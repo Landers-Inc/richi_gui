@@ -40,6 +40,7 @@ class DataLogger : public QObject {
         double power;             // Power received from the beacon
         double latPosition;       // Latitude of the beacon
         double lngPosition;       // Longitude of the beacon
+        double hgtPosition;       // Height of the beacon
     } BeaconItem;
 
     // We define an structure to save the timestamp and position
@@ -47,6 +48,7 @@ class DataLogger : public QObject {
         unsigned long long timestamp;  // Timestamp with respect to UTC
         double latPosition;            // Latitude GPS position
         double lngPosition;            // Longitude GPS Position
+        double hgtPosition;            // Height GPS Position
     } TimeData;
 
     // We define an structure to save the peaks data (frequency and power)

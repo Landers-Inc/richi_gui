@@ -61,6 +61,8 @@ class DataProcessor : public QObject {
     double gpsLatitude = 0;
     // Longitude position received from GPS
     double gpsLongitude = 0;
+    // Height position received from GPS
+    double gpsHeight = 0;
     // Timestamp received from GPS
     unsigned int gpsTime = 0;
     // Number of Space Vehicles used
@@ -70,6 +72,7 @@ class DataProcessor : public QObject {
     // Number of Space Vehicles used
     double currentPositionLatitude = 0;
     double currentPositionLongitude = 0;
+    double currentPositionHeight = 0;
     // Accumulator size
     int accumulatorSize = 5;
     // Pointer to the current value value in the accumulator to overwrite
@@ -155,7 +158,7 @@ class DataProcessor : public QObject {
     // Qt Slot used to receive the data from DataAcquisition
     void processData(std::vector<double> amplitudeData);
     // Qt Slot used to receive the data from GPSReader
-    void processGPS(double const &latitude, double const &longitude);
+    void processGPS(double const &latitude, double const &longitude, double const &height);
     // Qt Slot used to select peak timeserie to display
     void setPeakToDisplay(int disp);
     void setViewAxis(int axis);

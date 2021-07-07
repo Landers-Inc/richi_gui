@@ -192,8 +192,7 @@ class Ui_MainWindow {
         keyboardInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         keyboardInputWidget->move(310, 425);
         keyboardInputWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-        keyboardInputWidget->setAttribute(Qt::WA_TranslucentBackground, true);
-        keyboardInputWidget->setAttribute(Qt::WA_AlwaysStackOnTop, true);
+        keyboardInputWidget->setAttribute(Qt::WA_AlwaysStackOnTop);
         keyboardInputWidget->setClearColor(Qt::transparent);
         keyboardInputWidget->setMinimumSize(660, 375);
         keyboardInputWidget->setSource(QUrl("qrc:/main.qml"));
@@ -756,7 +755,7 @@ class Ui_MainWindow {
         beaconFound->setText(QCoreApplication::translate("MainWindow", "Baliza\nEncontrada"));
         preblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPre-Tronadura"));
         postblastLog->setText(QCoreApplication::translate("MainWindow", "Registro\nPost-Tronadura"));
-        standbyLog->setText(QCoreApplication::translate("MainWindow", "Estado inactivo"));
+        standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro inactivo"));
         tableLog->setText(QCoreApplication::translate("MainWindow", "Mostrar tabla"));
         switchLanguage->setText(QCoreApplication::translate("MainWindow", "Español"));
         saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
@@ -800,6 +799,7 @@ class Ui_MainWindow {
         beaconTable->beaconLabelsLayout->postPower->setText(QCoreApplication::translate("MainWindow", "Potencia Post"));
         beaconTable->beaconLabelsLayout->diffNorthDistance->setText(QCoreApplication::translate("MainWindow", "Distancia"));
         beaconTable->beaconLabelsLayout->diffEastDistance->setText(QCoreApplication::translate("MainWindow", "Rumbo"));
+        beaconTable->beaconLabelsLayout->diffHeight->setText(QCoreApplication::translate("MainWindow", "Altura"));
     }
 };
 
