@@ -365,18 +365,18 @@ void MainWindow::startNewLog() {
 void MainWindow::tableLog() {
     if (!ui->beaconTable->dialogInputWidget->isVisible()) {
         unsigned int rowsCount = std::max(dataLogger->beaconPreCount, dataLogger->beaconPostCount);
-        for (int i = 0; i < rowsCount; i++) {
+        for (unsigned int i = 0; i < rowsCount; i++) {
             BeaconTableItem *itemLayout = new BeaconTableItem(ui->beaconTable->tableWidget);
             ui->beaconTable->beaconListLayout->addLayout(itemLayout);
             beaconList.push_back(itemLayout);
         }
-        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+        for (unsigned int i = 0; i < dataLogger->beaconPreCount; i++) {
             beaconList[i]->id->setText(QString::number(i + 1));
             beaconList[i]->beaconType->setText(QString((char)(dataLogger->beaconPreData[i].beaconType + 'A')));
             beaconList[i]->preDistance->setText(QString::number(dataLogger->beaconPreData[i].distance, 'f', 1));
             beaconList[i]->prePower->setText(QString::number(20.0 * log10(dataLogger->beaconPreData[i].power), 'f', 1));
         }
-        for (int i = 0; i < dataLogger->beaconPostCount; i++) {
+        for (unsigned int i = 0; i < dataLogger->beaconPostCount; i++) {
             int idPost = (int)dataLogger->beaconPostData[i].distance;
             if (idPost != -1) {
                 beaconList[idPost - 1]->postId->setText(QString::number(i + 1));
@@ -420,7 +420,7 @@ void MainWindow::tableLog() {
 
 void MainWindow::tableCancel() {
     if (ui->beaconTable->dialogInputWidget->isVisible()) {
-        for (int i = 0; i < beaconList.size(); i++) {
+        for (unsigned int i = 0; i < beaconList.size(); i++) {
             ui->beaconTable->beaconListLayout->removeItem(beaconList[i]);
             QLayoutItem *child;
             while ((child = beaconList[i]->takeAt(0)) != 0) {
@@ -448,13 +448,20 @@ void MainWindow::tableGenerate() {
         std::strftime(datetimeString, sizeof(datetimeString), "/home/pi/table_%Y%m%d_%H%M%S.csv", std::gmtime(&currentDatetime));
         std::ofstream file(datetimeString);
         QLayoutItem *child;
+        // We write the headers row
         for (int i = 0; i < ui->beaconTable->beaconLabelsLayout->count(); ++i) {
             child = ui->beaconTable->beaconLabelsLayout->itemAt(i);
             QLabel *labelTemp = (QLabel *)child->widget();
             file << labelTemp->text().toStdString() << ",";
         }
+        file << "Latitude Pre,";
+        file << "Longitude Pre,";
+        file << "Height Pre,";
+        file << "Latitude Post,";
+        file << "Longitude Post,";
+        file << "Height Post";
         file << std::endl;
-        for (int j = 0; j < beaconList.size(); j++) {
+        for (unsigned int j = 0; j < beaconList.size(); j++) {
             for (int i = 0; i < beaconList[j]->count(); ++i) {
                 child = beaconList[j]->itemAt(i);
                 QObject *objTemp = (QObject *)child->widget();
@@ -463,6 +470,17 @@ void MainWindow::tableGenerate() {
                 } else if (QLineEdit *lineTemp = qobject_cast<QLineEdit *>(objTemp)) {
                     file << lineTemp->text().toStdString() << ",";
                 }
+            }
+            file << dataLogger->beaconPreData[j].latPosition << ",";
+            file << dataLogger->beaconPreData[j].lngPosition << ",";
+            file << dataLogger->beaconPreData[j].hgtPosition << ",";
+            int iId = beaconList[j]->postId->text().toInt();
+            if (iId != 0) {
+                file << dataLogger->beaconPostData[iId - 1].latPosition << ",";
+                file << dataLogger->beaconPostData[iId - 1].lngPosition << ",";
+                file << dataLogger->beaconPostData[iId - 1].hgtPosition;
+            } else {
+                file << ",,";
             }
             file << std::endl;
         }
@@ -473,8 +491,8 @@ void MainWindow::tableGenerate() {
 void MainWindow::tableUpdate() {
     if (ui->beaconTable->dialogInputWidget->isVisible()) {
         bool checkRepeated = false;
-        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
-            for (int j = 0; j < dataLogger->beaconPreCount; j++) {
+        for (unsigned int i = 0; i < dataLogger->beaconPreCount; i++) {
+            for (unsigned int j = 0; j < dataLogger->beaconPreCount; j++) {
                 int iId = beaconList[i]->postId->text().toInt();
                 int jId = beaconList[j]->postId->text().toInt();
                 if (i != j && iId != 0 && jId != 0) {
@@ -485,23 +503,23 @@ void MainWindow::tableUpdate() {
             }
         }
         bool checkGreater = false;
-        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+        for (unsigned int i = 0; i < dataLogger->beaconPreCount; i++) {
             signed int iId = beaconList[i]->assignedId->text().toInt();
             if (iId >= (signed int)dataLogger->beaconPreCount) checkGreater = true;
         }
 
         bool checkNegative = false;
-        for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+        for (unsigned int i = 0; i < dataLogger->beaconPreCount; i++) {
             double depth = beaconList[i]->preDistance->text().toDouble();
             if (depth <= 0) checkNegative = true;
         }
 
         if (!checkRepeated && !checkGreater && !checkNegative) {
-            for (int i = 0; i < dataLogger->beaconPreCount; i++) {
+            for (unsigned int i = 0; i < dataLogger->beaconPreCount; i++) {
                 double depth = beaconList[i]->preDistance->text().toDouble();
                 dataLogger->beaconPreData[i].distance = depth;
             }
-            for (int i = 0; i < beaconList.size(); i++) {
+            for (unsigned int i = 0; i < beaconList.size(); i++) {
                 int postId = beaconList[i]->postId->text().toInt();
                 if (postId > 0) {
                     double assignedId = beaconList[i]->assignedId->text().toDouble();
@@ -511,7 +529,7 @@ void MainWindow::tableUpdate() {
             dataLogger->updateBeaconData();
         }
 
-        for (int i = 0; i < beaconList.size(); i++) {
+        for (unsigned int i = 0; i < beaconList.size(); i++) {
             ui->beaconTable->beaconListLayout->removeItem(beaconList[i]);
             QLayoutItem *child;
             while ((child = beaconList[i]->takeAt(0)) != 0) {
