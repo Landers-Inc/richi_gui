@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <string>
 
 #include "mainwindow.h"
 
@@ -22,6 +23,7 @@ int main(int argc, char* argv[]) {
     QQmlApplicationEngine engine;
     engine.addImportPath(":/resources");
 
+    qRegisterMetaType<std::string>("std::string");
     qRegisterMetaType<QVector<double>>("QVector<double>");
     qRegisterMetaType<std::vector<double>>("std::vector<double>");
     qRegisterMetaType<DataLogger::TimeData>("DataLogger::TimeData");

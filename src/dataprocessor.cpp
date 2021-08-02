@@ -206,10 +206,20 @@ void DataProcessor::setViewAxis(int axis) {
 }
 
 // Qt Slot used to receive the data from GPSReader
-void DataProcessor::processGPS(double const &latitude, double const &longitude, double const &height) {
+void DataProcessor::processGPS(
+    double const &latitude,
+    double const &longitude,
+    double const &height,
+    std::string const &name,
+    unsigned char const &type,
+    unsigned char const &status,
+    unsigned char const &hor,
+    unsigned char const &ver) {
     gpsLatitude = latitude;
     gpsLongitude = longitude;
     gpsHeight = height;
+
+    emit updateGPSInfo(latitude, longitude, height, name, type, status, hor, ver);
 
     if (!startingAxisPosition) {
         startingAxisPosition = true;
@@ -339,17 +349,22 @@ void DataProcessor::processGPS(double const &latitude, double const &longitude, 
     emit dataReady(Qoutx, Qouty);
 }
 
-void DataProcessor::saveBeacon(double distance) {
+void DataProcessor::saveBeacon(double distance, double id, int beaconType) {
     unsigned long long int timeNow = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     // Save data in an struct
     DataLogger::TimeData timestamp = {timeNow, gpsLatitude, gpsLongitude, gpsHeight};
     // Log timestamp data
     emit logTimestamp(timestamp);
     if (stateInstance->getState() == PREBLAST) {
-        DataLogger::BeaconData beacon = {0, 0, peakToDisplay, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+        DataLogger::BeaconData beacon = {0, 0, beaconType, distance, peaksData[beaconType].frequency, peaksData[beaconType].power};
         emit logBeacon(beacon);
     } else if (stateInstance->getState() == POSTBLAST) {
-        DataLogger::BeaconData beacon = {0, 1, peakToDisplay, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
-        emit logBeacon(beacon);
+        if (distance == -1) {
+            DataLogger::BeaconData beacon = {0, 1, peakToDisplay, distance, id, id};
+            emit logBeacon(beacon);
+        } else {
+            DataLogger::BeaconData beacon = {0, 1, peakToDisplay, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+            emit logBeacon(beacon);
+        }
     }
 }

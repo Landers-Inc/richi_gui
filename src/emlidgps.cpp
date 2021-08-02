@@ -11,6 +11,7 @@ EMLIDGPS::EMLIDGPS() {
         fprintf(stderr, "Unable to open serial device /dev/ttyUSB-GPSLink: %s\n", strerror(errno));
         throw 1;
     }
+    gpsName = "EMLID GPS";
 };
 
 EMLIDGPS::~EMLIDGPS() {
@@ -52,14 +53,19 @@ void EMLIDGPS::run() {
                     latValue = *latVal;
                     lngValue = *lngVal;
                     hgtValue = *altMsl;
-                    emit dataReady(latValue, lngValue, hgtValue);
+                    gpsAccHor = *accHor;
+                    gpsAccVer = *accVer;
+                    emit dataReady(latValue, lngValue, hgtValue, gpsName, gpsFixType, gpsFixStatus, gpsAccHor, gpsAccVer);
                 } break;
                 case ERBID::STAT: {
                     unsigned int* timeGPS = reinterpret_cast<unsigned int*>(buff + 0);
                     unsigned short* weekGPS = reinterpret_cast<unsigned short*>(buff + 4);
                     unsigned char* fixType = reinterpret_cast<unsigned char*>(buff + 6);
+                    gpsFixType = *fixType;
                     unsigned char* fixStatus = reinterpret_cast<unsigned char*>(buff + 7);
+                    gpsFixStatus = *fixStatus;
                     unsigned char* numSV = reinterpret_cast<unsigned char*>(buff + 8);
+                    gpsNumSV = *numSV;
                 } break;
                 case ERBID::DOPS: {
                     unsigned int* timeGPS = reinterpret_cast<unsigned int*>(buff + 0);
@@ -93,6 +99,7 @@ void EMLIDGPS::run() {
                 } break;
                 case ERBID::RTK: {
                     unsigned char* numSV = reinterpret_cast<unsigned char*>(buff + 0);
+                    gpsNumSV = *numSV;
                     unsigned short* age = reinterpret_cast<unsigned short*>(buff + 1);
                     signed int* baselineN = reinterpret_cast<signed int*>(buff + 3);
                     signed int* baselineE = reinterpret_cast<signed int*>(buff + 7);

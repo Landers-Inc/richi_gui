@@ -16,6 +16,7 @@ class DataLogger : public QObject {
    public:
     // We define an structure to save the current configuration
     typedef struct Configuration {
+        char *name;
         char *datetime;
         unsigned int dataSize;   // Buffer used to process Spectrum
         double sampleFrequency;  // Frequency sampling for this configuration
@@ -113,10 +114,13 @@ class DataLogger : public QObject {
         if (!instance) instance = new DataLogger;
         return instance;
     }
+    void getConfigurationName(char *name);
 
    public slots:
     void insertConfiguration(Configuration const &conf);
     void insertBeaconData(BeaconData const &beacon);
+    void deleteBeaconData(BeaconData const &beacon);
+    void deleteBeaconData(BeaconItem const &beacon);
     void updateBeaconData();
     void insertTimeData(TimeData const &time);
     void insertPeaksData(PeaksData const &peak);

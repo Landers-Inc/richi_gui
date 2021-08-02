@@ -45,7 +45,10 @@ class Ui_MainWindow {
     BeaconInputDialog *inputBeaconWidget;
     BeaconFoundDialog *foundBeaconWidget;
     WarningDialog *warningWidget;
+    GPSStatus *gpsWidget;
     BeaconTable *beaconTable;
+    NameInputDialog *nameInputDialog;
+    AdjustSpectrum *adjustSpectrum;
 
     QWidget *centralWidget;
     QFrame *statusLine;
@@ -97,10 +100,12 @@ class Ui_MainWindow {
     QPushButton *tableLog;
     QHBoxLayout *saveLayout;
     QPushButton *switchLanguage;
+    QPushButton *adjustButton;
     QPushButton *startLog;
     QPushButton *saveLog;
     QPushButton *closeShutdown;
     QVBoxLayout *selectLayout;
+    QPushButton *gpsStatus;
     QPushButton *selectOneFreq;
     QPushButton *selectTwoFreq;
     QPushButton *selectThreeFreq;
@@ -185,7 +190,10 @@ class Ui_MainWindow {
         inputBeaconWidget = new BeaconInputDialog(MainWindow);
         foundBeaconWidget = new BeaconFoundDialog(MainWindow);
         warningWidget = new WarningDialog(MainWindow);
+        gpsWidget = new GPSStatus(MainWindow);
         beaconTable = new BeaconTable(MainWindow);
+        nameInputDialog = new NameInputDialog(MainWindow);
+        adjustSpectrum = new AdjustSpectrum(MainWindow);
 
         keyboardInputWidget = new QQuickWidget(MainWindow);
         keyboardInputWidget->setObjectName("keyboardInputWidget");
@@ -636,6 +644,14 @@ class Ui_MainWindow {
 
         saveLayout->addWidget(switchLanguage);
 
+        adjustButton = new QPushButton(layoutWidget);
+        adjustButton->setObjectName("adjustButton");
+        sizePolicy1.setHeightForWidth(adjustButton->sizePolicy().hasHeightForWidth());
+        adjustButton->setFocusPolicy(Qt::NoFocus);
+        adjustButton->setSizePolicy(sizePolicy1);
+
+        saveLayout->addWidget(adjustButton);
+
         saveLog = new QPushButton(layoutWidget);
         saveLog->setObjectName("simpleView");
         sizePolicy1.setHeightForWidth(saveLog->sizePolicy().hasHeightForWidth());
@@ -664,8 +680,9 @@ class Ui_MainWindow {
 
         saveLayout->setStretch(0, 2);
         saveLayout->setStretch(1, 2);
-        saveLayout->setStretch(2, 3);
+        saveLayout->setStretch(2, 2);
         saveLayout->setStretch(3, 3);
+        saveLayout->setStretch(4, 3);
 
         dataLayout->addLayout(saveLayout);
 
@@ -679,6 +696,15 @@ class Ui_MainWindow {
         selectLayout->setObjectName("selectLayout");
         selectLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         selectLayout->setContentsMargins(10, 10, 10, 10);
+
+        gpsStatus = new QPushButton(layoutWidget);
+        gpsStatus->setObjectName("gpsStatus");
+        sizePolicy1.setHeightForWidth(gpsStatus->sizePolicy().hasHeightForWidth());
+        gpsStatus->setFocusPolicy(Qt::NoFocus);
+        gpsStatus->setSizePolicy(sizePolicy1);
+        gpsStatus->setStyleSheet(GREEN_BUTTON);
+
+        selectLayout->addWidget(gpsStatus);
 
         selectOneFreq = new QPushButton(layoutWidget);
         selectOneFreq->setObjectName("selectOneFreq");
@@ -706,7 +732,7 @@ class Ui_MainWindow {
 
         panelLayout->addLayout(selectLayout);
 
-        panelLayout->setStretch(0, 4);
+        panelLayout->setStretch(0, 5);
         panelLayout->setStretch(1, 1);
 
         verticalLayout->addLayout(panelLayout);
@@ -758,9 +784,11 @@ class Ui_MainWindow {
         standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro inactivo"));
         tableLog->setText(QCoreApplication::translate("MainWindow", "Mostrar tabla"));
         switchLanguage->setText(QCoreApplication::translate("MainWindow", "Español"));
+        adjustButton->setText(QCoreApplication::translate("MainWindow", "Ajustar\nEspectro"));
         saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
         startLog->setText(QCoreApplication::translate("MainWindow", "Empezar Nuevo\nRegistro"));
         closeShutdown->setText(QCoreApplication::translate("MainWindow", "Cerrar y Apagar"));
+        gpsStatus->setText(QCoreApplication::translate("MainWindow", "Estado GPS"));
 
         if (!simpleView) {
             selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
@@ -774,6 +802,15 @@ class Ui_MainWindow {
 
         inputBeaconWidget->beaconTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza"));
         inputBeaconWidget->beaconOneInputLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]"));
+        if (!simpleView) {
+            inputBeaconWidget->beaconTypeA->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
+            inputBeaconWidget->beaconTypeB->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
+            inputBeaconWidget->beaconTypeC->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
+        } else {
+            inputBeaconWidget->beaconTypeA->setText(QCoreApplication::translate("MainWindow", "Baliza A"));
+            inputBeaconWidget->beaconTypeB->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
+            inputBeaconWidget->beaconTypeC->setText(QCoreApplication::translate("MainWindow", "Baliza C"));
+        }
         inputBeaconWidget->beaconInputAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
         inputBeaconWidget->beaconInputCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
 
@@ -787,6 +824,17 @@ class Ui_MainWindow {
         warningWidget->warningAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
         warningWidget->warningCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
 
+        gpsWidget->statusTitle->setText(QCoreApplication::translate("MainWindow", "Estado GPS"));
+        gpsWidget->gpsNameLabel->setText(QCoreApplication::translate("MainWindow", "Nombre"));
+        gpsWidget->gpsModeLabel->setText(QCoreApplication::translate("MainWindow", "Modo"));
+        gpsWidget->gpsStatusLabel->setText(QCoreApplication::translate("MainWindow", "Estado"));
+        gpsWidget->gpsCoordXLabel->setText(QCoreApplication::translate("MainWindow", "Latitud"));
+        gpsWidget->gpsCoordYLabel->setText(QCoreApplication::translate("MainWindow", "Longitud"));
+        gpsWidget->gpsCoordZLabel->setText(QCoreApplication::translate("MainWindow", "Altura [msnm]"));
+        gpsWidget->gpsAccHorLabel->setText(QCoreApplication::translate("MainWindow", "Precisión H [mm]"));
+        gpsWidget->gpsAccVerLabel->setText(QCoreApplication::translate("MainWindow", "Precisión V [mm]"));
+        gpsWidget->statusClose->setText(QCoreApplication::translate("MainWindow", "Cerrar"));
+
         beaconTable->updateButton->setText(QCoreApplication::translate("MainWindow", "Actualizar balizas"));
         beaconTable->generateButton->setText(QCoreApplication::translate("MainWindow", "Generar archivo"));
         beaconTable->cancelButton->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
@@ -797,9 +845,25 @@ class Ui_MainWindow {
         beaconTable->beaconLabelsLayout->postId->setText(QCoreApplication::translate("MainWindow", "Post Id"));
         beaconTable->beaconLabelsLayout->assignedId->setText(QCoreApplication::translate("MainWindow", "Asignado"));
         beaconTable->beaconLabelsLayout->postPower->setText(QCoreApplication::translate("MainWindow", "Potencia Post"));
-        beaconTable->beaconLabelsLayout->diffNorthDistance->setText(QCoreApplication::translate("MainWindow", "Distancia"));
+        beaconTable->beaconLabelsLayout->diffNorthDistance->setText(QCoreApplication::translate("MainWindow", "Desplazamiento horizontal"));
         beaconTable->beaconLabelsLayout->diffEastDistance->setText(QCoreApplication::translate("MainWindow", "Rumbo"));
-        beaconTable->beaconLabelsLayout->diffHeight->setText(QCoreApplication::translate("MainWindow", "Altura"));
+        beaconTable->beaconLabelsLayout->diffHeight->setText(QCoreApplication::translate("MainWindow", "Desplazamiento vertical"));
+        beaconTable->beaconLabelsLayout->preLongitude->setText(QCoreApplication::translate("MainWindow", "Pre Longitud"));
+        beaconTable->beaconLabelsLayout->preLatitude->setText(QCoreApplication::translate("MainWindow", "Pre Latitud"));
+        beaconTable->beaconLabelsLayout->postLongitude->setText(QCoreApplication::translate("MainWindow", "Post Longitud"));
+        beaconTable->beaconLabelsLayout->postLatitude->setText(QCoreApplication::translate("MainWindow", "Post Latitud"));
+
+        nameInputDialog->nameTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Nombre Configuración"));
+        nameInputDialog->nameOneInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingrese Nombre"));
+        nameInputDialog->nameInputAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+
+        adjustSpectrum->adjustTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Adjust espectro"));
+        adjustSpectrum->adjustOneInputLabel->setText(QCoreApplication::translate("MainWindow", "Máximo"));
+        adjustSpectrum->adjustTwoInputLabel->setText(QCoreApplication::translate("MainWindow", "Mínimo"));
+        adjustSpectrum->adjustOneInputText->setText(QCoreApplication::translate("MainWindow", "4.0"));
+        adjustSpectrum->adjustTwoInputText->setText(QCoreApplication::translate("MainWindow", "-140.0"));
+        adjustSpectrum->adjustInputAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
+        adjustSpectrum->adjustInputCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
     }
 };
 

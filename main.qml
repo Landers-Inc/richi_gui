@@ -1,7 +1,7 @@
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
-import QtQuick.VirtualKeyboard 2.15
+import QtQuick 2.4
+import QtQuick.Window 2.4
+import QtQuick.Controls 2.4
+import QtQuick.VirtualKeyboard 2.4
 
 InputPanel {
     id: inputPanel

@@ -5,28 +5,25 @@
             "includePath": [
                 "${workspaceFolder}/inc/**",
                 "${workspaceFolder}/src/**",
-                "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/**",
-                "/home/chmunozpardo/Programming/raspberrypi/sysroot/**"
+                "/usr/include/x86_64-linux-gnu/qt5/**"
             ],
             "defines": [],
-            "compilerPath": "/home/chmunozpardo/Programming/raspberrypi/tools/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "linux-gcc-arm"
+            "intelliSenseMode": "linux-gcc-x64"
         },
         {
             "name": "Windows",
             "includePath": [
                 "${workspaceFolder}/inc/**",
-                "${workspaceFolder}/src/**",
-                "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/**",
-                "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/**"
+                "${workspaceFolder}/src/**"
             ],
             "defines": [],
             "compilerPath": "C:/SysGCC/raspberry/bin/arm-linux-gnueabihf-g++.exe",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "linux-gcc-arm"
+            "intelliSenseMode": "msvc-x64"
         }
     ],
     "version": 4

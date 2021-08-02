@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QVector>
 #include <fstream>
+#include <iomanip>
 
 #include "datalogger.h"
 #include "dataprocessor.h"
@@ -45,6 +46,8 @@ class MainWindow : public QMainWindow {
     void startThreads();
     QVector<double> peakValues;
     double noiseFloor = -120.0;
+    double maxSpectrum = 4.0;
+    double minSpectrum = -140.0;
    signals:
     void peripheralsReady(double freq, double power);
     void setPeakTimeserie(int disp);
@@ -52,10 +55,20 @@ class MainWindow : public QMainWindow {
     // Qt Signal used to log a configuration
     void logConfiguration(DataLogger::Configuration const &conf);
     // Qt Signal used to log a beacon
-    void logBeacon(double distance);
+    void logBeacon(double distance, double id, int beaconType);
    public slots:
     // Qt Slot used to change Status label
     void warningStatus(QString message);
+
+    void updateGPS(
+        double const &latitude,
+        double const &longitude,
+        double const &height,
+        std::string const &name,
+        unsigned char const &type,
+        unsigned char const &status,
+        unsigned char const &hor,
+        unsigned char const &ver);
     // Qt Slot used to update timeserie data
     void updateData(QVector<double> const &xSeries, QVector<double> const &ySeries);
     // Qt Slot used to update FFT data
@@ -75,6 +88,10 @@ class MainWindow : public QMainWindow {
     // Qt Slot used to
     void selectDistanceAxis();
     // Qt Slot used to;
+    void openGPSStatus();
+    // Qt Slot used to;
+    void closeGPSStatus();
+    // Qt Slot used to;
     void openBeaconInput();
     // Qt Slot used to;
     void openBeaconFound();
@@ -93,11 +110,23 @@ class MainWindow : public QMainWindow {
     // Qt Slot used to
     void warningCancel();
     // Qt Slot used to
+    void openAdjust();
+    // Qt Slot used to
+    void adjustAccept();
+    // Qt Slot used to
+    void adjustCancel();
+    // Qt Slot used to
     void dispFrequencyOne();
     // Qt Slot used to
     void dispFrequencyTwo();
     // Qt Slot used to
     void dispFrequencyThree();
+    // Qt Slot used to
+    void selectBeaconTypeA();
+    // Qt Slot used to
+    void selectBeaconTypeB();
+    // Qt Slot used to
+    void selectBeaconTypeC();
     // Qt Slot used to
     void startNewLog();
     // Qt Slot used to
@@ -112,6 +141,10 @@ class MainWindow : public QMainWindow {
     void tableUpdate();
     // Qt Slot used to
     void tableGenerate();
+    // Qt Slot used to
+    void openInputName();
+    // Qt Slot used to
+    void closeInputName();
     // Qt Slot used to
     void tableCancel();
     // Qt Slot used to

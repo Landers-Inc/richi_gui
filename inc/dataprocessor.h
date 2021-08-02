@@ -133,6 +133,16 @@ class DataProcessor : public QObject {
     void beepStart(unsigned int milliseconds);
     // Qt Signal used to stop QTimer for beep
     void beepStop();
+    // Qt Signal used to stop QTimer for beep
+    void updateGPSInfo(
+        double const &latitude,
+        double const &longitude,
+        double const &height,
+        std::string const &name,
+        unsigned char const &type,
+        unsigned char const &status,
+        unsigned char const &hor,
+        unsigned char const &ver);
 
     // Qt Signal used to update the noise floor in the GUI thread
     void setNoiseFloor(double noiseFloor);
@@ -158,10 +168,18 @@ class DataProcessor : public QObject {
     // Qt Slot used to receive the data from DataAcquisition
     void processData(std::vector<double> amplitudeData);
     // Qt Slot used to receive the data from GPSReader
-    void processGPS(double const &latitude, double const &longitude, double const &height);
+    void processGPS(
+        double const &latitude,
+        double const &longitude,
+        double const &height,
+        std::string const &name,
+        unsigned char const &type,
+        unsigned char const &status,
+        unsigned char const &hor,
+        unsigned char const &ver);
     // Qt Slot used to select peak timeserie to display
     void setPeakToDisplay(int disp);
     void setViewAxis(int axis);
 
-    void saveBeacon(double distance);
+    void saveBeacon(double distance, double id, int beaconType);
 };

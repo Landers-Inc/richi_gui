@@ -21,6 +21,10 @@ class BeaconTableLabels : public QHBoxLayout {
     QLabel *diffNorthDistance;
     QLabel *diffEastDistance;
     QLabel *diffHeight;
+    QLabel *preLatitude;
+    QLabel *preLongitude;
+    QLabel *postLatitude;
+    QLabel *postLongitude;
 
     explicit BeaconTableLabels(QWidget *parent = 0) {
         this->setContentsMargins(0, 0, 0, 0);
@@ -75,6 +79,26 @@ class BeaconTableLabels : public QHBoxLayout {
         diffHeight->setFixedHeight(40);
         diffHeight->setAlignment(Qt::AlignCenter);
         diffHeight->setStyleSheet(BEACON_LABEL_ITEM);
+        preLongitude = new QLabel();
+        preLongitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        preLongitude->setFixedHeight(40);
+        preLongitude->setAlignment(Qt::AlignCenter);
+        preLongitude->setStyleSheet(BEACON_LABEL_ITEM);
+        preLatitude = new QLabel();
+        preLatitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        preLatitude->setFixedHeight(40);
+        preLatitude->setAlignment(Qt::AlignCenter);
+        preLatitude->setStyleSheet(BEACON_LABEL_ITEM);
+        postLongitude = new QLabel();
+        postLongitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        postLongitude->setFixedHeight(40);
+        postLongitude->setAlignment(Qt::AlignCenter);
+        postLongitude->setStyleSheet(BEACON_LABEL_ITEM);
+        postLatitude = new QLabel();
+        postLatitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        postLatitude->setFixedHeight(40);
+        postLatitude->setAlignment(Qt::AlignCenter);
+        postLatitude->setStyleSheet(BEACON_LABEL_ITEM);
         this->addWidget(id);
         this->addWidget(beaconType);
         this->addWidget(preDistance);
@@ -85,6 +109,10 @@ class BeaconTableLabels : public QHBoxLayout {
         this->addWidget(diffNorthDistance);
         this->addWidget(diffEastDistance);
         this->addWidget(diffHeight);
+        this->addWidget(preLongitude);
+        this->addWidget(preLatitude);
+        this->addWidget(postLongitude);
+        this->addWidget(postLatitude);
         this->setStretch(0, 1);
         this->setStretch(1, 1);
         this->setStretch(2, 1);
@@ -92,9 +120,13 @@ class BeaconTableLabels : public QHBoxLayout {
         this->setStretch(4, 1);
         this->setStretch(5, 1);
         this->setStretch(6, 1);
-        this->setStretch(7, 1);
-        this->setStretch(8, 1);
-        this->setStretch(9, 1);
+        this->setStretch(7, 2);
+        this->setStretch(8, 2);
+        this->setStretch(9, 2);
+        this->setStretch(10, 2);
+        this->setStretch(11, 2);
+        this->setStretch(12, 2);
+        this->setStretch(13, 2);
     }
 };
 
@@ -111,6 +143,10 @@ class BeaconTableItem : public QHBoxLayout {
     QLabel *diffNorthDistance;
     QLabel *diffEastDistance;
     QLabel *diffHeight;
+    QLabel *preLatitude;
+    QLabel *preLongitude;
+    QLabel *postLatitude;
+    QLabel *postLongitude;
 
     explicit BeaconTableItem(QWidget *parent = 0) {
         this->setContentsMargins(0, 0, 0, 0);
@@ -167,6 +203,26 @@ class BeaconTableItem : public QHBoxLayout {
         diffHeight->setFixedHeight(40);
         diffHeight->setAlignment(Qt::AlignCenter);
         diffHeight->setStyleSheet(BEACON_TABLE_ITEM);
+        preLongitude = new QLabel();
+        preLongitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        preLongitude->setFixedHeight(40);
+        preLongitude->setAlignment(Qt::AlignCenter);
+        preLongitude->setStyleSheet(BEACON_TABLE_ITEM);
+        preLatitude = new QLabel();
+        preLatitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        preLatitude->setFixedHeight(40);
+        preLatitude->setAlignment(Qt::AlignCenter);
+        preLatitude->setStyleSheet(BEACON_TABLE_ITEM);
+        postLongitude = new QLabel();
+        postLongitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        postLongitude->setFixedHeight(40);
+        postLongitude->setAlignment(Qt::AlignCenter);
+        postLongitude->setStyleSheet(BEACON_TABLE_ITEM);
+        postLatitude = new QLabel();
+        postLatitude->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        postLatitude->setFixedHeight(40);
+        postLatitude->setAlignment(Qt::AlignCenter);
+        postLatitude->setStyleSheet(BEACON_TABLE_ITEM);
         this->addWidget(id);
         this->addWidget(beaconType);
         this->addWidget(preDistance);
@@ -177,6 +233,10 @@ class BeaconTableItem : public QHBoxLayout {
         this->addWidget(diffNorthDistance);
         this->addWidget(diffEastDistance);
         this->addWidget(diffHeight);
+        this->addWidget(preLongitude);
+        this->addWidget(preLatitude);
+        this->addWidget(postLongitude);
+        this->addWidget(postLatitude);
         this->setStretch(0, 1);
         this->setStretch(1, 1);
         this->setStretch(2, 1);
@@ -184,9 +244,13 @@ class BeaconTableItem : public QHBoxLayout {
         this->setStretch(4, 1);
         this->setStretch(5, 1);
         this->setStretch(6, 1);
-        this->setStretch(7, 1);
-        this->setStretch(8, 1);
-        this->setStretch(9, 1);
+        this->setStretch(7, 2);
+        this->setStretch(8, 2);
+        this->setStretch(9, 2);
+        this->setStretch(10, 2);
+        this->setStretch(11, 2);
+        this->setStretch(12, 2);
+        this->setStretch(13, 2);
     }
 };
 
@@ -258,13 +322,15 @@ class BeaconTable : public QDialog {
         scrollWidget = new QWidget();
         scrollWidget->setObjectName("scrollWidget");
         scrollWidget->setLayout(beaconListLayout);
+        scrollWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        scrollWidget->setMinimumWidth(2400);
         scrollWidget->setStyleSheet("#scrollWidget{background: #ddd;}");
 
         scrollArea = new QScrollArea(tableWidget);
         scrollArea->setObjectName("scrollArea");
         scrollArea->setBackgroundRole(QPalette::Dark);
         scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
         scrollArea->setWidgetResizable(true);
         scrollArea->setStyleSheet("#scrollArea{background: #ddd;}");
 

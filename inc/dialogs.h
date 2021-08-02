@@ -5,6 +5,8 @@
 #include <QtWidgets>
 #include <iostream>
 
+#include "stylesheetdefines.h"
+
 class InputWidget : public QDialog {
     Q_OBJECT
    public:
@@ -37,11 +39,17 @@ class BeaconInputDialog : public QDialog {
     QVBoxLayout *beaconInputLayout;
     QHBoxLayout *beaconOneInputLayout;
     QHBoxLayout *beaconTwoInputLayout;
+    QHBoxLayout *beaconThreeInputLayout;
     QLabel *beaconTopInputLabel;
     QLabel *beaconOneInputLabel;
     QLineEdit *beaconOneInputText;
     QPushButton *beaconInputAccept;
     QPushButton *beaconInputCancel;
+    QPushButton *beaconTypeA;
+    QPushButton *beaconTypeB;
+    QPushButton *beaconTypeC;
+
+    int beaconTypeSelect = 0;
 
     explicit BeaconInputDialog(QWidget *parent = 0) {
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -64,8 +72,8 @@ class BeaconInputDialog : public QDialog {
         beaconInputWidget = new InputWidget(dialogInputWidget);
         beaconInputWidget->setObjectName("beaconInputWidget");
         beaconInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        beaconInputWidget->move(400, 100);
-        beaconInputWidget->setMinimumSize(480, 220);
+        beaconInputWidget->move(300, 100);
+        beaconInputWidget->setMinimumSize(680, 320);
         beaconInputWidget->setWindowFlags(Qt::Dialog);
         beaconInputWidget->setStyleSheet(
             "#beaconInputWidget{"
@@ -106,15 +114,45 @@ class BeaconInputDialog : public QDialog {
 
         beaconOneInputLayout->addWidget(beaconOneInputLabel);
         beaconOneInputLayout->addWidget(beaconOneInputText);
-
-        beaconInputLayout->addLayout(beaconOneInputLayout);
-
         beaconOneInputLayout->setStretch(0, 1);
         beaconOneInputLayout->setStretch(1, 1);
+
+        beaconInputLayout->addLayout(beaconOneInputLayout);
 
         beaconTwoInputLayout = new QHBoxLayout();
         beaconTwoInputLayout->setObjectName("beaconTwoInputLayout");
         beaconTwoInputLayout->setContentsMargins(10, 10, 10, 10);
+        beaconTypeA = new QPushButton(beaconInputWidget);
+        beaconTypeA->setObjectName("beaconTypeA");
+        sizePolicy1.setHeightForWidth(beaconTypeA->sizePolicy().hasHeightForWidth());
+        beaconTypeA->setFocusPolicy(Qt::NoFocus);
+        beaconTypeA->setSizePolicy(sizePolicy1);
+        beaconTypeA->setStyleSheet(GREEN_BUTTON);
+        beaconTypeB = new QPushButton(beaconInputWidget);
+        beaconTypeB->setObjectName("beaconTypeB");
+        sizePolicy1.setHeightForWidth(beaconTypeB->sizePolicy().hasHeightForWidth());
+        beaconTypeB->setFocusPolicy(Qt::NoFocus);
+        beaconTypeB->setSizePolicy(sizePolicy1);
+        beaconTypeB->setStyleSheet(RED_BUTTON);
+        beaconTypeC = new QPushButton(beaconInputWidget);
+        beaconTypeC->setObjectName("beaconTypeC");
+        sizePolicy1.setHeightForWidth(beaconTypeC->sizePolicy().hasHeightForWidth());
+        beaconTypeC->setFocusPolicy(Qt::NoFocus);
+        beaconTypeC->setSizePolicy(sizePolicy1);
+        beaconTypeC->setStyleSheet(RED_BUTTON);
+
+        beaconTwoInputLayout->addWidget(beaconTypeA);
+        beaconTwoInputLayout->addWidget(beaconTypeB);
+        beaconTwoInputLayout->addWidget(beaconTypeC);
+        beaconTwoInputLayout->setStretch(0, 1);
+        beaconTwoInputLayout->setStretch(1, 1);
+        beaconTwoInputLayout->setStretch(2, 1);
+
+        beaconInputLayout->addLayout(beaconTwoInputLayout);
+
+        beaconThreeInputLayout = new QHBoxLayout();
+        beaconThreeInputLayout->setObjectName("beaconThreeInputLayout");
+        beaconThreeInputLayout->setContentsMargins(10, 10, 10, 10);
         beaconInputAccept = new QPushButton(beaconInputWidget);
         beaconInputAccept->setObjectName("beaconInputAccept");
         sizePolicy1.setHeightForWidth(beaconInputAccept->sizePolicy().hasHeightForWidth());
@@ -126,17 +164,17 @@ class BeaconInputDialog : public QDialog {
         beaconInputCancel->setFocusPolicy(Qt::NoFocus);
         beaconInputCancel->setSizePolicy(sizePolicy1);
 
-        beaconTwoInputLayout->addWidget(beaconInputAccept);
-        beaconTwoInputLayout->addWidget(beaconInputCancel);
+        beaconThreeInputLayout->addWidget(beaconInputAccept);
+        beaconThreeInputLayout->addWidget(beaconInputCancel);
+        beaconThreeInputLayout->setStretch(0, 1);
+        beaconThreeInputLayout->setStretch(1, 1);
 
-        beaconInputLayout->addLayout(beaconTwoInputLayout);
-
-        beaconTwoInputLayout->setStretch(0, 1);
-        beaconTwoInputLayout->setStretch(1, 1);
+        beaconInputLayout->addLayout(beaconThreeInputLayout);
 
         beaconInputLayout->setStretch(0, 1);
         beaconInputLayout->setStretch(1, 1);
         beaconInputLayout->setStretch(2, 1);
+        beaconInputLayout->setStretch(3, 1);
     }
 };
 
@@ -343,5 +381,569 @@ class WarningDialog : public QDialog {
         warningLayout->setStretch(0, 1);
         warningLayout->setStretch(1, 1);
         warningLayout->setStretch(2, 1);
+    }
+};
+
+class GPSStatus : public QDialog {
+    Q_OBJECT
+   public:
+    QWidget *dialogWidget;
+    QWidget *statusWidget;
+    QVBoxLayout *statusLayout;
+    QLabel *statusTitle;
+    QHBoxLayout *statusOneLayout;
+    QLabel *gpsNameLabel;
+    QLabel *gpsName;
+    QHBoxLayout *statusTwoLayout;
+    QLabel *gpsStatusLabel;
+    QLabel *gpsStatus;
+    QHBoxLayout *statusThreeLayout;
+    QLabel *gpsModeLabel;
+    QLabel *gpsMode;
+    QHBoxLayout *statusFourLayout;
+    QLabel *gpsCoordXLabel;
+    QLabel *gpsCoordX;
+    QHBoxLayout *statusFiveLayout;
+    QLabel *gpsCoordYLabel;
+    QLabel *gpsCoordY;
+    QHBoxLayout *statusSixLayout;
+    QLabel *gpsCoordZLabel;
+    QLabel *gpsCoordZ;
+    QHBoxLayout *statusSevenLayout;
+    QLabel *gpsAccHorLabel;
+    QLabel *gpsAccHor;
+    QHBoxLayout *statusEightLayout;
+    QLabel *gpsAccVerLabel;
+    QLabel *gpsAccVer;
+    QPushButton *statusClose;
+
+    explicit GPSStatus(QWidget *parent = 0) {
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(parent->sizePolicy().hasHeightForWidth());
+
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+
+        dialogWidget = new QWidget(parent);
+        dialogWidget->setObjectName("dialogWidget");
+        sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
+        dialogWidget->setSizePolicy(sizePolicy);
+        dialogWidget->setMinimumSize(QSize(1280, 800));
+        dialogWidget->setMaximumSize(QSize(1280, 800));
+        dialogWidget->setVisible(false);
+
+        statusWidget = new QDialog(dialogWidget);
+        statusWidget->setObjectName("statusWidget");
+        statusWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        statusWidget->move(200, 100);
+        statusWidget->setMinimumSize(880, 600);
+        statusWidget->setWindowFlags(Qt::Dialog);
+        statusWidget->setStyleSheet(
+            "#statusWidget{"
+            "background: #ddd;"
+            "border-radius: 10px;"
+            "border-style: solid;"
+            "border-width: 2px;"
+            "border-radius: 7px;"
+            "border-color: black;}");
+
+        statusLayout = new QVBoxLayout(statusWidget);
+        statusLayout->setObjectName("statusLayout");
+        statusLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        statusLayout->setContentsMargins(10, 10, 10, 10);
+        statusTitle = new QLabel(statusWidget);
+        statusTitle->setObjectName("statusTitle");
+        statusTitle->setContentsMargins(10, 10, 10, 10);
+        statusTitle->setAlignment(Qt::AlignCenter);
+        statusTitle->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 30px 'Ubuntu';"
+            "font-weight: bold;");
+
+        statusLayout->addWidget(statusTitle);
+
+        statusOneLayout = new QHBoxLayout();
+        statusOneLayout->setObjectName("statusOneLayout");
+        gpsNameLabel = new QLabel(statusWidget);
+        gpsNameLabel->setObjectName("gpsNameLabel");
+        gpsNameLabel->setAutoFillBackground(true);
+        gpsNameLabel->setScaledContents(false);
+        gpsNameLabel->setAlignment(Qt::AlignCenter);
+        gpsNameLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsName = new QLabel(statusWidget);
+        gpsName->setObjectName("gpsName");
+        gpsName->setAutoFillBackground(true);
+        gpsName->setScaledContents(false);
+        gpsName->setAlignment(Qt::AlignCenter);
+        gpsName->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusOneLayout->addWidget(gpsNameLabel);
+        statusOneLayout->addWidget(gpsName);
+
+        statusOneLayout->setStretch(0, 1);
+        statusOneLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusOneLayout);
+
+        statusThreeLayout = new QHBoxLayout();
+        statusThreeLayout->setObjectName("statusThreeLayout");
+        gpsModeLabel = new QLabel(statusWidget);
+        gpsModeLabel->setObjectName("gpsModeLabel");
+        gpsModeLabel->setAutoFillBackground(true);
+        gpsModeLabel->setScaledContents(false);
+        gpsModeLabel->setAlignment(Qt::AlignCenter);
+        gpsModeLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsMode = new QLabel(statusWidget);
+        gpsMode->setObjectName("gpsMode");
+        gpsMode->setAutoFillBackground(true);
+        gpsMode->setScaledContents(false);
+        gpsMode->setAlignment(Qt::AlignCenter);
+        gpsMode->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusThreeLayout->addWidget(gpsModeLabel);
+        statusThreeLayout->addWidget(gpsMode);
+
+        statusThreeLayout->setStretch(0, 1);
+        statusThreeLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusThreeLayout);
+
+        statusTwoLayout = new QHBoxLayout();
+        statusTwoLayout->setObjectName("statusTwoLayout");
+        gpsStatusLabel = new QLabel(statusWidget);
+        gpsStatusLabel->setObjectName("gpsStatusLabel");
+        gpsStatusLabel->setAutoFillBackground(true);
+        gpsStatusLabel->setScaledContents(false);
+        gpsStatusLabel->setAlignment(Qt::AlignCenter);
+        gpsStatusLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsStatus = new QLabel(statusWidget);
+        gpsStatus->setObjectName("gpsStatus");
+        gpsStatus->setAutoFillBackground(true);
+        gpsStatus->setScaledContents(false);
+        gpsStatus->setAlignment(Qt::AlignCenter);
+        gpsStatus->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusTwoLayout->addWidget(gpsStatusLabel);
+        statusTwoLayout->addWidget(gpsStatus);
+
+        statusTwoLayout->setStretch(0, 1);
+        statusTwoLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusTwoLayout);
+
+        statusFourLayout = new QHBoxLayout();
+        statusFourLayout->setObjectName("statusFourLayout");
+        gpsCoordXLabel = new QLabel(statusWidget);
+        gpsCoordXLabel->setObjectName("gpsCoordXLabel");
+        gpsCoordXLabel->setAutoFillBackground(true);
+        gpsCoordXLabel->setScaledContents(false);
+        gpsCoordXLabel->setAlignment(Qt::AlignCenter);
+        gpsCoordXLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsCoordX = new QLabel(statusWidget);
+        gpsCoordX->setObjectName("gpsCoordX");
+        gpsCoordX->setAutoFillBackground(true);
+        gpsCoordX->setScaledContents(false);
+        gpsCoordX->setAlignment(Qt::AlignCenter);
+        gpsCoordX->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusFourLayout->addWidget(gpsCoordXLabel);
+        statusFourLayout->addWidget(gpsCoordX);
+
+        statusFourLayout->setStretch(0, 1);
+        statusFourLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusFourLayout);
+
+        statusFiveLayout = new QHBoxLayout();
+        statusFiveLayout->setObjectName("statusFiveLayout");
+        gpsCoordYLabel = new QLabel(statusWidget);
+        gpsCoordYLabel->setObjectName("gpsCoordYLabel");
+        gpsCoordYLabel->setAutoFillBackground(true);
+        gpsCoordYLabel->setScaledContents(false);
+        gpsCoordYLabel->setAlignment(Qt::AlignCenter);
+        gpsCoordYLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsCoordY = new QLabel(statusWidget);
+        gpsCoordY->setObjectName("gpsCoordY");
+        gpsCoordY->setAutoFillBackground(true);
+        gpsCoordY->setScaledContents(false);
+        gpsCoordY->setAlignment(Qt::AlignCenter);
+        gpsCoordY->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusFiveLayout->addWidget(gpsCoordYLabel);
+        statusFiveLayout->addWidget(gpsCoordY);
+
+        statusFiveLayout->setStretch(0, 1);
+        statusFiveLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusFiveLayout);
+
+        statusSixLayout = new QHBoxLayout();
+        statusSixLayout->setObjectName("statusSixLayout");
+        gpsCoordZLabel = new QLabel(statusWidget);
+        gpsCoordZLabel->setObjectName("gpsCoordZLabel");
+        gpsCoordZLabel->setAutoFillBackground(true);
+        gpsCoordZLabel->setScaledContents(false);
+        gpsCoordZLabel->setAlignment(Qt::AlignCenter);
+        gpsCoordZLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsCoordZ = new QLabel(statusWidget);
+        gpsCoordZ->setObjectName("gpsCoordZ");
+        gpsCoordZ->setAutoFillBackground(true);
+        gpsCoordZ->setScaledContents(false);
+        gpsCoordZ->setAlignment(Qt::AlignCenter);
+        gpsCoordZ->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusSixLayout->addWidget(gpsCoordZLabel);
+        statusSixLayout->addWidget(gpsCoordZ);
+
+        statusSixLayout->setStretch(0, 1);
+        statusSixLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusSixLayout);
+
+        statusSevenLayout = new QHBoxLayout();
+        statusSevenLayout->setObjectName("statusSevenLayout");
+        gpsAccHorLabel = new QLabel(statusWidget);
+        gpsAccHorLabel->setObjectName("gpsAccHorLabel");
+        gpsAccHorLabel->setAutoFillBackground(true);
+        gpsAccHorLabel->setScaledContents(false);
+        gpsAccHorLabel->setAlignment(Qt::AlignCenter);
+        gpsAccHorLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsAccHor = new QLabel(statusWidget);
+        gpsAccHor->setObjectName("gpsAccHor");
+        gpsAccHor->setAutoFillBackground(true);
+        gpsAccHor->setScaledContents(false);
+        gpsAccHor->setAlignment(Qt::AlignCenter);
+        gpsAccHor->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusSevenLayout->addWidget(gpsAccHorLabel);
+        statusSevenLayout->addWidget(gpsAccHor);
+
+        statusSevenLayout->setStretch(0, 1);
+        statusSevenLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusSevenLayout);
+
+        statusEightLayout = new QHBoxLayout();
+        statusEightLayout->setObjectName("statusEightLayout");
+        gpsAccVerLabel = new QLabel(statusWidget);
+        gpsAccVerLabel->setObjectName("gpsAccVerLabel");
+        gpsAccVerLabel->setAutoFillBackground(true);
+        gpsAccVerLabel->setScaledContents(false);
+        gpsAccVerLabel->setAlignment(Qt::AlignCenter);
+        gpsAccVerLabel->setStyleSheet(
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;");
+        gpsAccVer = new QLabel(statusWidget);
+        gpsAccVer->setObjectName("gpsAccVer");
+        gpsAccVer->setAutoFillBackground(true);
+        gpsAccVer->setScaledContents(false);
+        gpsAccVer->setAlignment(Qt::AlignCenter);
+        gpsAccVer->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 24px 'Ubuntu';"
+            "font-weight: bold;"
+            "background-color: white;");
+
+        statusEightLayout->addWidget(gpsAccVerLabel);
+        statusEightLayout->addWidget(gpsAccVer);
+
+        statusEightLayout->setStretch(0, 1);
+        statusEightLayout->setStretch(1, 1);
+
+        statusLayout->addLayout(statusEightLayout);
+
+        statusClose = new QPushButton(statusWidget);
+        statusClose->setObjectName("statusClose");
+        sizePolicy1.setHeightForWidth(statusClose->sizePolicy().hasHeightForWidth());
+        statusClose->setFocusPolicy(Qt::NoFocus);
+        statusClose->setSizePolicy(sizePolicy1);
+
+        statusLayout->addWidget(statusClose);
+
+        statusLayout->setStretch(0, 1);
+        statusLayout->setStretch(1, 1);
+        statusLayout->setStretch(2, 1);
+        statusLayout->setStretch(3, 1);
+        statusLayout->setStretch(4, 1);
+        statusLayout->setStretch(5, 1);
+        statusLayout->setStretch(6, 1);
+        statusLayout->setStretch(7, 1);
+        statusLayout->setStretch(8, 1);
+        statusLayout->setStretch(9, 1);
+    }
+};
+
+class NameInputDialog : public QDialog {
+    Q_OBJECT
+   public:
+    QWidget *dialogInputWidget;
+    QWidget *nameInputWidget;
+    QVBoxLayout *nameInputLayout;
+    QHBoxLayout *nameOneInputLayout;
+    QLabel *nameTopInputLabel;
+    QLabel *nameOneInputLabel;
+    QLineEdit *nameOneInputText;
+    QPushButton *nameInputAccept;
+
+    explicit NameInputDialog(QWidget *parent = 0) {
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(parent->sizePolicy().hasHeightForWidth());
+
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+
+        dialogInputWidget = new QWidget(parent);
+        dialogInputWidget->setObjectName("dialogInputWidget");
+        sizePolicy.setHeightForWidth(dialogInputWidget->sizePolicy().hasHeightForWidth());
+        dialogInputWidget->setSizePolicy(sizePolicy);
+        dialogInputWidget->setMinimumSize(QSize(1280, 800));
+        dialogInputWidget->setMaximumSize(QSize(1280, 800));
+        dialogInputWidget->setVisible(false);
+
+        nameInputWidget = new InputWidget(dialogInputWidget);
+        nameInputWidget->setObjectName("nameInputWidget");
+        nameInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        nameInputWidget->move(200, 100);
+        nameInputWidget->setMinimumSize(880, 180);
+        nameInputWidget->setWindowFlags(Qt::Dialog);
+        nameInputWidget->setStyleSheet(
+            "#nameInputWidget{"
+            "background: #ddd;"
+            "border-radius: 10px;"
+            "border-style: solid;"
+            "border-width: 2px;"
+            "border-radius: 7px;"
+            "border-color: black;}");
+
+        nameInputLayout = new QVBoxLayout(nameInputWidget);
+        nameInputLayout->setObjectName("nameInputLayout");
+        nameInputLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        nameInputLayout->setContentsMargins(10, 10, 10, 10);
+        nameTopInputLabel = new QLabel(nameInputWidget);
+        nameTopInputLabel->setObjectName("nameTopInputLabel");
+        nameTopInputLabel->setContentsMargins(10, 10, 10, 10);
+        nameTopInputLabel->setAlignment(Qt::AlignCenter);
+        nameTopInputLabel->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 30px 'Ubuntu';"
+            "font-weight: bold;");
+
+        nameInputLayout->addWidget(nameTopInputLabel);
+
+        nameOneInputLayout = new QHBoxLayout();
+        nameOneInputLayout->setObjectName("nameOneInputLayout");
+        nameOneInputLayout->setContentsMargins(10, 10, 10, 10);
+        nameOneInputLabel = new QLabel(nameInputWidget);
+        nameOneInputLabel->setObjectName("nameOneInputLabel");
+        nameOneInputLabel->setAlignment(Qt::AlignCenter);
+        nameOneInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        nameOneInputText = new QLineEdit(nameInputWidget);
+        nameOneInputText->setObjectName("nameOneInputText");
+        nameOneInputText->setInputMethodHints(Qt::ImhUrlCharactersOnly);
+
+        nameOneInputLayout->addWidget(nameOneInputLabel);
+        nameOneInputLayout->addWidget(nameOneInputText);
+
+        nameOneInputLayout->setStretch(0, 1);
+        nameOneInputLayout->setStretch(1, 2);
+
+        nameInputLayout->addLayout(nameOneInputLayout);
+
+        nameInputAccept = new QPushButton(nameInputWidget);
+        nameInputAccept->setObjectName("nameInputAccept");
+        sizePolicy1.setHeightForWidth(nameInputAccept->sizePolicy().hasHeightForWidth());
+        nameInputAccept->setFocusPolicy(Qt::NoFocus);
+        nameInputAccept->setSizePolicy(sizePolicy1);
+
+        nameInputLayout->addWidget(nameInputAccept);
+
+        nameInputLayout->setStretch(0, 1);
+        nameInputLayout->setStretch(1, 1);
+        nameInputLayout->setStretch(2, 1);
+    }
+};
+
+class AdjustSpectrum : public QDialog {
+    Q_OBJECT
+   public:
+    QWidget *dialogInputWidget;
+    QWidget *adjustInputWidget;
+    QVBoxLayout *adjustInputLayout;
+    QHBoxLayout *adjustOneInputLayout;
+    QHBoxLayout *adjustTwoInputLayout;
+    QHBoxLayout *adjustThreeInputLayout;
+    QLabel *adjustTopInputLabel;
+    QLabel *adjustOneInputLabel;
+    QLabel *adjustTwoInputLabel;
+    QLineEdit *adjustOneInputText;
+    QLineEdit *adjustTwoInputText;
+    QPushButton *adjustInputAccept;
+    QPushButton *adjustInputCancel;
+
+    int beaconTypeSelect = 0;
+
+    explicit AdjustSpectrum(QWidget *parent = 0) {
+        QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(parent->sizePolicy().hasHeightForWidth());
+
+        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+
+        dialogInputWidget = new QWidget(parent);
+        dialogInputWidget->setObjectName("dialogInputWidget");
+        sizePolicy.setHeightForWidth(dialogInputWidget->sizePolicy().hasHeightForWidth());
+        dialogInputWidget->setSizePolicy(sizePolicy);
+        dialogInputWidget->setMinimumSize(QSize(1280, 800));
+        dialogInputWidget->setMaximumSize(QSize(1280, 800));
+        dialogInputWidget->setVisible(false);
+
+        adjustInputWidget = new InputWidget(dialogInputWidget);
+        adjustInputWidget->setObjectName("adjustInputWidget");
+        adjustInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        adjustInputWidget->move(300, 100);
+        adjustInputWidget->setMinimumSize(680, 320);
+        adjustInputWidget->setWindowFlags(Qt::Dialog);
+        adjustInputWidget->setStyleSheet(
+            "#adjustInputWidget{"
+            "background: #ddd;"
+            "border-radius: 10px;"
+            "border-style: solid;"
+            "border-width: 2px;"
+            "border-radius: 7px;"
+            "border-color: black;}");
+
+        adjustInputLayout = new QVBoxLayout(adjustInputWidget);
+        adjustInputLayout->setObjectName("adjustInputLayout");
+        adjustInputLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        adjustInputLayout->setContentsMargins(10, 10, 10, 10);
+        adjustTopInputLabel = new QLabel(adjustInputWidget);
+        adjustTopInputLabel->setObjectName("adjustTopInputLabel");
+        adjustTopInputLabel->setContentsMargins(10, 10, 10, 10);
+        adjustTopInputLabel->setAlignment(Qt::AlignCenter);
+        adjustTopInputLabel->setStyleSheet(
+            "border: 1px solid #000;"
+            "font: 30px 'Ubuntu';"
+            "font-weight: bold;");
+
+        adjustInputLayout->addWidget(adjustTopInputLabel);
+
+        adjustOneInputLayout = new QHBoxLayout();
+        adjustOneInputLayout->setObjectName("adjustOneInputLayout");
+        adjustOneInputLayout->setContentsMargins(10, 10, 10, 10);
+        adjustOneInputLabel = new QLabel(adjustInputWidget);
+        adjustOneInputLabel->setObjectName("adjustOneInputLabel");
+        adjustOneInputLabel->setAlignment(Qt::AlignCenter);
+        adjustOneInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustOneInputText = new QLineEdit(adjustInputWidget);
+        adjustOneInputText->setObjectName("adjustOneInputText");
+        adjustOneInputText->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
+
+        adjustOneInputLayout->addWidget(adjustOneInputLabel);
+        adjustOneInputLayout->addWidget(adjustOneInputText);
+        adjustOneInputLayout->setStretch(0, 1);
+        adjustOneInputLayout->setStretch(1, 1);
+
+        adjustInputLayout->addLayout(adjustOneInputLayout);
+
+        adjustTwoInputLayout = new QHBoxLayout();
+        adjustTwoInputLayout->setObjectName("adjustTwoInputLayout");
+        adjustTwoInputLayout->setContentsMargins(10, 10, 10, 10);
+        adjustTwoInputLabel = new QLabel(adjustInputWidget);
+        adjustTwoInputLabel->setObjectName("adjustTwoInputLabel");
+        adjustTwoInputLabel->setAlignment(Qt::AlignCenter);
+        adjustTwoInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustTwoInputText = new QLineEdit(adjustInputWidget);
+        adjustTwoInputText->setObjectName("adjustTwoInputText");
+        adjustTwoInputText->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
+
+        adjustTwoInputLayout->addWidget(adjustTwoInputLabel);
+        adjustTwoInputLayout->addWidget(adjustTwoInputText);
+        adjustTwoInputLayout->setStretch(0, 1);
+        adjustTwoInputLayout->setStretch(1, 1);
+
+        adjustInputLayout->addLayout(adjustTwoInputLayout);
+
+        adjustThreeInputLayout = new QHBoxLayout();
+        adjustThreeInputLayout->setObjectName("adjustThreeInputLayout");
+        adjustThreeInputLayout->setContentsMargins(10, 10, 10, 10);
+        adjustInputAccept = new QPushButton(adjustInputWidget);
+        adjustInputAccept->setObjectName("adjustInputAccept");
+        sizePolicy1.setHeightForWidth(adjustInputAccept->sizePolicy().hasHeightForWidth());
+        adjustInputAccept->setFocusPolicy(Qt::NoFocus);
+        adjustInputAccept->setSizePolicy(sizePolicy1);
+        adjustInputCancel = new QPushButton(adjustInputWidget);
+        adjustInputCancel->setObjectName("adjustInputCancel");
+        sizePolicy1.setHeightForWidth(adjustInputCancel->sizePolicy().hasHeightForWidth());
+        adjustInputCancel->setFocusPolicy(Qt::NoFocus);
+        adjustInputCancel->setSizePolicy(sizePolicy1);
+
+        adjustThreeInputLayout->addWidget(adjustInputAccept);
+        adjustThreeInputLayout->addWidget(adjustInputCancel);
+        adjustThreeInputLayout->setStretch(0, 1);
+        adjustThreeInputLayout->setStretch(1, 1);
+
+        adjustInputLayout->addLayout(adjustThreeInputLayout);
+
+        adjustInputLayout->setStretch(0, 1);
+        adjustInputLayout->setStretch(1, 1);
+        adjustInputLayout->setStretch(2, 1);
+        adjustInputLayout->setStretch(3, 1);
     }
 };

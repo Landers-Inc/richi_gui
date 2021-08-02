@@ -161,6 +161,7 @@ void DataLogger::getLastBeacons() {
     } else
         qDebug() << query.lastError();
 }
+
 void DataLogger::getLastIDs() {
     QSqlQuery query(loggerDatabase);
     query.prepare("SELECT MAX(id) FROM TimeData");
@@ -183,19 +184,43 @@ void DataLogger::getLastIDs() {
         qDebug() << query.lastError();
 }
 
+void DataLogger::getConfigurationName(char *name) {
+    QSqlQuery query(loggerDatabase);
+
+    std::string configurationName;
+
+    query.prepare(
+        "SELECT name "
+        "FROM Configuration "
+        "WHERE id = :id");
+    query.bindValue(":id", configurationId);
+    if (query.exec())
+        if (query.next()) {
+            configurationName = query.value(0).toString().toStdString();
+            strcpy(name, configurationName.c_str());
+        } else {
+            qDebug() << query.lastError();
+        }
+    else
+        qDebug() << query.lastError();
+}
+
 void DataLogger::insertConfiguration(Configuration const &conf) {
     QSqlQuery query(loggerDatabase);
 
     query.prepare(
         "INSERT INTO Configuration ("
+        "name,"
         "date_start,"
         "data_size,"
         "sample_frequency"
         ") VALUES ("
+        ":name,"
         ":date_start,"
         ":data_size,"
         ":sample_frequency"
         ")");
+    query.bindValue(":name", conf.name);
     query.bindValue(":date_start", conf.datetime);
     query.bindValue(":data_size", conf.dataSize);
     query.bindValue(":sample_frequency", conf.sampleFrequency);
@@ -306,17 +331,49 @@ void DataLogger::insertBeaconData(BeaconData const &beacon) {
     getLastBeacons();
 }
 
+void DataLogger::deleteBeaconData(BeaconData const &beacon) {
+    QSqlQuery query(loggerDatabase);
+
+    query.prepare(
+        "DELETE FROM BeaconData "
+        "WHERE id ="
+        ":id");
+    query.bindValue(":id", beacon.id);
+    if (!query.exec())
+        qDebug() << query.lastError();
+
+    getLastBeacons();
+}
+
+void DataLogger::deleteBeaconData(BeaconItem const &beacon) {
+    QSqlQuery query(loggerDatabase);
+
+    query.prepare(
+        "DELETE FROM BeaconData "
+        "WHERE id ="
+        ":id");
+    query.bindValue(":id", beacon.id);
+    if (!query.exec())
+        qDebug() << query.lastError();
+
+    getLastBeacons();
+}
+
 void DataLogger::updateBeaconData() {
     QSqlQuery query(loggerDatabase);
 
     for (auto beacon : beaconPreData) {
         query.prepare(
             "UPDATE BeaconData "
-            "SET distance = :distance "
+            "SET distance = :distance, "
+            "power = :power, "
+            "frequency = :frequency "
             "WHERE "
             "id = :id");
         query.bindValue(":id", beacon.id);
         query.bindValue(":distance", beacon.distance);
+        query.bindValue(":power", beacon.power);
+        query.bindValue(":frequency", beacon.frequency);
         if (!query.exec())
             qDebug() << query.lastError();
     }
@@ -324,11 +381,15 @@ void DataLogger::updateBeaconData() {
     for (auto beacon : beaconPostData) {
         query.prepare(
             "UPDATE BeaconData "
-            "SET distance = :distance "
+            "SET distance = :distance, "
+            "power = :power, "
+            "frequency = :frequency "
             "WHERE "
             "id = :id");
         query.bindValue(":id", beacon.id);
         query.bindValue(":distance", beacon.distance);
+        query.bindValue(":power", beacon.power);
+        query.bindValue(":frequency", beacon.frequency);
         if (!query.exec())
             qDebug() << query.lastError();
     }
