@@ -607,12 +607,8 @@ void MainWindow::tableGenerate() {
             QLabel *labelTemp = (QLabel *)child->widget();
             file << labelTemp->text().toStdString() << ",";
         }
-        file << "Latitude Pre,";
-        file << "Longitude Pre,";
-        file << "Height Pre,";
-        file << "Latitude Post,";
-        file << "Longitude Post,";
-        file << "Height Post";
+        file << "Altura Pre,";
+        file << "Altura Post";
         file << std::endl;
         for (unsigned int j = 0; j < beaconList.size(); j++) {
             for (int i = 0; i < beaconList[j]->count(); ++i) {
@@ -624,16 +620,10 @@ void MainWindow::tableGenerate() {
                     file << lineTemp->text().toStdString() << ",";
                 }
             }
-            file << std::fixed << std::setprecision(10) << dataLogger->beaconPreData[j].latPosition << ",";
-            file << std::fixed << std::setprecision(10) << dataLogger->beaconPreData[j].lngPosition << ",";
             file << std::fixed << std::setprecision(10) << dataLogger->beaconPreData[j].hgtPosition << ",";
             int iId = beaconList[j]->postId->text().toInt();
             if (iId != 0) {
-                file << std::fixed << std::setprecision(10) << dataLogger->beaconPostData[iId - 1].latPosition << ",";
-                file << std::fixed << std::setprecision(10) << dataLogger->beaconPostData[iId - 1].lngPosition << ",";
                 file << std::fixed << std::setprecision(10) << dataLogger->beaconPostData[iId - 1].hgtPosition;
-            } else {
-                file << ",,";
             }
             file << std::endl;
         }

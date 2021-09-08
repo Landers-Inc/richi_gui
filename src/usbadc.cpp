@@ -46,8 +46,6 @@ bool USBADC::open() {
 
     std::cout << "Device " << deviceInfo->name << " selected" << std::endl;
 
-    deviceIndex = 0;
-    deviceInfo = Pa_GetDeviceInfo(deviceIndex);
     inputParameters.device = deviceIndex;
     if (inputParameters.device == paNoDevice)
         return false;
@@ -113,12 +111,13 @@ int USBADC::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
                              unsigned long framesPerBuffer,
                              const PaStreamCallbackTimeInfo *timeInfo,
                              PaStreamCallbackFlags statusFlags) {
+    float *out = (float *)outputBuffer;
     float *in = (float *)inputBuffer;
     unsigned long i;
 
     (void)timeInfo;
     (void)statusFlags;
-    (void)outputBuffer;
+    (void)inputBuffer;
 
     for (i = 0; i < framesPerBuffer; i++)
         amplitudeData[i] = *in++;

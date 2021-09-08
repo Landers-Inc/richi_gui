@@ -4,6 +4,39 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Launch on RPi4",
+            "type": "process",
+            "command": "ssh",
+            "args": [
+                "-p",
+                "22",
+                "pi@192.168.1.139",
+                "export DISPLAY=:0;",
+                "export QT_QPA_EGLFS_HIDECURSOR=1;",
+                "export QT_QPA_EGLFS_WIDTH=1280;",
+                "export QT_QPA_EGLFS_HEIGHT=800;",
+                "startx;"
+            ],
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                    "pattern": [
+                        {
+                            "regexp": ".",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": ".",
+                        "endsPattern": ".",
+                    }
+                }
+            ]
+        },
+        {
             "label": "Launch GDB Server for debugging",
             "type": "process",
             "command": "ssh",
@@ -134,13 +167,17 @@
             "windows": {
                 "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/bin/qmake.exe",
                 "args": [
-                    "${workspaceFolder}/richi_gui.pro"
+                    "${workspaceFolder}/richi_gui.pro",
+                    "-spec",
+                    "devices/linux-rasp-pi4-v3d-g++"
                 ]
             },
             "linux": {
-                "command": "qmake",
+                "command": "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/bin/qmake",
                 "args": [
-                    "${workspaceFolder}/richi_gui.pro"
+                    "${workspaceFolder}/richi_gui.pro",
+                    "-spec",
+                    "devices/linux-rasp-pi4-v3d-g++"
                 ]
             },
             "options": {
@@ -154,15 +191,19 @@
                 "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/bin/qmake.exe",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
+                    "-spec",
+                    "devices/linux-rasp-pi4-v3d-g++",
                     "CONFIG+=debug",
                     "CONFIG+=qml_debug",
                     "CONFIG-=separate_debug_info"
                 ]
             },
             "linux": {
-                "command": "qmake",
+                "command": "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/bin/qmake",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
+                    "-spec",
+                    "devices/linux-rasp-pi4-v3d-g++",
                     "CONFIG+=debug",
                     "CONFIG+=qml_debug"
                 ]
@@ -193,6 +234,66 @@
             },
             "group": "build",
             "problemMatcher": []
-        }
+        },
+        {
+            "label": "Build and deploy release",
+            "type": "shell",
+            "windows": {
+                "command": "scp",
+                "args": [
+                    "-P",
+                    "22",
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "linux": {
+                "command": "scp",
+                "args": [
+                    "-P",
+                    "22",
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn": [
+                "Build release executable"
+            ]
+        },
+        {
+            "label": "Build and deploy debug",
+            "type": "shell",
+            "windows": {
+                "command": "scp",
+                "args": [
+                    "-P",
+                    "22",
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "linux": {
+                "command": "scp",
+                "args": [
+                    "-P",
+                    "22",
+                    "${workspaceFolder}/build/richi_gui",
+                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                ]
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn": [
+                "Build debug executable"
+            ]
+        },
     ]
 }
