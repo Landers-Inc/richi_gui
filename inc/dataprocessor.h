@@ -25,16 +25,30 @@ class DataProcessor : public QObject {
     QThread *dataAcquiring;
     QThread *gpsAcquiring;
     QThread *beepPlaying;
+    QThread *gpsStatus;
     DataReader *dataAcquisition;
     GPSReader *gpsAcquisition;
     StateMachine *stateInstance;
     QSound *beepWav;
     QTimer *beepTimer;
+    QTimer *gpsTimer;
 
     signed int currentBeepLevel = -120;
 
    public:
-    explicit DataProcessor(int dataSizeArg, double sampleFrequencyArg, QObject *parent = 0) : QObject(parent), dataSize(dataSizeArg), sampleFrequency(sampleFrequencyArg) {
+    explicit DataProcessor(int dataSizeArg,
+                           double sampleFrequencyArg,
+                           int windowOptionArg,
+                           float beaconAArg,
+                           float beaconBArg,
+                           float beaconCArg,
+                           QObject *parent = 0) : QObject(parent),
+                                                  dataSize(dataSizeArg),
+                                                  sampleFrequency(sampleFrequencyArg),
+                                                  windowOption(windowOptionArg),
+                                                  beaconA(beaconAArg * 1000.0),
+                                                  beaconB(beaconBArg * 1000.0),
+                                                  beaconC(beaconCArg * 1000.0) {
         std::cout << "Starting DataProcessor instance" << std::endl;
         initialize();
     };
@@ -85,8 +99,20 @@ class DataProcessor : public QObject {
     int peakPointer = 0;
     // Buffer size for data processing
     int dataSize = 0;
+    // Sample counter
+    long unsigned int sampleCount = 0;
     // Sample frequency
     double sampleFrequency = 0.0;
+    // Type of windows used when processing data
+    int windowOption = 0;
+    // Beacon Frequencies
+    float beaconA;
+    float beaconB;
+    float beaconC;
+    // Option to log spectrum
+    bool logSpectrumOption = false;
+    // USB ADC type
+    int gpsType = 0;
     // Window applied to time data
     std::vector<double> dataWindow;
     // Window process gain
@@ -120,6 +146,8 @@ class DataProcessor : public QObject {
     double calculateNoiseFloor(std::vector<double> data);
     // Function to initialize the vector members
     void initialize();
+    // Function to reconnect to the GPS
+    void reconnectGPS();
    signals:
     // Qt Signal used to send the FFT data to the GUI thread
     void fftReady(QVector<double> const &xSeries, QVector<double> const &ySeries);
@@ -130,10 +158,12 @@ class DataProcessor : public QObject {
     // Qt Signal used to stop GPS running thread
     void gpsQuit();
     // Qt Signal used to start QTimer for beep
+    void gpsStatusStart(unsigned int milliseconds);
+    // Qt Signal used to start QTimer for beep
     void beepStart(unsigned int milliseconds);
     // Qt Signal used to stop QTimer for beep
     void beepStop();
-    // Qt Signal used to stop QTimer for beep
+    // Qt Signal used to update GPS info
     void updateGPSInfo(
         double const &latitude,
         double const &longitude,
@@ -163,8 +193,19 @@ class DataProcessor : public QObject {
     void logSpectrum(DataLogger::SpectrumData const &spectrum);
     // Qt Signal used to log a peak
     void logPeaks(DataLogger::PeaksData const &peaks);
+    // Qt Signal used to set GPS to disconnected
+    void gpsDisconnected();
+    // Qt Signal used to set GPS to reconnected
+    void gpsReconnected();
 
    public slots:
+    // Qt Slot used to update processor parameters
+    void updateParameters(int sampleSizeArg,
+                          int sampleFrequencyArg,
+                          int accumulatorSizeArg,
+                          int windowOptionArg, float beaconA,
+                          float beaconB,
+                          float beaconC);
     // Qt Slot used to receive the data from DataAcquisition
     void processData(std::vector<double> amplitudeData);
     // Qt Slot used to receive the data from GPSReader
@@ -179,7 +220,8 @@ class DataProcessor : public QObject {
         unsigned char const &ver);
     // Qt Slot used to select peak timeserie to display
     void setPeakToDisplay(int disp);
+    // Qt Slot used to select timeseries axis
     void setViewAxis(int axis);
-
+    // Qt Slot used to select timeseries axis
     void saveBeacon(double distance, double id, int beaconType);
 };

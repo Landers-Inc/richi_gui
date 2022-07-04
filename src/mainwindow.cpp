@@ -11,8 +11,52 @@
 #include <iterator>
 #include <random>
 
-unsigned int N_size = 4096;
-double sampleFrequency = 44100.0;
+#include "ui_mainwindow.h"
+
+void MainWindow::setCurrentParameters() {
+    for (int i = 0; i <= ui->adjustSpectrum->adjustFrequencyInputText->count(); i++) {
+        if (i == ui->adjustSpectrum->adjustFrequencyInputText->count()) {
+            sampleFrequency = 44100.0;
+            ui->adjustSpectrum->adjustFrequencyInputText->setCurrentIndex(0);
+        } else if (sampleFrequency == ui->adjustSpectrum->adjustFrequencyInputText->itemData(i).toDouble()) {
+            ui->adjustSpectrum->adjustFrequencyInputText->setCurrentIndex(i);
+            break;
+        }
+    }
+
+    for (int i = 0; i <= ui->adjustSpectrum->adjustWindowOptionInputText->count(); i++) {
+        if (i == ui->adjustSpectrum->adjustWindowOptionInputText->count()) {
+            windowOption = 4;
+            ui->adjustSpectrum->adjustWindowOptionInputText->setCurrentIndex(1);
+        } else if (windowOption == ui->adjustSpectrum->adjustWindowOptionInputText->itemData(i).toInt()) {
+            ui->adjustSpectrum->adjustWindowOptionInputText->setCurrentIndex(i);
+            break;
+        }
+    }
+
+    for (int i = 0; i <= ui->adjustSpectrum->adjustSampleSizeInputText->count(); i++) {
+        if (i == ui->adjustSpectrum->adjustSampleSizeInputText->count()) {
+            sampleSize = 2048;
+            ui->adjustSpectrum->adjustSampleSizeInputText->setCurrentIndex(0);
+        } else if (sampleSize == ui->adjustSpectrum->adjustSampleSizeInputText->itemData(i).toInt()) {
+            ui->adjustSpectrum->adjustSampleSizeInputText->setCurrentIndex(i);
+            break;
+        }
+    }
+
+    for (int i = 0; i <= ui->adjustSpectrum->adjustAverageInputText->count(); i++) {
+        if (i == ui->adjustSpectrum->adjustAverageInputText->count()) {
+            fftAverage = 8;
+            ui->adjustSpectrum->adjustAverageInputText->setCurrentIndex(2);
+        } else if (fftAverage == ui->adjustSpectrum->adjustAverageInputText->itemData(i).toInt()) {
+            ui->adjustSpectrum->adjustAverageInputText->setCurrentIndex(i);
+            break;
+        }
+    }
+    ui->adjustSpectrum->adjustBeaconAInputText->setText(QString::number(beaconA * 1000.0, 'f', 2));
+    ui->adjustSpectrum->adjustBeaconBInputText->setText(QString::number(beaconB * 1000.0, 'f', 2));
+    ui->adjustSpectrum->adjustBeaconCInputText->setText(QString::number(beaconC * 1000.0, 'f', 2));
+}
 
 void MainWindow::warningStatus(QString message) {
     ui->statusLabel->setText(message);
@@ -67,12 +111,12 @@ void MainWindow::switchView() {
         ui->selectDistanceAxis->setVisible(true);
         ui->selectTimeAxis->setVisible(true);
         ui->beaconLayout->setStretch(0, 1);
-        ui->selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
-        ui->selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
-        ui->selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
-        ui->inputBeaconWidget->beaconTypeA->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
-        ui->inputBeaconWidget->beaconTypeB->setText(QCoreApplication::translate("MainWindow", "14.05 kHz"));
-        ui->inputBeaconWidget->beaconTypeC->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
+        ui->selectOneFreq->setText(QString::number(beaconA, 'f', 2) + " kHz");
+        ui->selectTwoFreq->setText(QString::number(beaconB, 'f', 2) + " kHz");
+        ui->selectThreeFreq->setText(QString::number(beaconC, 'f', 2) + " kHz");
+        ui->inputBeaconWidget->beaconTypeA->setText(QString::number(beaconA, 'f', 2) + " kHz");
+        ui->inputBeaconWidget->beaconTypeB->setText(QString::number(beaconB, 'f', 2) + " kHz");
+        ui->inputBeaconWidget->beaconTypeC->setText(QString::number(beaconC, 'f', 2) + " kHz");
         ui->saveLog->setText(QCoreApplication::translate("MainWindow", "Vista avanzada"));
         warningStatus(QCoreApplication::translate("MainWindow", "Status: Vista avanzada seleccionada"));
     }
@@ -155,6 +199,20 @@ void MainWindow::updatePlots() {
     ui->leftPlot->replot();
 }
 
+void MainWindow::readConfig() {
+    reader = new mINI::INIFile("config.ini");
+    reader->read(iniStruct);
+    saveSpectrum = iniStruct["config"]["logspectrum"] == "1";
+    sampleSize = std::stoi(iniStruct["config"]["samples"]);
+    sampleFrequency = std::stod(iniStruct["config"]["frequency"]);
+    fftAverage = std::stoi(iniStruct["config"]["average"]);
+    windowOption = std::stoi(iniStruct["config"]["window"]);
+
+    beaconA = std::stof(iniStruct["beacon"]["beaconA"]) / 1000.0;
+    beaconB = std::stof(iniStruct["beacon"]["beaconB"]) / 1000.0;
+    beaconC = std::stof(iniStruct["beacon"]["beaconC"]) / 1000.0;
+}
+
 void MainWindow::startThreads() {
     stateInstance->startingPeripherals();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
@@ -166,7 +224,7 @@ void MainWindow::startThreads() {
     dataProcessing->setObjectName("processor thread");
 
     dataLogger = DataLogger::getInstance();
-    dataProcessor = new DataProcessor(N_size, sampleFrequency);
+    dataProcessor = new DataProcessor(sampleSize, sampleFrequency, windowOption, beaconA, beaconB, beaconC);
 
     dataLogger->moveToThread(dataLogging);
     dataProcessor->moveToThread(dataProcessing);
@@ -174,32 +232,38 @@ void MainWindow::startThreads() {
     connect(dataProcessing, &QThread::finished, dataProcessor, &QObject::deleteLater);
     connect(dataLogging, &QThread::finished, dataLogger, &QObject::deleteLater);
 
-    connect(dataProcessor, &DataProcessor::updateGPSInfo, this, &MainWindow::updateGPS, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::dataReady, this, &MainWindow::updateData, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::fftReady, this, &MainWindow::updateFFT, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::plotData, this, &MainWindow::updatePlots, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::setNoiseFloor, this, &MainWindow::updateNoiseFloor, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::peakOneReady, this, &MainWindow::updateOnePeak, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::peakTwoReady, this, &MainWindow::updateTwoPeak, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::peakThreeReady, this, &MainWindow::updateThreePeak, Qt::QueuedConnection);
+    connect(dataProcessor, &DataProcessor::updateGPSInfo, this, &MainWindow::updateGPS, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::dataReady, this, &MainWindow::updateData, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::fftReady, this, &MainWindow::updateFFT, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::plotData, this, &MainWindow::updatePlots, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::setNoiseFloor, this, &MainWindow::updateNoiseFloor, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::peakOneReady, this, &MainWindow::updateOnePeak, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::peakTwoReady, this, &MainWindow::updateTwoPeak, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::peakThreeReady, this, &MainWindow::updateThreePeak, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::gpsDisconnected, this, &MainWindow::gpsDisconnected, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::gpsReconnected, this, &MainWindow::gpsReconnected, Qt::UniqueConnection);
 
-    connect(dataProcessor, &DataProcessor::logConfiguration, dataLogger, &DataLogger::insertConfiguration, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::logBeacon, dataLogger, &DataLogger::insertBeaconData, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::logTimestamp, dataLogger, &DataLogger::insertTimeData, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::logPeaks, dataLogger, &DataLogger::insertPeaksData, Qt::QueuedConnection);
-    connect(dataProcessor, &DataProcessor::logSpectrum, dataLogger, &DataLogger::insertSpectrumData, Qt::QueuedConnection);
+    connect(dataProcessor, &DataProcessor::logConfiguration, dataLogger, &DataLogger::insertConfiguration, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::logBeacon, dataLogger, &DataLogger::insertBeaconData, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::logTimestamp, dataLogger, &DataLogger::insertTimeData, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::logPeaks, dataLogger, &DataLogger::insertPeaksData, Qt::UniqueConnection);
+    connect(dataProcessor, &DataProcessor::logSpectrum, dataLogger, &DataLogger::insertSpectrumData, Qt::UniqueConnection);
 
-    connect(this, &MainWindow::logConfiguration, dataLogger, &DataLogger::insertConfiguration, Qt::QueuedConnection);
-    connect(this, &MainWindow::setPeakTimeserie, dataProcessor, &DataProcessor::setPeakToDisplay, Qt::QueuedConnection);
-    connect(this, &MainWindow::setViewAxis, dataProcessor, &DataProcessor::setViewAxis, Qt::QueuedConnection);
-    connect(this, &MainWindow::logBeacon, dataProcessor, &DataProcessor::saveBeacon, Qt::QueuedConnection);
+    connect(this, &MainWindow::logConfiguration, dataLogger, &DataLogger::insertConfiguration, Qt::UniqueConnection);
+    connect(this, &MainWindow::setPeakTimeserie, dataProcessor, &DataProcessor::setPeakToDisplay, Qt::UniqueConnection);
+    connect(this, &MainWindow::setViewAxis, dataProcessor, &DataProcessor::setViewAxis, Qt::UniqueConnection);
+    connect(this, &MainWindow::logBeacon, dataProcessor, &DataProcessor::saveBeacon, Qt::UniqueConnection);
+    connect(this, &MainWindow::updateProcessingParameters, dataProcessor, &DataProcessor::updateParameters, Qt::UniqueConnection);
 
     stateInstance->peripheralsReady();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+    readConfig();
     ui->setupUi(this);
+
+    setCurrentParameters();
 
     appLanguage = new Ui::Language;
     *appLanguage = Ui::Language::SPANISH;
@@ -223,13 +287,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     StateMachine::updateString();
 
     peakValues = QVector<double>(3);
-
     stateInstance = StateMachine::getInstance();
-
     startPeripherals = new std::thread(&MainWindow::startThreads, this);
-
     connectButtons();
-
     startPeripherals->join();
 }
 
@@ -373,14 +433,16 @@ void MainWindow::warningAccept() {
     char *confName = nameBA.data();
     char datetimeString[40];
     std::strftime(datetimeString, sizeof(datetimeString), "%Y-%m-%d %H:%M:%S", std::gmtime(&currentDatetime));
-    DataLogger::Configuration conf = {confName, datetimeString, N_size, sampleFrequency};
+    DataLogger::Configuration conf = {confName, datetimeString, sampleSize, sampleFrequency};
     emit logConfiguration(conf);
     stateInstance->newLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
     ui->preblastLog->setStyleSheet(RED_BUTTON);
-    ui->selectBeacon->setStyleSheet(RED_BUTTON);
     ui->postblastLog->setStyleSheet(RED_BUTTON);
-    ui->beaconFound->setStyleSheet(RED_BUTTON);
+    ui->selectBeacon->setStyleSheet(DISABLED_BUTTON);
+    ui->selectBeacon->setDisabled(false);
+    ui->beaconFound->setStyleSheet(DISABLED_BUTTON);
+    ui->beaconFound->setDisabled(false);
 }
 
 void MainWindow::warningCancel() {
@@ -392,11 +454,13 @@ void MainWindow::warningCancel() {
 
 void MainWindow::openAdjust() {
     if (!ui->adjustSpectrum->dialogInputWidget->isVisible()) {
+        ui->adjustSpectrum->adjustWindowOptionInputText->setCurrentIndex(windowOption);
         ui->adjustSpectrum->dialogInputWidget->setVisible(true);
         ui->adjustSpectrum->adjustInputWidget->setVisible(true);
         ui->keyboardInputWidget->setVisible(true);
         ui->adjustSpectrum->adjustInputWidget->activateWindow();
         ui->adjustSpectrum->adjustInputWidget->setFocus(Qt::ActiveWindowFocusReason);
+        setCurrentParameters();
     }
 }
 
@@ -415,6 +479,40 @@ void MainWindow::adjustAccept() {
         ui->adjustSpectrum->dialogInputWidget->setVisible(false);
         ui->adjustSpectrum->adjustInputWidget->setVisible(false);
         ui->keyboardInputWidget->setVisible(false);
+        windowOption = ui->adjustSpectrum->adjustWindowOptionInputText->currentData().toInt();
+        sampleFrequency = ui->adjustSpectrum->adjustFrequencyInputText->currentData().toDouble();
+        sampleSize = ui->adjustSpectrum->adjustSampleSizeInputText->currentData().toInt();
+        fftAverage = ui->adjustSpectrum->adjustAverageInputText->currentData().toInt();
+        beaconA = ui->adjustSpectrum->adjustBeaconAInputText->text().toDouble() / 1000.0;
+        beaconB = ui->adjustSpectrum->adjustBeaconBInputText->text().toDouble() / 1000.0;
+        beaconC = ui->adjustSpectrum->adjustBeaconCInputText->text().toDouble() / 1000.0;
+        std::stringstream streamData;
+        streamData << windowOption;
+        iniStruct["config"]["window"] = streamData.str();
+        streamData.str(std::string());
+        streamData << std::fixed << std::setprecision(1) << sampleFrequency;
+        iniStruct["config"]["frequency"] = streamData.str();
+        streamData.str(std::string());
+        streamData << sampleSize;
+        iniStruct["config"]["samples"] = streamData.str();
+        streamData.str(std::string());
+        streamData << fftAverage;
+        iniStruct["config"]["average"] = streamData.str();
+
+        streamData.str(std::string());
+        streamData << std::fixed << std::setprecision(1) << beaconA * 1000.0;
+        iniStruct["beacon"]["beaconA"] = streamData.str();
+        streamData.str(std::string());
+        streamData << std::fixed << std::setprecision(1) << beaconB * 1000.0;
+        iniStruct["beacon"]["beaconB"] = streamData.str();
+        streamData.str(std::string());
+        streamData << std::fixed << std::setprecision(1) << beaconC * 1000.0;
+        iniStruct["beacon"]["beaconC"] = streamData.str();
+        reader->write(iniStruct);
+        emit updateProcessingParameters(
+            sampleSize, sampleFrequency, fftAverage, windowOption,
+            beaconA, beaconB, beaconC);
+        updateGUI();
     }
 }
 
@@ -589,7 +687,7 @@ void MainWindow::tableGenerate() {
         QString name = ui->nameInputDialog->nameOneInputText->text();
         ui->inputBeaconWidget->beaconOneInputText->setText("");
         QByteArray nameBA = name.toLocal8Bit();
-        const char *path = "/home/pi/";
+        const char *path = "/home/pi/USB/";
         char filename[200] = {0};
         dataLogger->getConfigurationName(filename);
         const char *extension = ".csv";
@@ -741,9 +839,11 @@ void MainWindow::startNewPreblastLog() {
     stateInstance->preblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
     ui->preblastLog->setStyleSheet(GREEN_BUTTON);
-    ui->selectBeacon->setStyleSheet(GREEN_BUTTON);
     ui->postblastLog->setStyleSheet(RED_BUTTON);
-    ui->beaconFound->setStyleSheet(RED_BUTTON);
+    ui->selectBeacon->setStyleSheet(GREEN_BUTTON);
+    ui->selectBeacon->setDisabled(false);
+    ui->beaconFound->setStyleSheet(DISABLED_BUTTON);
+    ui->beaconFound->setDisabled(true);
     ui->standbyLog->setStyleSheet(RED_BUTTON);
     ui->standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro activo"));
 }
@@ -752,9 +852,11 @@ void MainWindow::startNewPostblastLog() {
     stateInstance->postblastLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
     ui->preblastLog->setStyleSheet(RED_BUTTON);
-    ui->selectBeacon->setStyleSheet(RED_BUTTON);
     ui->postblastLog->setStyleSheet(GREEN_BUTTON);
+    ui->selectBeacon->setStyleSheet(DISABLED_BUTTON);
+    ui->selectBeacon->setDisabled(true);
     ui->beaconFound->setStyleSheet(GREEN_BUTTON);
+    ui->beaconFound->setDisabled(false);
     ui->standbyLog->setStyleSheet(RED_BUTTON);
     ui->standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro activo"));
 }
@@ -763,9 +865,11 @@ void MainWindow::standbyLog() {
     stateInstance->gotoIdle();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);
     ui->preblastLog->setStyleSheet(RED_BUTTON);
-    ui->selectBeacon->setStyleSheet(RED_BUTTON);
     ui->postblastLog->setStyleSheet(RED_BUTTON);
-    ui->beaconFound->setStyleSheet(RED_BUTTON);
+    ui->selectBeacon->setStyleSheet(DISABLED_BUTTON);
+    ui->selectBeacon->setDisabled(true);
+    ui->beaconFound->setStyleSheet(DISABLED_BUTTON);
+    ui->beaconFound->setDisabled(true);
     ui->standbyLog->setStyleSheet(GREEN_BUTTON);
     ui->standbyLog->setText(QCoreApplication::translate("MainWindow", "Registro inactivo"));
 }
@@ -844,9 +948,24 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::updateGUI() {
+    for (int i = 0; i < 7; i++) {
+        ui->adjustSpectrum->adjustWindowOptionInputText->setItemText(i, DataWindow::windowName(i));
+    }
+    ui->selectOneFreq->setText(QString::number(beaconA, 'f', 2) + " kHz");
+    ui->selectTwoFreq->setText(QString::number(beaconB, 'f', 2) + " kHz");
+    ui->selectThreeFreq->setText(QString::number(beaconC, 'f', 2) + " kHz");
+    ui->inputBeaconWidget->beaconTypeA->setText(QString::number(beaconA, 'f', 2) + " kHz");
+    ui->inputBeaconWidget->beaconTypeB->setText(QString::number(beaconB, 'f', 2) + " kHz");
+    ui->inputBeaconWidget->beaconTypeC->setText(QString::number(beaconC, 'f', 2) + " kHz");
     ui->rightPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Frequency"));
+    ui->rightPlot->xAxis->setRange(0, sampleFrequency / 2);
     ui->rightPlot->yAxis->setLabel(QCoreApplication::translate("MainWindow", "Power"));
-    ui->textLabel->setText(QCoreApplication::translate("MainWindow", "Window Hanning\nN = 4096\nFs = 44100.0"));
+    ui->textLabel->setText(
+        DataWindow::windowName(windowOption) +
+        "\nN = " +
+        QString::number(sampleSize) +
+        "\nFs = " +
+        QString::number(sampleFrequency, 'f', 1));
     if (ui->timeDistance == 0) {
         ui->leftPlot->xAxis->setLabel(QCoreApplication::translate("MainWindow", "Time [seconds]"));
     } else if (ui->timeDistance == 1) {
@@ -884,11 +1003,14 @@ void MainWindow::setupGUI() {
     ui->textLabel->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
     ui->textLabel->setPadding(QMargins(5, 5, 5, 5));
     ui->textLabel->position->setType(QCPItemPosition::ptAxisRectRatio);
-    ui->textLabel->position->setCoords(0.25, 0);
+    ui->textLabel->position->setCoords(0.20, 0);
     ui->textLabel->setFont(QFont(font().family(), 10));
     ui->textLabel->setPen(QPen(Qt::black));
     ui->textLabel->setBrush(QBrush(Qt::white));
-    ui->textLabel->setText(QCoreApplication::translate("MainWindow", "Window Hanning\nN = 4096\nFs = 44100.0"));
+    ui->textLabel->setText(
+        DataWindow::windowName(windowOption) +
+        "\nN = " + QString::number(sampleSize) +
+        "\nFs = " + QString::number(sampleFrequency, 'f', 1));
 
     ui->leftPlot->setBackground(QBrush(QColor(0xDD, 0xDD, 0xDD)));
     ui->leftPlot->addGraph();
@@ -930,4 +1052,12 @@ void MainWindow::setupGUI() {
     ui->selectOneFreq->setStyleSheet(GREEN_BUTTON);
     ui->selectTwoFreq->setStyleSheet(RED_BUTTON);
     ui->selectThreeFreq->setStyleSheet(RED_BUTTON);
+}
+
+void MainWindow::gpsDisconnected() {
+    ui->gpsStatus->setStyleSheet(RED_BUTTON);
+}
+
+void MainWindow::gpsReconnected() {
+    ui->gpsStatus->setStyleSheet(GREEN_BUTTON);
 }

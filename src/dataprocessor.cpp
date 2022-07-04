@@ -127,10 +127,19 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     emit plotData();
 }
 
-// Function to initialize the vector members
-void DataProcessor::initialize() {
+// Qt Slot used to update processor parameters
+void DataProcessor::updateParameters(int sampleSizeArg, int sampleFrequencyArg, int accumulatorSizeArg, int windowOptionArg,
+                                     float beaconAArg, float beaconBArg, float beaconCArg) {
+    sampleFrequency = sampleFrequencyArg;
+    dataSize = sampleSizeArg;
+    accumulatorSize = accumulatorSizeArg;
+    windowOption = windowOptionArg;
+    beaconA = beaconAArg * 1000.0;
+    beaconB = beaconBArg * 1000.0;
+    beaconC = beaconCArg * 1000.0;
+
     // Initialize data processing window
-    dataWindow = DataWindow::CreateWindow(dataSize, DataWindow::NUTALL);
+    dataWindow = DataWindow::createWindow(dataSize, windowOption);
     // Initialize vector for frequency domain X-axis plot in FFT
     frequencyDomain = std::vector<double>(dataSize / 2, 0);
     // Initialize time domain and frequency domain X-axis
@@ -139,12 +148,51 @@ void DataProcessor::initialize() {
     }
 
     // Initialize frequency bins to look for peaks
-    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (13750.0 - 125.0) / sampleFrequency),
-                                           (int)ceil(dataSize * (13750.0 + 125.0) / sampleFrequency)});
-    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (14000.0 - 125.0) / sampleFrequency),
-                                           (int)ceil(dataSize * (14000.0 + 125.0) / sampleFrequency)});
-    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (14250.0 - 125.0) / sampleFrequency),
-                                           (int)ceil(dataSize * (14250.0 + 125.0) / sampleFrequency)});
+    frequencyBins.clear();
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (beaconA - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (beaconA + 125.0) / sampleFrequency)});
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (beaconB - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (beaconB + 125.0) / sampleFrequency)});
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (beaconC - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (beaconC + 125.0) / sampleFrequency)});
+
+    // Initialize FFT accumulator with zeroes
+    fftAccumulator.clear();
+    for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
+
+    timeDomain = std::vector<double>(peakSerieSize, 0);
+    distanceDomain = std::vector<double>(peakSerieSize, 0);
+
+    dataAcquiring->quit();
+    while (!dataAcquiring->isFinished())
+        ;
+    dataAcquisition = new USBADC(dataSize, sampleFrequency);
+    dataAcquisition->moveToThread(dataAcquiring);
+
+    connect(dataAcquiring, &QThread::finished, dataAcquisition, &QObject::deleteLater);
+    connect(dataAcquiring, &QThread::started, dataAcquisition, &DataReader::startStream);
+    connect(dataAcquisition, &DataReader::dataReady, this, &DataProcessor::processData, Qt::QueuedConnection);
+    dataAcquiring->start();
+}
+
+// Function to initialize the vector members
+void DataProcessor::initialize() {
+    // Initialize data processing window
+    dataWindow = DataWindow::createWindow(dataSize, windowOption);
+    // Initialize vector for frequency domain X-axis plot in FFT
+    frequencyDomain = std::vector<double>(dataSize / 2, 0);
+    // Initialize time domain and frequency domain X-axis
+    for (int i = 0; i < dataSize; i++) {
+        if (i < dataSize / 2) frequencyDomain[i] = (double)sampleFrequency * i / dataSize;
+    }
+
+    // Initialize frequency bins to look for peaks
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (beaconA - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (beaconA + 125.0) / sampleFrequency)});
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (beaconB - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (beaconB + 125.0) / sampleFrequency)});
+    frequencyBins.push_back(FrequencyIndex{(int)floor(dataSize * (beaconC - 125.0) / sampleFrequency),
+                                           (int)ceil(dataSize * (beaconC + 125.0) / sampleFrequency)});
 
     // Initialize FFT accumulator with zeroes
     for (int i = 0; i < accumulatorSize; i++) fftAccumulator.push_back(std::vector<double>(dataSize, 0));
@@ -177,12 +225,24 @@ void DataProcessor::initialize() {
     dataAcquiring->start();
 
     stateInstance = StateMachine::getInstance();
+
+    gpsStatus = new QThread();
+    gpsStatus->setObjectName("gps status thread");
+    gpsTimer = new QTimer;
+    gpsTimer->moveToThread(gpsStatus);
+    connect(gpsStatus, &QThread::finished, gpsTimer, &QObject::deleteLater);
+    connect(gpsTimer, &QTimer::timeout, this, &DataProcessor::reconnectGPS);
+    connect(this, &DataProcessor::gpsStatusStart, gpsTimer, static_cast<void (QTimer::*)(int)>(&QTimer::start));
+    gpsStatus->start();
+
     // Initialize GPS instance
     gpsAcquiring = new QThread();
     gpsAcquiring->setObjectName("gps thread");
     try {
+        gpsType = 1;
         gpsAcquisition = new EMLIDGPS();
     } catch (...) {
+        gpsType = 0;
         gpsAcquisition = new FakeGPS();
     }
     gpsAcquisition->moveToThread(gpsAcquiring);
@@ -193,6 +253,8 @@ void DataProcessor::initialize() {
     connect(this, &DataProcessor::gpsQuit, gpsAcquisition, &GPSReader::quit, Qt::DirectConnection);
     // Start GPS thread
     gpsAcquiring->start();
+
+    if (gpsType > 0) emit gpsStatusStart(5000);
 }
 
 // Qt Slot used to select peak timeserie to display
@@ -220,6 +282,8 @@ void DataProcessor::processGPS(
     gpsHeight = height;
 
     emit updateGPSInfo(latitude, longitude, height, name, type, status, hor, ver);
+
+    if (gpsType > 0) emit gpsStatusStart(5000);
 
     if (!startingAxisPosition) {
         startingAxisPosition = true;
@@ -269,7 +333,7 @@ void DataProcessor::processGPS(
                     emit beepStop();
                     break;
                 case -100:
-                    emit beepStart(2000);
+                    emit beepStart(5000);
                     break;
                 case -93:
                     emit beepStart(1833);
@@ -314,7 +378,7 @@ void DataProcessor::processGPS(
         emit logTimestamp(timestamp);
         // Log spectrum in logarithm scale
         DataLogger::SpectrumData spectrum = {averageFFT[1]};
-        emit logSpectrum(spectrum);
+        if (logSpectrumOption) emit logSpectrum(spectrum);
         // Log each peak data in logarithm scale
         for (unsigned char i = 0; i < 3; i++) {
             DataLogger::PeaksData peak = {i, peaksData[i].frequency, 20.0 * log10(peaksData[i].power)};
@@ -322,7 +386,7 @@ void DataProcessor::processGPS(
         }
     }
 
-    timeDomain[peakPointer] = (double)(timeNow - currentTime) / 1000.0;
+    timeDomain[peakPointer] = (double)sampleCount++;
     double prevData = 0.0;
     if (peakPointer == 0)
         prevData = distanceDomain[peakSerieSize - 1];
@@ -367,4 +431,40 @@ void DataProcessor::saveBeacon(double distance, double id, int beaconType) {
             emit logBeacon(beacon);
         }
     }
+}
+
+void DataProcessor::reconnectGPS() {
+    emit gpsDisconnected();
+    emit gpsQuit();
+    gpsAcquiring->quit();
+    gpsAcquiring->wait();
+
+    // Initialize GPS instance
+    gpsAcquiring = new QThread();
+    gpsAcquiring->setObjectName("gps thread");
+    switch (gpsType) {
+        case 1:
+            try {
+                gpsAcquisition = new EMLIDGPS();
+            } catch (...) {
+                std::cout << "Not connected GPS" << std::endl;
+                emit gpsStatusStart(2000);
+                return;
+            }
+            break;
+        default:
+            break;
+    }
+    gpsAcquisition->moveToThread(gpsAcquiring);
+    // Connect this object with GPS instance to receive new position data. DirectConnection since it is high priority
+    connect(gpsAcquiring, &QThread::started, gpsAcquisition, &GPSReader::run);
+    connect(gpsAcquiring, &QThread::finished, gpsAcquisition, &QObject::deleteLater);
+    connect(gpsAcquisition, &GPSReader::dataReady, this, &DataProcessor::processGPS, Qt::QueuedConnection);
+    connect(this, &DataProcessor::gpsQuit, gpsAcquisition, &GPSReader::quit, Qt::DirectConnection);
+    // Start GPS thread
+    gpsAcquiring->start();
+
+    emit gpsReconnected();
+
+    if (gpsType > 0) emit gpsStatusStart(5000);
 }

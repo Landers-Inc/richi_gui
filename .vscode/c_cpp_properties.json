@@ -5,11 +5,11 @@
             "includePath": [
                 "${workspaceFolder}/inc/**",
                 "${workspaceFolder}/src/**",
-                "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/**",
-                "/home/chmunozpardo/Programming/raspberrypi/sysroot/**"
+                "/opt/rpi4/qt5.15/**",
+                "/opt/rpi4/sysroot/**"
             ],
             "defines": [],
-            "compilerPath": "/home/chmunozpardo/Programming/raspberrypi/tools/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++",
+            "compilerPath": "/opt/rpi4/tools/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++",
             "cStandard": "c11",
             "cppStandard": "c++14",
             "intelliSenseMode": "linux-gcc-arm"

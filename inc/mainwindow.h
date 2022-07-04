@@ -6,11 +6,13 @@
 #include <fstream>
 #include <iomanip>
 
+#include "INIReader.h"
 #include "datalogger.h"
 #include "dataprocessor.h"
+#include "datawindow.h"
+#include "dialogs/beacontable.h"
 #include "qcustomplot.h"
 #include "statemachine.h"
-#include "ui_mainwindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,9 +34,14 @@ class MainWindow : public QMainWindow {
     void updateGUI();
     void startProcessing();
 
+    float beaconA;
+    float beaconB;
+    float beaconC;
+
    private:
-    void connectButtons();
     Ui::Language *appLanguage;
+    mINI::INIFile *reader;
+    mINI::INIStructure iniStruct;
     Ui::MainWindow *ui;
     QThread *dataProcessing;
     QThread *dataLogging;
@@ -43,12 +50,27 @@ class MainWindow : public QMainWindow {
     DataLogger *dataLogger;
     StateMachine *stateInstance;
     std::vector<BeaconTableItem *> beaconList;
+    void connectButtons();
     void startThreads();
+    void readConfig();
+    void setCurrentParameters();
     QVector<double> peakValues;
     double noiseFloor = -120.0;
     double maxSpectrum = 4.0;
     double minSpectrum = -140.0;
+    bool saveSpectrum;
+    int sampleSize;
+    int fftAverage;
+    int windowOption;
+    double sampleFrequency;
    signals:
+    void updateProcessingParameters(int sampleSizeArg,
+                                    int sampleFrequencyArg,
+                                    int accumulatorSizeArg,
+                                    int windowOptionArg,
+                                    float beaconA,
+                                    float beaconB,
+                                    float beaconC);
     void peripheralsReady(double freq, double power);
     void setPeakTimeserie(int disp);
     void setViewAxis(int axis);
@@ -83,6 +105,10 @@ class MainWindow : public QMainWindow {
     void updateThreePeak(double freq, double power);
     // Qt Slot used to
     void updatePlots();
+    // Qt Slot used to
+    void gpsDisconnected();
+    // Qt Slot used to
+    void gpsReconnected();
     // Qt Slot used to
     void selectTimeAxis();
     // Qt Slot used to

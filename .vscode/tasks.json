@@ -1,6 +1,10 @@
 {
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
+    // **************************************************
+    // Change the IP for the raspberry pi in this script
+    // In my case the IP used was 192.168.1.140
+    // **************************************************
     "version": "2.0.0",
     "tasks": [
         {
@@ -10,7 +14,7 @@
             "args": [
                 "-p",
                 "22",
-                "pi@192.168.1.139",
+                "pi@192.168.1.140",
                 "export DISPLAY=:0;",
                 "export QT_QPA_EGLFS_HIDECURSOR=1;",
                 "export QT_QPA_EGLFS_WIDTH=1280;",
@@ -44,9 +48,39 @@
                 "-X",
                 "-p",
                 "22",
-                "pi@192.168.1.139",
+                "pi@192.168.1.140",
                 "export DISPLAY=localhost:10.0;",
                 "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
+            ],
+            "isBackground": true,
+            "problemMatcher": [
+                {
+                    "pattern": [
+                        {
+                            "regexp": ".",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": ".",
+                        "endsPattern": ".",
+                    }
+                }
+            ]
+        },
+        {
+            "label": "Launch as VNC server",
+            "type": "process",
+            "command": "ssh",
+            "args": [
+                "-X",
+                "-p",
+                "22",
+                "pi@192.168.1.140",
+                "/home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
             "isBackground": true,
             "problemMatcher": [
@@ -165,7 +199,7 @@
             "label": "Run qmake release",
             "type": "shell",
             "windows": {
-                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/bin/qmake.exe",
+                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5.15/bin/qmake.exe",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
@@ -173,7 +207,7 @@
                 ]
             },
             "linux": {
-                "command": "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/bin/qmake",
+                "command": "/opt/rpi4/qt5.15/bin/qmake",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
@@ -188,7 +222,7 @@
             "label": "Run qmake debug",
             "type": "shell",
             "windows": {
-                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/bin/qmake.exe",
+                "command": "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5.15/bin/qmake.exe",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
@@ -199,7 +233,7 @@
                 ]
             },
             "linux": {
-                "command": "/home/chmunozpardo/Programming/raspberrypi/sysroot/usr/local/qt5/bin/qmake",
+                "command": "/opt/rpi4/qt5.15/bin/qmake",
                 "args": [
                     "${workspaceFolder}/richi_gui.pro",
                     "-spec",
@@ -244,7 +278,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
                 ]
             },
             "linux": {
@@ -253,7 +287,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {
@@ -274,7 +308,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
                 ]
             },
             "linux": {
@@ -283,7 +317,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.139:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {

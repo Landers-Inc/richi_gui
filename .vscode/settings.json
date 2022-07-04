@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.ts": "plaintext",
+        "*.H": "c",
         "cmath": "cpp",
         "qobject": "cpp",
         "qtcore": "cpp",
@@ -103,7 +104,11 @@
         "hash_set": "cpp",
         "unordered_set": "cpp",
         "set": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "ui_mainwindow.h": "cpp",
+        "beacontable.h": "cpp",
+        "mainwindow.h": "cpp",
+        "qstring": "cpp"
     },
     "editor.tabSize": 4,
     "editor.detectIndentation": false,

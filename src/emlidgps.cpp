@@ -111,4 +111,4 @@ void EMLIDGPS::run() {
             }
         }
     }
-}
+};

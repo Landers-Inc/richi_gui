@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QString>
 #include <cmath>
 #include <vector>
 
@@ -16,8 +17,30 @@ class DataWindow {
         BLACKMAN_NUTTALL,
         BLACKMAN_HARRIS
     };
+
+    static QString windowName(const int windowOption) {
+        switch (windowOption) {
+            case 0:
+                return QCoreApplication::translate("MainWindow", "No Window");
+            case 1:
+                return QCoreApplication::translate("MainWindow", "Window Hamming");
+            case 2:
+                return QCoreApplication::translate("MainWindow", "Window Hanning");
+            case 3:
+                return QCoreApplication::translate("MainWindow", "Window Blackman");
+            case 4:
+                return QCoreApplication::translate("MainWindow", "Window Nutall");
+            case 5:
+                return QCoreApplication::translate("MainWindow", "Window Bl-Nutall");
+            case 6:
+                return QCoreApplication::translate("MainWindow", "Window Bl-Harris");
+            default:
+                return QCoreApplication::translate("MainWindow", "No Window");
+        }
+    }
+
     // Returns a window with size and type given by the arguments
-    static std::vector<double> CreateWindow(const int size, const int windowName) {
+    static std::vector<double> createWindow(const int size, const int windowName) {
         std::vector<double> coefficients = std::vector<double>(size);
         switch (windowName) {
             case NOWINDOW:

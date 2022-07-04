@@ -79,6 +79,7 @@ HEADERS += \
     inc/stylesheetdefines.h \
     inc/mainwindow.h \
     inc/dataprocessor.h \
+    inc/datawindow.h \
     inc/ui_mainwindow.h \
     inc/utils.h \
     inc/usbadc.h \

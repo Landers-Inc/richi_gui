@@ -5,6 +5,7 @@
 #include <QtWidgets>
 #include <iostream>
 
+#include "datawindow.h"
 #include "stylesheetdefines.h"
 
 class InputWidget : public QDialog {
@@ -820,12 +821,32 @@ class AdjustSpectrum : public QDialog {
     QWidget *adjustInputWidget;
     QVBoxLayout *adjustInputLayout;
     QHBoxLayout *adjustOneInputLayout;
+    QHBoxLayout *adjustWindowOptionInputLayout;
+    QHBoxLayout *adjustSampleSizeInputLayout;
+    QHBoxLayout *adjustBeaconsInputLayout;
+    QVBoxLayout *adjustBeaconALayout;
+    QVBoxLayout *adjustBeaconBLayout;
+    QVBoxLayout *adjustBeaconCLayout;
     QHBoxLayout *adjustTwoInputLayout;
     QHBoxLayout *adjustThreeInputLayout;
     QLabel *adjustTopInputLabel;
     QLabel *adjustOneInputLabel;
+    QLabel *adjustWindowOptionInputLabel;
+    QLabel *adjustFrequencyInputLabel;
+    QLabel *adjustSampleSizeInputLabel;
+    QLabel *adjustAverageInputLabel;
     QLabel *adjustTwoInputLabel;
+    QLabel *adjustBeaconAInputLabel;
+    QLabel *adjustBeaconBInputLabel;
+    QLabel *adjustBeaconCInputLabel;
     QLineEdit *adjustOneInputText;
+    QLineEdit *adjustBeaconAInputText;
+    QLineEdit *adjustBeaconBInputText;
+    QLineEdit *adjustBeaconCInputText;
+    QComboBox *adjustWindowOptionInputText;
+    QComboBox *adjustFrequencyInputText;
+    QComboBox *adjustSampleSizeInputText;
+    QComboBox *adjustAverageInputText;
     QLineEdit *adjustTwoInputText;
     QPushButton *adjustInputAccept;
     QPushButton *adjustInputCancel;
@@ -853,8 +874,8 @@ class AdjustSpectrum : public QDialog {
         adjustInputWidget = new InputWidget(dialogInputWidget);
         adjustInputWidget->setObjectName("adjustInputWidget");
         adjustInputWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        adjustInputWidget->move(300, 100);
-        adjustInputWidget->setMinimumSize(680, 320);
+        adjustInputWidget->move(200, 0);
+        adjustInputWidget->setMinimumSize(880, 420);
         adjustInputWidget->setWindowFlags(Qt::Dialog);
         adjustInputWidget->setStyleSheet(
             "#adjustInputWidget{"
@@ -869,16 +890,84 @@ class AdjustSpectrum : public QDialog {
         adjustInputLayout->setObjectName("adjustInputLayout");
         adjustInputLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         adjustInputLayout->setContentsMargins(10, 10, 10, 10);
-        adjustTopInputLabel = new QLabel(adjustInputWidget);
-        adjustTopInputLabel->setObjectName("adjustTopInputLabel");
-        adjustTopInputLabel->setContentsMargins(10, 10, 10, 10);
-        adjustTopInputLabel->setAlignment(Qt::AlignCenter);
-        adjustTopInputLabel->setStyleSheet(
-            "border: 1px solid #000;"
-            "font: 30px 'Ubuntu';"
-            "font-weight: bold;");
 
-        adjustInputLayout->addWidget(adjustTopInputLabel);
+        adjustWindowOptionInputLayout = new QHBoxLayout();
+        adjustWindowOptionInputLayout->setObjectName("adjustWindowOptionInputLayout");
+        adjustWindowOptionInputLayout->setContentsMargins(10, 10, 10, 10);
+        adjustWindowOptionInputLabel = new QLabel(adjustInputWidget);
+        adjustWindowOptionInputLabel->setObjectName("adjustWindowOptionInputLabel");
+        adjustWindowOptionInputLabel->setAlignment(Qt::AlignCenter);
+        adjustWindowOptionInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustWindowOptionInputText = new QComboBox(adjustInputWidget);
+        adjustWindowOptionInputText->setObjectName("adjustWindowOptionInputText");
+        for (int i = 0; i < 7; i++) {
+            adjustWindowOptionInputText->addItem(DataWindow::windowName(i), i);
+        }
+
+        adjustFrequencyInputLabel = new QLabel(adjustInputWidget);
+        adjustFrequencyInputLabel->setObjectName("adjustFrequencyInputLabel");
+        adjustFrequencyInputLabel->setAlignment(Qt::AlignCenter);
+        adjustFrequencyInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustFrequencyInputText = new QComboBox(adjustInputWidget);
+        adjustFrequencyInputText->setObjectName("adjustFrequencyInputText");
+        adjustFrequencyInputText->addItem("44100.0", 44100.0);
+        adjustFrequencyInputText->addItem("48000.0", 48000.0);
+
+        adjustWindowOptionInputLayout->addWidget(adjustWindowOptionInputLabel);
+        adjustWindowOptionInputLayout->addWidget(adjustWindowOptionInputText);
+        adjustWindowOptionInputLayout->addWidget(adjustFrequencyInputLabel);
+        adjustWindowOptionInputLayout->addWidget(adjustFrequencyInputText);
+        adjustWindowOptionInputLayout->setStretch(0, 1);
+        adjustWindowOptionInputLayout->setStretch(1, 1);
+        adjustWindowOptionInputLayout->setStretch(2, 1);
+        adjustWindowOptionInputLayout->setStretch(3, 1);
+
+        adjustInputLayout->addLayout(adjustWindowOptionInputLayout);
+
+        adjustSampleSizeInputLayout = new QHBoxLayout();
+        adjustSampleSizeInputLayout->setObjectName("adjustSampleSizeInputLayout");
+        adjustSampleSizeInputLayout->setContentsMargins(10, 10, 10, 10);
+        adjustSampleSizeInputLabel = new QLabel(adjustInputWidget);
+        adjustSampleSizeInputLabel->setObjectName("adjustSampleSizeInputLabel");
+        adjustSampleSizeInputLabel->setAlignment(Qt::AlignCenter);
+        adjustSampleSizeInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustSampleSizeInputText = new QComboBox(adjustInputWidget);
+        adjustSampleSizeInputText->setObjectName("adjustSampleSizeInputText");
+        // adjustSampleSizeInputText->addItem("1024", 1024);
+        adjustSampleSizeInputText->addItem("2048", 2048);
+        adjustSampleSizeInputText->addItem("4096", 4096);
+        adjustSampleSizeInputText->addItem("8192", 8192);
+
+        adjustAverageInputLabel = new QLabel(adjustInputWidget);
+        adjustAverageInputLabel->setObjectName("adjustAverageInputLabel");
+        adjustAverageInputLabel->setAlignment(Qt::AlignCenter);
+        adjustAverageInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustAverageInputText = new QComboBox(adjustInputWidget);
+        adjustAverageInputText->setObjectName("adjustAverageInputText");
+        adjustAverageInputText->addItem("2", 2);
+        adjustAverageInputText->addItem("4", 4);
+        adjustAverageInputText->addItem("8", 8);
+        adjustAverageInputText->addItem("12", 12);
+        adjustAverageInputText->addItem("16", 16);
+
+        adjustSampleSizeInputLayout->addWidget(adjustSampleSizeInputLabel);
+        adjustSampleSizeInputLayout->addWidget(adjustSampleSizeInputText);
+        adjustSampleSizeInputLayout->addWidget(adjustAverageInputLabel);
+        adjustSampleSizeInputLayout->addWidget(adjustAverageInputText);
+        adjustSampleSizeInputLayout->setStretch(0, 1);
+        adjustSampleSizeInputLayout->setStretch(1, 1);
+        adjustSampleSizeInputLayout->setStretch(2, 1);
+        adjustSampleSizeInputLayout->setStretch(3, 1);
+
+        adjustInputLayout->addLayout(adjustSampleSizeInputLayout);
 
         adjustOneInputLayout = new QHBoxLayout();
         adjustOneInputLayout->setObjectName("adjustOneInputLayout");
@@ -893,16 +982,6 @@ class AdjustSpectrum : public QDialog {
         adjustOneInputText->setObjectName("adjustOneInputText");
         adjustOneInputText->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
 
-        adjustOneInputLayout->addWidget(adjustOneInputLabel);
-        adjustOneInputLayout->addWidget(adjustOneInputText);
-        adjustOneInputLayout->setStretch(0, 1);
-        adjustOneInputLayout->setStretch(1, 1);
-
-        adjustInputLayout->addLayout(adjustOneInputLayout);
-
-        adjustTwoInputLayout = new QHBoxLayout();
-        adjustTwoInputLayout->setObjectName("adjustTwoInputLayout");
-        adjustTwoInputLayout->setContentsMargins(10, 10, 10, 10);
         adjustTwoInputLabel = new QLabel(adjustInputWidget);
         adjustTwoInputLabel->setObjectName("adjustTwoInputLabel");
         adjustTwoInputLabel->setAlignment(Qt::AlignCenter);
@@ -913,12 +992,87 @@ class AdjustSpectrum : public QDialog {
         adjustTwoInputText->setObjectName("adjustTwoInputText");
         adjustTwoInputText->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
 
-        adjustTwoInputLayout->addWidget(adjustTwoInputLabel);
-        adjustTwoInputLayout->addWidget(adjustTwoInputText);
-        adjustTwoInputLayout->setStretch(0, 1);
-        adjustTwoInputLayout->setStretch(1, 1);
+        adjustOneInputLayout->addWidget(adjustOneInputLabel);
+        adjustOneInputLayout->addWidget(adjustOneInputText);
+        adjustOneInputLayout->addWidget(adjustTwoInputLabel);
+        adjustOneInputLayout->addWidget(adjustTwoInputText);
+        adjustOneInputLayout->setStretch(0, 1);
+        adjustOneInputLayout->setStretch(1, 1);
+        adjustOneInputLayout->setStretch(2, 1);
+        adjustOneInputLayout->setStretch(3, 1);
 
-        adjustInputLayout->addLayout(adjustTwoInputLayout);
+        adjustInputLayout->addLayout(adjustOneInputLayout);
+
+        adjustBeaconsInputLayout = new QHBoxLayout();
+        adjustBeaconsInputLayout->setObjectName("adjustBeaconsInputLayout");
+        adjustBeaconsInputLayout->setContentsMargins(10, 10, 10, 10);
+        adjustBeaconALayout = new QVBoxLayout();
+        adjustBeaconALayout->setObjectName("adjustBeaconALayout");
+        adjustBeaconALayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        adjustBeaconALayout->setContentsMargins(10, 10, 10, 10);
+        adjustBeaconAInputLabel = new QLabel(adjustInputWidget);
+        adjustBeaconAInputLabel->setObjectName("adjustBeaconAInputLabel");
+        adjustBeaconAInputLabel->setAlignment(Qt::AlignCenter);
+        adjustBeaconAInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustBeaconAInputText = new QLineEdit(adjustInputWidget);
+        adjustBeaconAInputText->setObjectName("adjustBeaconAInputText");
+        adjustBeaconAInputText->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
+
+        adjustBeaconALayout->addWidget(adjustBeaconAInputLabel);
+        adjustBeaconALayout->addWidget(adjustBeaconAInputText);
+        adjustBeaconALayout->setStretch(0, 1);
+        adjustBeaconALayout->setStretch(1, 1);
+
+        adjustBeaconsInputLayout->addLayout(adjustBeaconALayout);
+
+        adjustBeaconBLayout = new QVBoxLayout();
+        adjustBeaconBLayout->setObjectName("adjustBeaconBLayout");
+        adjustBeaconBLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        adjustBeaconBLayout->setContentsMargins(10, 10, 10, 10);
+        adjustBeaconBInputLabel = new QLabel(adjustInputWidget);
+        adjustBeaconBInputLabel->setObjectName("adjustBeaconBInputLabel");
+        adjustBeaconBInputLabel->setAlignment(Qt::AlignCenter);
+        adjustBeaconBInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustBeaconBInputText = new QLineEdit(adjustInputWidget);
+        adjustBeaconBInputText->setObjectName("adjustBeaconBInputText");
+        adjustBeaconBInputText->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
+
+        adjustBeaconBLayout->addWidget(adjustBeaconBInputLabel);
+        adjustBeaconBLayout->addWidget(adjustBeaconBInputText);
+        adjustBeaconBLayout->setStretch(0, 1);
+        adjustBeaconBLayout->setStretch(1, 1);
+
+        adjustBeaconsInputLayout->addLayout(adjustBeaconBLayout);
+
+        adjustBeaconCLayout = new QVBoxLayout();
+        adjustBeaconCLayout->setObjectName("adjustBeaconCLayout");
+        adjustBeaconCLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
+        adjustBeaconCLayout->setContentsMargins(10, 10, 10, 10);
+        adjustBeaconCInputLabel = new QLabel(adjustInputWidget);
+        adjustBeaconCInputLabel->setObjectName("adjustBeaconCInputLabel");
+        adjustBeaconCInputLabel->setAlignment(Qt::AlignCenter);
+        adjustBeaconCInputLabel->setStyleSheet(
+            "font: 18px 'Ubuntu';"
+            "font-weight: bold;");
+        adjustBeaconCInputText = new QLineEdit(adjustInputWidget);
+        adjustBeaconCInputText->setObjectName("adjustBeaconCInputText");
+        adjustBeaconCInputText->setInputMethodHints(Qt::ImhFormattedNumbersOnly);
+
+        adjustBeaconCLayout->addWidget(adjustBeaconCInputLabel);
+        adjustBeaconCLayout->addWidget(adjustBeaconCInputText);
+        adjustBeaconCLayout->setStretch(0, 1);
+        adjustBeaconCLayout->setStretch(1, 1);
+
+        adjustBeaconsInputLayout->addLayout(adjustBeaconCLayout);
+        adjustBeaconsInputLayout->setStretch(0, 1);
+        adjustBeaconsInputLayout->setStretch(1, 1);
+        adjustBeaconsInputLayout->setStretch(2, 1);
+
+        adjustInputLayout->addLayout(adjustBeaconsInputLayout);
 
         adjustThreeInputLayout = new QHBoxLayout();
         adjustThreeInputLayout->setObjectName("adjustThreeInputLayout");
@@ -941,9 +1095,10 @@ class AdjustSpectrum : public QDialog {
 
         adjustInputLayout->addLayout(adjustThreeInputLayout);
 
-        adjustInputLayout->setStretch(0, 1);
-        adjustInputLayout->setStretch(1, 1);
-        adjustInputLayout->setStretch(2, 1);
-        adjustInputLayout->setStretch(3, 1);
+        adjustInputLayout->setStretch(0, 2);
+        adjustInputLayout->setStretch(1, 2);
+        adjustInputLayout->setStretch(2, 2);
+        adjustInputLayout->setStretch(3, 2);
+        adjustInputLayout->setStretch(4, 1);
     }
 };

@@ -10,6 +10,7 @@
             "request": "launch",
             "MIMode": "gdb",
             "program": "${workspaceFolder}/build/richi_gui",
+            "miDebuggerServerAddress": "192.168.1.140:10000",
             "cwd": "${workspaceFolder}",
             "linux": {
                 "miDebuggerPath": "gdb-multiarch",
@@ -21,7 +22,7 @@
                     },
                     {
                         "description": "Set sysroot",
-                        "text": "set sysroot /home/chmunozpardo/Programming/raspberrypi/sysroot",
+                        "text": "set sysroot /opt/rpi4/sysroot",
                         "ignoreFailures": true
                     },
                     {

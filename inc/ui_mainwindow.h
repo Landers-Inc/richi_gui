@@ -14,6 +14,7 @@
 
 #include "dialogs.h"
 #include "dialogs/beacontable.h"
+#include "mainwindow.h"
 #include "qcustomplot.h"
 #include "stylesheetdefines.h"
 
@@ -89,6 +90,7 @@ class Ui_MainWindow {
 
     QPushButton *beaconFound;
     QVBoxLayout *logLayout;
+    QHBoxLayout *freqSelectLayout;
     QHBoxLayout *axisSelectLayout;
     QHBoxLayout *preblastLayout;
     QHBoxLayout *postblastLayout;
@@ -110,7 +112,7 @@ class Ui_MainWindow {
     QPushButton *selectTwoFreq;
     QPushButton *selectThreeFreq;
 
-    void setupUi(QMainWindow *MainWindow) {
+    void setupUi(MainWindow *MainWindow) {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
         MainWindow->resize(1280, 800);
@@ -143,25 +145,38 @@ class Ui_MainWindow {
             "radius: 1.35, stop: 0 #fff, stop: 1 #ddd"
             ");"
             "}"
+            "QPushButton#selectOneFreq {"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
+            "}"
+            "QPushButton#selectTwoFreq {"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
+            "}"
+            "QPushButton#selectThreeFreq {"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
+            "}"
             "QPushButton#selectTimeAxis {"
             "border-top-right-radius: 0px;"
             "border-bottom-right-radius: 0px;"
             "border-right: 1px solid #000;"
             "}"
             "QPushButton#selectBeacon {"
-            "border-top-right-radius: 0px;"
-            "border-bottom-right-radius: 0px;"
-            "border-right: 1px solid #000;"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
             "}"
             "QPushButton#beaconFound {"
-            "border-top-right-radius: 0px;"
-            "border-bottom-right-radius: 0px;"
-            "border-right: 1px solid #000;"
-            "}"
-            "QPushButton#standbyLog {"
-            "border-top-right-radius: 0px;"
-            "border-bottom-right-radius: 0px;"
-            "border-right: 1px solid #000;"
+            "border-top-left-radius: 0px;"
+            "border-bottom-left-radius: 0px;"
+            "border-left: 1px solid #000;"
             "}"
             "QPushButton#selectDistanceAxis {"
             "border-top-left-radius: 0px;"
@@ -169,19 +184,32 @@ class Ui_MainWindow {
             "border-left: 1px solid #000;"
             "}"
             "QPushButton#preblastLog {"
-            "border-top-left-radius: 0px;"
-            "border-bottom-left-radius: 0px;"
-            "border-left: 1px solid #000;"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
             "}"
             "QPushButton#postblastLog {"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-right: 1px solid #000;"
+            "}"
+            "QPushButton#gpsStatus {"
+            "border-bottom-left-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
+            "border-bottom: 1px solid #000;"
+            "}"
+            "QPushButton#standbyLog {"
+            "border-top-right-radius: 0px;"
+            "border-bottom-right-radius: 0px;"
             "border-top-left-radius: 0px;"
             "border-bottom-left-radius: 0px;"
-            "border-left: 1px solid #000;"
+            "border-bottom: 1px solid #000;"
+            "border-top: 1px solid #000;"
             "}"
             "QPushButton#tableLog {"
             "border-top-left-radius: 0px;"
-            "border-bottom-left-radius: 0px;"
-            "border-left: 1px solid #000;"
+            "border-top-right-radius: 0px;"
+            "border-top: 1px solid #000;"
             "}"
             "QPushButton:focus {}");
 
@@ -516,6 +544,41 @@ class Ui_MainWindow {
         beaconLayout->setObjectName("beaconLayout");
         beaconLayout->setSpacing(10);
 
+        freqSelectLayout = new QHBoxLayout();
+        freqSelectLayout->setObjectName("freqSelectLayout");
+        freqSelectLayout->setContentsMargins(0, 0, 0, 0);
+        freqSelectLayout->setSpacing(0);
+
+        selectOneFreq = new QPushButton(layoutWidget);
+        selectOneFreq->setObjectName("selectOneFreq");
+        sizePolicy1.setHeightForWidth(selectOneFreq->sizePolicy().hasHeightForWidth());
+        selectOneFreq->setFocusPolicy(Qt::NoFocus);
+        selectOneFreq->setSizePolicy(sizePolicy1);
+
+        freqSelectLayout->addWidget(selectOneFreq);
+
+        selectTwoFreq = new QPushButton(layoutWidget);
+        selectTwoFreq->setObjectName("selectTwoFreq");
+        sizePolicy1.setHeightForWidth(selectTwoFreq->sizePolicy().hasHeightForWidth());
+        selectTwoFreq->setFocusPolicy(Qt::NoFocus);
+        selectTwoFreq->setSizePolicy(sizePolicy1);
+
+        freqSelectLayout->addWidget(selectTwoFreq);
+
+        selectThreeFreq = new QPushButton(layoutWidget);
+        selectThreeFreq->setObjectName("selectThreeFreq");
+        sizePolicy1.setHeightForWidth(selectThreeFreq->sizePolicy().hasHeightForWidth());
+        selectThreeFreq->setFocusPolicy(Qt::NoFocus);
+        selectThreeFreq->setSizePolicy(sizePolicy1);
+
+        freqSelectLayout->addWidget(selectThreeFreq);
+
+        freqSelectLayout->setStretch(0, 1);
+        freqSelectLayout->setStretch(1, 1);
+        freqSelectLayout->setStretch(2, 1);
+
+        beaconLayout->addLayout(freqSelectLayout);
+
         axisSelectLayout = new QHBoxLayout();
         axisSelectLayout->setObjectName("axisSelectLayout");
         axisSelectLayout->setContentsMargins(0, 0, 0, 0);
@@ -547,14 +610,6 @@ class Ui_MainWindow {
         preblastLayout->setContentsMargins(0, 0, 0, 0);
         preblastLayout->setSpacing(0);
 
-        selectBeacon = new QPushButton(layoutWidget);
-        selectBeacon->setObjectName("selectBeacon");
-        selectBeacon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        selectBeacon->setFocusPolicy(Qt::NoFocus);
-        selectBeacon->setStyleSheet(RED_BUTTON);
-
-        preblastLayout->addWidget(selectBeacon);
-
         preblastLog = new QPushButton(layoutWidget);
         preblastLog->setObjectName("preblastLog");
         preblastLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -562,6 +617,15 @@ class Ui_MainWindow {
         preblastLog->setStyleSheet(RED_BUTTON);
 
         preblastLayout->addWidget(preblastLog);
+
+        selectBeacon = new QPushButton(layoutWidget);
+        selectBeacon->setObjectName("selectBeacon");
+        selectBeacon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        selectBeacon->setFocusPolicy(Qt::NoFocus);
+        selectBeacon->setStyleSheet(DISABLED_BUTTON);
+        selectBeacon->setDisabled(true);
+
+        preblastLayout->addWidget(selectBeacon);
 
         preblastLayout->setStretch(0, 1);
         preblastLayout->setStretch(1, 1);
@@ -574,14 +638,6 @@ class Ui_MainWindow {
         postblastLayout->setContentsMargins(0, 0, 0, 0);
         postblastLayout->setSpacing(0);
 
-        beaconFound = new QPushButton(layoutWidget);
-        beaconFound->setObjectName("beaconFound");
-        beaconFound->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        beaconFound->setFocusPolicy(Qt::NoFocus);
-        beaconFound->setStyleSheet(RED_BUTTON);
-
-        postblastLayout->addWidget(beaconFound);
-
         postblastLog = new QPushButton(layoutWidget);
         postblastLog->setObjectName("postblastLog");
         postblastLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -590,34 +646,19 @@ class Ui_MainWindow {
 
         postblastLayout->addWidget(postblastLog);
 
+        beaconFound = new QPushButton(layoutWidget);
+        beaconFound->setObjectName("beaconFound");
+        beaconFound->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        beaconFound->setFocusPolicy(Qt::NoFocus);
+        beaconFound->setStyleSheet(DISABLED_BUTTON);
+        beaconFound->setDisabled(true);
+
+        postblastLayout->addWidget(beaconFound);
+
         postblastLayout->setStretch(0, 1);
         postblastLayout->setStretch(1, 1);
 
         beaconLayout->addLayout(postblastLayout);
-
-        standbyLayout = new QHBoxLayout();
-        standbyLayout->setObjectName("standbyLayout");
-        standbyLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
-        standbyLayout->setContentsMargins(0, 0, 0, 0);
-        standbyLayout->setSpacing(0);
-
-        standbyLog = new QPushButton(layoutWidget);
-        standbyLog->setObjectName("standbyLog");
-        standbyLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        standbyLog->setFocusPolicy(Qt::NoFocus);
-        standbyLog->setStyleSheet(GREEN_BUTTON);
-
-        standbyLayout->addWidget(standbyLog);
-
-        tableLog = new QPushButton(layoutWidget);
-        tableLog->setObjectName("tableLog");
-        tableLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        tableLog->setFocusPolicy(Qt::NoFocus);
-        tableLog->setStyleSheet(GREEN_BUTTON);
-
-        standbyLayout->addWidget(tableLog);
-
-        beaconLayout->addLayout(standbyLayout);
 
         beaconLayout->setStretch(0, 1);
         beaconLayout->setStretch(1, 1);
@@ -696,6 +737,7 @@ class Ui_MainWindow {
         selectLayout->setObjectName("selectLayout");
         selectLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
         selectLayout->setContentsMargins(10, 10, 10, 10);
+        selectLayout->setSpacing(0);
 
         gpsStatus = new QPushButton(layoutWidget);
         gpsStatus->setObjectName("gpsStatus");
@@ -706,33 +748,29 @@ class Ui_MainWindow {
 
         selectLayout->addWidget(gpsStatus);
 
-        selectOneFreq = new QPushButton(layoutWidget);
-        selectOneFreq->setObjectName("selectOneFreq");
-        sizePolicy1.setHeightForWidth(selectOneFreq->sizePolicy().hasHeightForWidth());
-        selectOneFreq->setFocusPolicy(Qt::NoFocus);
-        selectOneFreq->setSizePolicy(sizePolicy1);
+        standbyLog = new QPushButton(layoutWidget);
+        standbyLog->setObjectName("standbyLog");
+        standbyLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        standbyLog->setFocusPolicy(Qt::NoFocus);
+        standbyLog->setStyleSheet(GREEN_BUTTON);
 
-        selectLayout->addWidget(selectOneFreq);
+        selectLayout->addWidget(standbyLog);
 
-        selectTwoFreq = new QPushButton(layoutWidget);
-        selectTwoFreq->setObjectName("selectTwoFreq");
-        sizePolicy1.setHeightForWidth(selectTwoFreq->sizePolicy().hasHeightForWidth());
-        selectTwoFreq->setFocusPolicy(Qt::NoFocus);
-        selectTwoFreq->setSizePolicy(sizePolicy1);
+        tableLog = new QPushButton(layoutWidget);
+        tableLog->setObjectName("tableLog");
+        tableLog->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        tableLog->setFocusPolicy(Qt::NoFocus);
+        tableLog->setStyleSheet(GREEN_BUTTON);
 
-        selectLayout->addWidget(selectTwoFreq);
+        selectLayout->addWidget(tableLog);
 
-        selectThreeFreq = new QPushButton(layoutWidget);
-        selectThreeFreq->setObjectName("selectThreeFreq");
-        sizePolicy1.setHeightForWidth(selectThreeFreq->sizePolicy().hasHeightForWidth());
-        selectThreeFreq->setFocusPolicy(Qt::NoFocus);
-        selectThreeFreq->setSizePolicy(sizePolicy1);
-
-        selectLayout->addWidget(selectThreeFreq);
+        selectLayout->setStretch(0, 1);
+        selectLayout->setStretch(1, 1);
+        selectLayout->setStretch(2, 1);
 
         panelLayout->addLayout(selectLayout);
 
-        panelLayout->setStretch(0, 5);
+        panelLayout->setStretch(0, 6);
         panelLayout->setStretch(1, 1);
 
         verticalLayout->addLayout(panelLayout);
@@ -759,22 +797,22 @@ class Ui_MainWindow {
         QMetaObject::connectSlotsByName(MainWindow);
     }
 
-    void retranslateUi(QMainWindow *MainWindow) {
+    void retranslateUi(MainWindow *MainWindow) {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow"));
         statusLabel->setText(QCoreApplication::translate("MainWindow", "Status: Inicializando"));
         peaksTitle->setText(QCoreApplication::translate("MainWindow", "Peaks Detectados"));
         peakOneFreqValue->setText(QCoreApplication::translate("MainWindow", ""));
-        peakOneFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz"));
+        peakOneFreqUnit->setText("kHz");
         peakTwoFreqValue->setText(QCoreApplication::translate("MainWindow", ""));
-        peakTwoFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz"));
+        peakTwoFreqUnit->setText("kHz");
         peakThreeFreqValue->setText(QCoreApplication::translate("MainWindow", ""));
-        peakThreeFreqUnit->setText(QCoreApplication::translate("MainWindow", "kHz"));
+        peakThreeFreqUnit->setText("kHz");
         peakOnePowerValue->setText(QCoreApplication::translate("MainWindow", ""));
-        peakOnePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS"));
+        peakOnePowerUnit->setText("dBFS");
         peakTwoPowerValue->setText(QCoreApplication::translate("MainWindow", ""));
-        peakTwoPowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS"));
+        peakTwoPowerUnit->setText("dBFS");
         peakThreePowerValue->setText(QCoreApplication::translate("MainWindow", ""));
-        peakThreePowerUnit->setText(QCoreApplication::translate("MainWindow", "dBFS"));
+        peakThreePowerUnit->setText("dBFS");
         selectTimeAxis->setText(QCoreApplication::translate("MainWindow", "Versus\nTiempo"));
         selectDistanceAxis->setText(QCoreApplication::translate("MainWindow", "Versus\nDistancia"));
         selectBeacon->setText(QCoreApplication::translate("MainWindow", "Seleccionar\nBaliza"));
@@ -791,9 +829,9 @@ class Ui_MainWindow {
         gpsStatus->setText(QCoreApplication::translate("MainWindow", "Estado GPS"));
 
         if (!simpleView) {
-            selectOneFreq->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
-            selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
-            selectThreeFreq->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
+            selectOneFreq->setText(QString::number(MainWindow->beaconA, 'f', 2) + " kHz");
+            selectTwoFreq->setText(QString::number(MainWindow->beaconB, 'f', 2) + " kHz");
+            selectThreeFreq->setText(QString::number(MainWindow->beaconC, 'f', 2) + " kHz");
         } else {
             selectOneFreq->setText(QCoreApplication::translate("MainWindow", "Baliza A"));
             selectTwoFreq->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
@@ -803,9 +841,9 @@ class Ui_MainWindow {
         inputBeaconWidget->beaconTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingreso Nueva Baliza"));
         inputBeaconWidget->beaconOneInputLabel->setText(QCoreApplication::translate("MainWindow", "Distancia Baliza [metros]"));
         if (!simpleView) {
-            inputBeaconWidget->beaconTypeA->setText(QCoreApplication::translate("MainWindow", "13.75 kHz"));
-            inputBeaconWidget->beaconTypeB->setText(QCoreApplication::translate("MainWindow", "14.00 kHz"));
-            inputBeaconWidget->beaconTypeC->setText(QCoreApplication::translate("MainWindow", "14.25 kHz"));
+            inputBeaconWidget->beaconTypeA->setText(QString::number(MainWindow->beaconA, 'f', 2) + " kHz");
+            inputBeaconWidget->beaconTypeB->setText(QString::number(MainWindow->beaconB, 'f', 2) + " kHz");
+            inputBeaconWidget->beaconTypeC->setText(QString::number(MainWindow->beaconC, 'f', 2) + " kHz");
         } else {
             inputBeaconWidget->beaconTypeA->setText(QCoreApplication::translate("MainWindow", "Baliza A"));
             inputBeaconWidget->beaconTypeB->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
@@ -857,13 +895,23 @@ class Ui_MainWindow {
         nameInputDialog->nameOneInputLabel->setText(QCoreApplication::translate("MainWindow", "Ingrese Nombre"));
         nameInputDialog->nameInputAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
 
-        adjustSpectrum->adjustTopInputLabel->setText(QCoreApplication::translate("MainWindow", "Adjust espectro"));
         adjustSpectrum->adjustOneInputLabel->setText(QCoreApplication::translate("MainWindow", "Máximo"));
         adjustSpectrum->adjustTwoInputLabel->setText(QCoreApplication::translate("MainWindow", "Mínimo"));
+        adjustSpectrum->adjustWindowOptionInputLabel->setText(QCoreApplication::translate("MainWindow", "Ventana"));
+        adjustSpectrum->adjustFrequencyInputLabel->setText(QCoreApplication::translate("MainWindow", "Frecuencia"));
+        adjustSpectrum->adjustSampleSizeInputLabel->setText(QCoreApplication::translate("MainWindow", "Muestras"));
+        adjustSpectrum->adjustAverageInputLabel->setText(QCoreApplication::translate("MainWindow", "Promedios"));
         adjustSpectrum->adjustOneInputText->setText(QCoreApplication::translate("MainWindow", "4.0"));
         adjustSpectrum->adjustTwoInputText->setText(QCoreApplication::translate("MainWindow", "-140.0"));
+        adjustSpectrum->adjustBeaconAInputLabel->setText(QCoreApplication::translate("MainWindow", "Baliza A"));
+        adjustSpectrum->adjustBeaconBInputLabel->setText(QCoreApplication::translate("MainWindow", "Baliza B"));
+        adjustSpectrum->adjustBeaconCInputLabel->setText(QCoreApplication::translate("MainWindow", "Baliza C"));
         adjustSpectrum->adjustInputAccept->setText(QCoreApplication::translate("MainWindow", "Aceptar"));
         adjustSpectrum->adjustInputCancel->setText(QCoreApplication::translate("MainWindow", "Cancelar"));
+
+        for (int i = 0; i < 7; i++) {
+            adjustSpectrum->adjustWindowOptionInputText->setItemText(i, DataWindow::windowName(i));
+        }
     }
 };
 
