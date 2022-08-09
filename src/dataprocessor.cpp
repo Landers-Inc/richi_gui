@@ -202,7 +202,6 @@ void DataProcessor::initialize() {
 
     beepPlaying = new QThread();
     beepPlaying->setObjectName("playing thread");
-    // beepWav = new QSound("/home/pi/Documents/GUI/censor-beep-1.wav");
     beepWav = new QSound("qrc:/censor-beep-1.wav");
     beepWav->moveToThread(beepPlaying);
     beepTimer = new QTimer;

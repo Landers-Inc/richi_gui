@@ -50,7 +50,7 @@
                 "22",
                 "pi@192.168.1.111",
                 "export DISPLAY=localhost:10.0;",
-                "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
+                "gdbserver --multi :10000 /home/pi/richi_gui -platform vnc:size=1280x800;"
             ],
             "isBackground": true,
             "problemMatcher": [
@@ -80,7 +80,7 @@
                 "-p",
                 "22",
                 "pi@192.168.1.111",
-                "/home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
+                "/home/pi/richi_gui -platform vnc:size=1280x800;"
             ],
             "isBackground": true,
             "problemMatcher": [
@@ -274,7 +274,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/richi_gui",
                 ]
             },
             "linux": {
@@ -283,7 +283,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/richi_gui",
                 ]
             },
             "options": {
@@ -304,7 +304,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/richi_gui",
                 ]
             },
             "linux": {
@@ -313,7 +313,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/richi_gui",
                 ]
             },
             "options": {
