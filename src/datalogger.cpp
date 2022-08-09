@@ -8,6 +8,7 @@ void DataLogger::setDatabaseTables() {
     query.prepare(
         "CREATE TABLE IF NOT EXISTS Configuration ("
         "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        "name VARCHAR(256) NOT NULL,"
         "date_start DATETIME NOT NULL,"
         "data_size INT UNSIGNED NOT NULL,"
         "sample_frequency DOUBLE NOT NULL"

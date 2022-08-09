@@ -3,7 +3,7 @@
     // for the documentation about the tasks.json format
     // **************************************************
     // Change the IP for the raspberry pi in this script
-    // In my case the IP used was 192.168.1.140
+    // In my case the IP used was 192.168.1.111
     // **************************************************
     "version": "2.0.0",
     "tasks": [
@@ -14,7 +14,7 @@
             "args": [
                 "-p",
                 "22",
-                "pi@192.168.1.140",
+                "pi@192.168.1.111",
                 "export DISPLAY=:0;",
                 "export QT_QPA_EGLFS_HIDECURSOR=1;",
                 "export QT_QPA_EGLFS_WIDTH=1280;",
@@ -48,7 +48,7 @@
                 "-X",
                 "-p",
                 "22",
-                "pi@192.168.1.140",
+                "pi@192.168.1.111",
                 "export DISPLAY=localhost:10.0;",
                 "gdbserver --multi :10000 /home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
@@ -79,7 +79,7 @@
                 "-X",
                 "-p",
                 "22",
-                "pi@192.168.1.140",
+                "pi@192.168.1.111",
                 "/home/pi/Documents/GUI/richi_gui -platform vnc:size=1280x800;"
             ],
             "isBackground": true,
@@ -125,16 +125,14 @@
                 "command": "C:/SysGCC/raspberry/bin/make.exe",
                 "args": [
                     "-f",
-                    "Makefile",
-                    "qmake_all"
+                    "Makefile"
                 ]
             },
             "linux": {
                 "command": "make",
                 "args": [
                     "-f",
-                    "Makefile",
-                    "qmake_all"
+                    "Makefile"
                 ]
             },
             // "dependsOn": [
@@ -175,16 +173,14 @@
                 "command": "C:/SysGCC/raspberry/bin/make.exe",
                 "args": [
                     "-f",
-                    "Makefile",
-                    "qmake_all"
+                    "Makefile"
                 ]
             },
             "linux": {
                 "command": "make",
                 "args": [
                     "-f",
-                    "Makefile",
-                    "qmake_all"
+                    "Makefile"
                 ]
             },
             // "dependsOn": [
@@ -278,7 +274,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
                 ]
             },
             "linux": {
@@ -287,7 +283,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {
@@ -308,7 +304,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
                 ]
             },
             "linux": {
@@ -317,7 +313,7 @@
                     "-P",
                     "22",
                     "${workspaceFolder}/build/richi_gui",
-                    "pi@192.168.1.140:~/Documents/GUI/richi_gui",
+                    "pi@192.168.1.111:~/Documents/GUI/richi_gui",
                 ]
             },
             "options": {

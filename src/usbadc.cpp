@@ -29,20 +29,16 @@ bool USBADC::open() {
 
     const PaDeviceInfo *deviceInfo;
     int deviceIndex = 0;
-    bool usbDetected = false;
     unsigned int tryCount = 0;
-    // do {
     std::cout << "Trying to detect USB device " << ++tryCount << std::endl;
     for (deviceIndex = 0; deviceIndex < numDevices; deviceIndex++) {
         deviceInfo = Pa_GetDeviceInfo(deviceIndex);
         std::cout << "Checking " << deviceInfo->name << " device" << std::endl;
         const std::string name(deviceInfo->name);
         if (name.find("USB") != std::string::npos) {
-            usbDetected = true;
             break;
         }
     }
-    // } while (!usbDetected);
 
     std::cout << "Device " << deviceInfo->name << " selected" << std::endl;
 
@@ -52,7 +48,7 @@ bool USBADC::open() {
 
     inputParameters.channelCount = 1;
     inputParameters.sampleFormat = paFloat32;
-    inputParameters.suggestedLatency = Pa_GetDeviceInfo(inputParameters.device)->defaultLowInputLatency;
+    inputParameters.suggestedLatency = deviceInfo->defaultLowInputLatency;
     inputParameters.hostApiSpecificStreamInfo = nullptr;
 
     // In case Alsa fails at the beginning, try several times
@@ -111,7 +107,7 @@ int USBADC::paCallbackMethod(const void *inputBuffer, void *outputBuffer,
                              unsigned long framesPerBuffer,
                              const PaStreamCallbackTimeInfo *timeInfo,
                              PaStreamCallbackFlags statusFlags) {
-    float *out = (float *)outputBuffer;
+    (void)outputBuffer;
     float *in = (float *)inputBuffer;
     unsigned long i;
 

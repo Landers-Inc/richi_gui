@@ -10,7 +10,7 @@
             "request": "launch",
             "MIMode": "gdb",
             "program": "${workspaceFolder}/build/richi_gui",
-            "miDebuggerServerAddress": "192.168.1.140:10000",
+            "miDebuggerServerAddress": "192.168.1.111:10000",
             "cwd": "${workspaceFolder}",
             "linux": {
                 "miDebuggerPath": "gdb-multiarch",
