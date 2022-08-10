@@ -2,7 +2,7 @@
 
 #include <QDebug>
 #include <QObject>
-#include <QSound>
+#include <QSoundEffect>
 #include <QThread>
 #include <cmath>
 #include <iostream>
@@ -10,7 +10,7 @@
 
 #include "datalogger.h"
 #include "datawindow.h"
-#include "emlidgps.h"
+//#include "emlidgps.h"
 #include "fakegps.h"
 #include "fftw3.h"
 #include "qcustomplot.h"
@@ -29,7 +29,7 @@ class DataProcessor : public QObject {
     DataReader *dataAcquisition;
     GPSReader *gpsAcquisition;
     StateMachine *stateInstance;
-    QSound *beepWav;
+    QSoundEffect *beepWav;
     QTimer *beepTimer;
     QTimer *gpsTimer;
 

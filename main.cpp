@@ -1,8 +1,8 @@
 #include <errno.h>    // Error integer and strerror() function
 #include <fcntl.h>    // Contains file controls like O_RDWR
-#include <termios.h>  // Contains POSIX terminal control definitions
+// #include <termios.h>  // Contains POSIX terminal control definitions
 #include <unistd.h>   // write(), read(), close()
-#include <wiringSerial.h>
+// #include <wiringSerial.h>
 
 #include <QApplication>
 #include <QQmlApplicationEngine>

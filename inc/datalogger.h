@@ -76,7 +76,7 @@ class DataLogger : public QObject {
     // Static object to store the singleton instance
     static DataLogger *instance;
     // Static member to save filename
-    QSqlDatabase loggerDatabase = QSqlDatabase::addDatabase("QMYSQL");
+    QSqlDatabase loggerDatabase = QSqlDatabase::addDatabase("QSQLITE");
     // Current timestamp id
     unsigned int timestampId = 0;
     // Current configuration id
@@ -88,8 +88,6 @@ class DataLogger : public QObject {
         // Set MariaDB database
         loggerDatabase.setHostName("127.0.0.1");
         loggerDatabase.setDatabaseName("datalog");
-        loggerDatabase.setUserName("admin");
-        loggerDatabase.setPassword("password");
         if (loggerDatabase.open()) {
             setDatabaseTables();
             getLastIDs();

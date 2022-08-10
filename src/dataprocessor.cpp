@@ -109,8 +109,8 @@ void DataProcessor::processData(std::vector<double> amplitudeData) {
     averageFFT = fftAverage(fftAccumulator);
 
     // Cast FFT from std::vector to QVector. Necessary to plot data on QCustomPlot
-    QVector<double> Qoutx = QVector<double>::fromStdVector(frequencyDomain);
-    QVector<double> Qouty = QVector<double>::fromStdVector(averageFFT[1]);
+    QVector<double> Qoutx = QVector<double>(frequencyDomain.begin(), frequencyDomain.end());
+    QVector<double> Qouty = QVector<double>(averageFFT[1].begin(), averageFFT[1].end());
     // Emit signal to MainWindow to update frequency data
     emit fftReady(Qoutx, Qouty);
 
@@ -202,7 +202,8 @@ void DataProcessor::initialize() {
 
     beepPlaying = new QThread();
     beepPlaying->setObjectName("playing thread");
-    beepWav = new QSound("qrc:/censor-beep-1.wav");
+    beepWav = new QSoundEffect;
+    beepWav->setSource(QUrl("qrc:/censor-beep-1.wav"));
     beepWav->moveToThread(beepPlaying);
     beepTimer = new QTimer;
     beepTimer->moveToThread(beepPlaying);
@@ -210,7 +211,7 @@ void DataProcessor::initialize() {
     connect(beepPlaying, &QThread::finished, beepTimer, &QObject::deleteLater);
     connect(this, &DataProcessor::beepStart, beepTimer, static_cast<void (QTimer::*)(int)>(&QTimer::start));
     connect(this, &DataProcessor::beepStop, beepTimer, &QTimer::stop);
-    connect(beepTimer, &QTimer::timeout, beepWav, static_cast<void (QSound::*)()>(&QSound::play));
+    connect(beepTimer, &QTimer::timeout, beepWav, static_cast<void (QSoundEffect::*)()>(&QSoundEffect::play));
     beepPlaying->start();
 
     dataAcquiring = new QThread();
@@ -237,13 +238,10 @@ void DataProcessor::initialize() {
     // Initialize GPS instance
     gpsAcquiring = new QThread();
     gpsAcquiring->setObjectName("gps thread");
-    try {
-        gpsType = 1;
-        gpsAcquisition = new EMLIDGPS();
-    } catch (...) {
-        gpsType = 0;
-        gpsAcquisition = new FakeGPS();
-    }
+
+    gpsType = 0;
+    gpsAcquisition = new FakeGPS();
+
     gpsAcquisition->moveToThread(gpsAcquiring);
     // Connect this object with GPS instance to receive new position data. DirectConnection since it is high priority
     connect(gpsAcquiring, &QThread::started, gpsAcquisition, &GPSReader::run);
@@ -404,10 +402,10 @@ void DataProcessor::processGPS(
     // Cast data from std::vector to QVector. Necessary to plot data on QCustomPlot
     QVector<double> Qoutx;
     if (timeDistance == 0)
-        Qoutx = QVector<double>::fromStdVector(timeDomain);
+        Qoutx = QVector<double>(timeDomain.begin(), timeDomain.end());
     else if (timeDistance == 1)
-        Qoutx = QVector<double>::fromStdVector(distanceDomain);
-    QVector<double> Qouty = QVector<double>::fromStdVector(peakTimeserie[peakToDisplay]);
+        Qoutx = QVector<double>(distanceDomain.begin(), distanceDomain.end());
+    QVector<double> Qouty = QVector<double>(peakTimeserie[peakToDisplay].begin(), peakTimeserie[peakToDisplay].end());
     // Emit signal to MainWindow to update time data
     emit dataReady(Qoutx, Qouty);
 }
@@ -419,14 +417,14 @@ void DataProcessor::saveBeacon(double distance, double id, int beaconType) {
     // Log timestamp data
     emit logTimestamp(timestamp);
     if (stateInstance->getState() == PREBLAST) {
-        DataLogger::BeaconData beacon = {0, 0, beaconType, distance, peaksData[beaconType].frequency, peaksData[beaconType].power};
+        DataLogger::BeaconData beacon = {0, 0, (unsigned int)beaconType, distance, peaksData[beaconType].frequency, peaksData[beaconType].power};
         emit logBeacon(beacon);
     } else if (stateInstance->getState() == POSTBLAST) {
         if (distance == -1) {
-            DataLogger::BeaconData beacon = {0, 1, peakToDisplay, distance, id, id};
+            DataLogger::BeaconData beacon = {0, 1, (unsigned int)peakToDisplay, distance, id, id};
             emit logBeacon(beacon);
         } else {
-            DataLogger::BeaconData beacon = {0, 1, peakToDisplay, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
+            DataLogger::BeaconData beacon = {0, 1, (unsigned int)peakToDisplay, distance, peaksData[peakToDisplay].frequency, peaksData[peakToDisplay].power};
             emit logBeacon(beacon);
         }
     }
@@ -441,19 +439,7 @@ void DataProcessor::reconnectGPS() {
     // Initialize GPS instance
     gpsAcquiring = new QThread();
     gpsAcquiring->setObjectName("gps thread");
-    switch (gpsType) {
-        case 1:
-            try {
-                gpsAcquisition = new EMLIDGPS();
-            } catch (...) {
-                std::cout << "Not connected GPS" << std::endl;
-                emit gpsStatusStart(2000);
-                return;
-            }
-            break;
-        default:
-            break;
-    }
+
     gpsAcquisition->moveToThread(gpsAcquiring);
     // Connect this object with GPS instance to receive new position data. DirectConnection since it is high priority
     connect(gpsAcquiring, &QThread::started, gpsAcquisition, &GPSReader::run);
