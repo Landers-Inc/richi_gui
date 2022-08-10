@@ -7,7 +7,7 @@ void DataLogger::setDatabaseTables() {
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS Configuration ("
-        "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,"
         "name VARCHAR(256) NOT NULL,"
         "date_start DATETIME NOT NULL,"
         "data_size INT UNSIGNED NOT NULL,"
@@ -18,7 +18,7 @@ void DataLogger::setDatabaseTables() {
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS TimeData ("
-        "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,"
         "timestamp BIGINT UNSIGNED NOT NULL,"
         "lat_position DOUBLE NOT NULL,"
         "lng_position DOUBLE NOT NULL,"
@@ -29,7 +29,7 @@ void DataLogger::setDatabaseTables() {
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS BeaconData ("
-        "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"
+        "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,"
         "timedata_id INT UNSIGNED NOT NULL, "
         "configuration_id INT UNSIGNED NOT NULL, "
         "register_type INT UNSIGNED NOT NULL, "
@@ -51,7 +51,7 @@ void DataLogger::setDatabaseTables() {
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS PeaksData ("
-        "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+        "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL, "
         "timedata_id INT UNSIGNED NOT NULL, "
         "configuration_id INT UNSIGNED NOT NULL, "
         "peak_id INT UNSIGNED NOT NULL, "
@@ -71,7 +71,7 @@ void DataLogger::setDatabaseTables() {
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS SpectrumData ("
-        "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY, "
+        "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL, "
         "timedata_id INT UNSIGNED NOT NULL, "
         "configuration_id INT UNSIGNED NOT NULL, "
         "spectrum BLOB, "

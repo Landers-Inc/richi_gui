@@ -433,7 +433,7 @@ void MainWindow::warningAccept() {
     char *confName = nameBA.data();
     char datetimeString[40];
     std::strftime(datetimeString, sizeof(datetimeString), "%Y-%m-%d %H:%M:%S", std::gmtime(&currentDatetime));
-    DataLogger::Configuration conf = {confName, datetimeString, sampleSize, sampleFrequency};
+    DataLogger::Configuration conf = {confName, datetimeString, (unsigned int)sampleSize, sampleFrequency};
     emit logConfiguration(conf);
     stateInstance->newLog();
     ui->statusLabel->setText(stateInstance->stateString[stateInstance->getState()]);

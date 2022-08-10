@@ -68,7 +68,7 @@ SOURCES += \
     src/usbadc.cpp \
     src/datalogger.cpp \
     src/fakegps.cpp \
-    src/emlidgps.cpp \
+#    src/emlidgps.cpp \
     src/statemachine.cpp \
     src/qcustomplot.cpp
 
@@ -84,13 +84,19 @@ HEADERS += \
     inc/utils.h \
     inc/usbadc.h \
     inc/fakegps.h \
-    inc/emlidgps.h \
+#    inc/emlidgps.h \
     inc/qcustomplot.h \
     inc/datalogger.h \
     inc/statemachine.h \
     inc/dialogs.h
 
-LIBS+= -lfftw3 -lpthread -lportaudio -lwiringPi
+win32-msvc*{
+LIBS+= -L$$PWD/libs/fftw3 libfftw3-3.lib -L$$PWD/libs/portaudio portaudio_x64.lib
+}
+win32-g++{
+LIBS+= -L$$PWD/libs/fftw3 -llibfftw3-3 -L$$PWD/libs/portaudio -lportaudio_x64
+}
+
 
 RESOURCES += resources/richikb/richikb.qrc \
     resources.qrc \
