@@ -33,6 +33,7 @@ int main(int argc, char* argv[]) {
     qRegisterMetaType<DataLogger::Configuration>("DataLogger::Configuration");
 
     MainWindow w;
+    w.setWindowState(Qt::WindowMaximized);
     w.show();
     w.setupGUI();
     w.startProcessing();

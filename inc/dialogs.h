@@ -66,8 +66,8 @@ class BeaconInputDialog : public QDialog {
         dialogInputWidget->setObjectName("dialogInputWidget");
         sizePolicy.setHeightForWidth(dialogInputWidget->sizePolicy().hasHeightForWidth());
         dialogInputWidget->setSizePolicy(sizePolicy);
-        dialogInputWidget->setMinimumSize(QSize(1280, 800));
-        dialogInputWidget->setMaximumSize(QSize(1280, 800));
+        dialogInputWidget->setMinimumSize(QSize(1024, 768));
+        dialogInputWidget->setMaximumSize(QSize(1024, 768));
         dialogInputWidget->setVisible(false);
 
         beaconInputWidget = new InputWidget(dialogInputWidget);
@@ -208,8 +208,8 @@ class BeaconFoundDialog : public QDialog {
         dialogFoundWidget->setObjectName("dialogFoundWidget");
         sizePolicy.setHeightForWidth(dialogFoundWidget->sizePolicy().hasHeightForWidth());
         dialogFoundWidget->setSizePolicy(sizePolicy);
-        dialogFoundWidget->setMinimumSize(QSize(1280, 800));
-        dialogFoundWidget->setMaximumSize(QSize(1280, 800));
+        dialogFoundWidget->setMinimumSize(QSize(1024, 768));
+        dialogFoundWidget->setMaximumSize(QSize(1024, 768));
         dialogFoundWidget->setVisible(false);
 
         beaconFoundWidget = new InputWidget(dialogFoundWidget);
@@ -323,8 +323,8 @@ class WarningDialog : public QDialog {
         dialogWidget->setObjectName("dialogWidget");
         sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
         dialogWidget->setSizePolicy(sizePolicy);
-        dialogWidget->setMinimumSize(QSize(1280, 800));
-        dialogWidget->setMaximumSize(QSize(1280, 800));
+        dialogWidget->setMinimumSize(QSize(1024, 768));
+        dialogWidget->setMaximumSize(QSize(1024, 768));
         dialogWidget->setVisible(false);
 
         warningWidget = new QDialog(dialogWidget);
@@ -432,8 +432,8 @@ class GPSStatus : public QDialog {
         dialogWidget->setObjectName("dialogWidget");
         sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
         dialogWidget->setSizePolicy(sizePolicy);
-        dialogWidget->setMinimumSize(QSize(1280, 800));
-        dialogWidget->setMaximumSize(QSize(1280, 800));
+        dialogWidget->setMinimumSize(QSize(1024, 768));
+        dialogWidget->setMaximumSize(QSize(1024, 768));
         dialogWidget->setVisible(false);
 
         statusWidget = new QDialog(dialogWidget);
@@ -745,8 +745,8 @@ class NameInputDialog : public QDialog {
         dialogInputWidget->setObjectName("dialogInputWidget");
         sizePolicy.setHeightForWidth(dialogInputWidget->sizePolicy().hasHeightForWidth());
         dialogInputWidget->setSizePolicy(sizePolicy);
-        dialogInputWidget->setMinimumSize(QSize(1280, 800));
-        dialogInputWidget->setMaximumSize(QSize(1280, 800));
+        dialogInputWidget->setMinimumSize(QSize(1024, 768));
+        dialogInputWidget->setMaximumSize(QSize(1024, 768));
         dialogInputWidget->setVisible(false);
 
         nameInputWidget = new InputWidget(dialogInputWidget);
@@ -867,8 +867,8 @@ class AdjustSpectrum : public QDialog {
         dialogInputWidget->setObjectName("dialogInputWidget");
         sizePolicy.setHeightForWidth(dialogInputWidget->sizePolicy().hasHeightForWidth());
         dialogInputWidget->setSizePolicy(sizePolicy);
-        dialogInputWidget->setMinimumSize(QSize(1280, 800));
-        dialogInputWidget->setMaximumSize(QSize(1280, 800));
+        dialogInputWidget->setMinimumSize(QSize(1024, 768));
+        dialogInputWidget->setMaximumSize(QSize(1024, 768));
         dialogInputWidget->setVisible(false);
 
         adjustInputWidget = new InputWidget(dialogInputWidget);

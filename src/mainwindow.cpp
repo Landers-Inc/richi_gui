@@ -431,7 +431,7 @@ void MainWindow::warningAccept() {
     ui->inputBeaconWidget->beaconOneInputText->setText("");
     QByteArray nameBA = name.toLocal8Bit();
     char *confName = nameBA.data();
-    char datetimeString[40];
+    char datetimeString[40] = {0};
     std::strftime(datetimeString, sizeof(datetimeString), "%Y-%m-%d %H:%M:%S", std::gmtime(&currentDatetime));
     DataLogger::Configuration conf = {confName, datetimeString, (unsigned int)sampleSize, sampleFrequency};
     emit logConfiguration(conf);
@@ -687,13 +687,11 @@ void MainWindow::tableGenerate() {
         QString name = ui->nameInputDialog->nameOneInputText->text();
         ui->inputBeaconWidget->beaconOneInputText->setText("");
         QByteArray nameBA = name.toLocal8Bit();
-        const char *path = "/home/pi/USB/";
         char filename[200] = {0};
         dataLogger->getConfigurationName(filename);
         const char *extension = ".csv";
         char completeName[200] = {0};
-        strcpy(completeName, path);
-        strcat(completeName, filename);
+        strcpy(completeName, filename);
         strcat(completeName, extension);
         // std::strftime(datetimeString, sizeof(datetimeString), "/home/pi/table_%Y%m%d_%H%M%S.csv", std::gmtime(&currentDatetime));
         // std::strftime(datetimeString, sizeof(datetimeString), completeName, std::gmtime(&currentDatetime));

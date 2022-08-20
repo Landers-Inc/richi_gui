@@ -30,8 +30,8 @@ class WarningDialog : public QDialog {
         dialogWidget->setObjectName("dialogWidget");
         sizePolicy.setHeightForWidth(dialogWidget->sizePolicy().hasHeightForWidth());
         dialogWidget->setSizePolicy(sizePolicy);
-        dialogWidget->setMinimumSize(QSize(1280, 800));
-        dialogWidget->setMaximumSize(QSize(1280, 800));
+        dialogWidget->setMinimumSize(QSize(1024, 768));
+        dialogWidget->setMaximumSize(QSize(1024, 768));
         dialogWidget->setVisible(false);
 
         warningWidget = new QDialog(dialogWidget);

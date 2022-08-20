@@ -283,8 +283,8 @@ class BeaconTable : public QDialog {
         dialogInputWidget->setObjectName("dialogInputWidget");
         sizePolicy.setHeightForWidth(dialogInputWidget->sizePolicy().hasHeightForWidth());
         dialogInputWidget->setSizePolicy(sizePolicy);
-        dialogInputWidget->setMinimumSize(QSize(1280, 800));
-        dialogInputWidget->setMaximumSize(QSize(1280, 800));
+        dialogInputWidget->setMinimumSize(QSize(1024, 768));
+        dialogInputWidget->setMaximumSize(QSize(1024, 768));
         dialogInputWidget->setVisible(false);
 
         tableWidget = new InputWidget(dialogInputWidget);

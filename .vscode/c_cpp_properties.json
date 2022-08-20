@@ -1,32 +1,19 @@
 {
     "configurations": [
         {
-            "name": "Linux",
-            "includePath": [
-                "${workspaceFolder}/inc/**",
-                "${workspaceFolder}/src/**",
-                "/opt/rpi4/qt5.15/**",
-                "/opt/rpi4/sysroot/**"
-            ],
-            "defines": [],
-            "compilerPath": "/opt/rpi4/tools/gcc-linaro-7.4.1-2019.02-x86_64_arm-linux-gnueabihf/bin/arm-linux-gnueabihf-g++",
-            "cStandard": "c11",
-            "cppStandard": "c++14",
-            "intelliSenseMode": "linux-gcc-arm"
-        },
-        {
             "name": "Windows",
             "includePath": [
                 "${workspaceFolder}/inc/**",
                 "${workspaceFolder}/src/**",
-                "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/usr/local/qt5/**",
-                "C:/SysGCC/raspberry/arm-linux-gnueabihf/sysroot/**"
+                "C:/Qt/5.15.2/mingw81_64/include/**",
+                "C:/Qt/Tools/mingw810_64/include/**",
+                "C:/Qt/Tools/mingw810_64/x86_64-w64-mingw32/include/**"
             ],
             "defines": [],
-            "compilerPath": "C:/SysGCC/raspberry/bin/arm-linux-gnueabihf-g++.exe",
+            "compilerPath": "C:/Qt/Tools/mingw810_64/bin/g++.exe",
             "cStandard": "c11",
             "cppStandard": "c++14",
-            "intelliSenseMode": "linux-gcc-arm"
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

@@ -113,3 +113,7 @@ DISTFILES += \
 TRANSLATIONS += \
     languages/richigui_en.ts \
     languages/richigui_es.ts
+
+win32 {
+    QMAKE_POST_LINK = windeployqt $$shell_path(release/richi_gui.exe)
+}

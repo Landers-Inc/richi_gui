@@ -115,13 +115,13 @@ class Ui_MainWindow {
     void setupUi(MainWindow *MainWindow) {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(1280, 800);
+        MainWindow->resize(1024, 768);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
         MainWindow->setSizePolicy(sizePolicy);
-        MainWindow->setMinimumSize(QSize(1280, 800));
+        MainWindow->setMinimumSize(QSize(1024, 768));
         MainWindow->setStyleSheet(
             "QPushButton {"
             "color: #111;"
@@ -237,12 +237,12 @@ class Ui_MainWindow {
         centralWidget->setObjectName("centralWidget");
         sizePolicy.setHeightForWidth(centralWidget->sizePolicy().hasHeightForWidth());
         centralWidget->setSizePolicy(sizePolicy);
-        centralWidget->setMinimumSize(QSize(1280, 800));
-        centralWidget->setMaximumSize(QSize(1280, 800));
+        centralWidget->setMinimumSize(QSize(1024, 768));
+        centralWidget->setMaximumSize(QSize(1024, 768));
         centralWidget->setStyleSheet("#centralWidget{background: #ddd;}");
         layoutWidget = new QWidget(centralWidget);
         layoutWidget->setObjectName("layoutWidget");
-        layoutWidget->setGeometry(QRect(10, 10, 1260, 780));
+        layoutWidget->setGeometry(QRect(10, 10, 1004, 748));
         verticalLayout = new QVBoxLayout(layoutWidget);
         verticalLayout->setObjectName("verticalLayout");
         verticalLayout->setSizeConstraint(QLayout::SetDefaultConstraint);
@@ -782,7 +782,7 @@ class Ui_MainWindow {
         statusLine->setLineWidth(1280);
         statusLabel = new QLabel(layoutWidget);
         statusLabel->setObjectName("statusLabel");
-        statusLabel->setGeometry(QRect(10, 710, 1260, 80));
+        statusLabel->setGeometry(QRect(10, 698, 1004, 80));
 
         verticalLayout->addWidget(statusLine);
         verticalLayout->addWidget(statusLabel);

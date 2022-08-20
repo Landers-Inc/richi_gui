@@ -33,18 +33,28 @@ bool USBADC::open() {
     std::cout << "Trying to detect USB device " << ++tryCount << std::endl;
     for (deviceIndex = 0; deviceIndex < numDevices; deviceIndex++) {
         deviceInfo = Pa_GetDeviceInfo(deviceIndex);
-        std::cout << "Device " << deviceInfo->name << " selected" << std::endl;
+        std::cout << "Checking " << deviceInfo->name << " device" << std::endl;
+        const std::string name(deviceInfo->name);
+        if (name.find("USB") != std::string::npos) {
+            break;
+        }
+    }
 
-        inputParameters.device = deviceIndex;
-        if (inputParameters.device == paNoDevice)
-            return false;
+    std::cout << "Device " << deviceInfo->name << " selected" << std::endl;
 
-        inputParameters.channelCount = 1;
-        inputParameters.sampleFormat = paFloat32;
-        inputParameters.suggestedLatency = deviceInfo->defaultLowInputLatency;
-        inputParameters.hostApiSpecificStreamInfo = nullptr;
+    inputParameters.device = deviceIndex;
+    if (inputParameters.device == paNoDevice)
+        return false;
 
-        std::cout << "Trying to open stream " << std::endl;
+    inputParameters.channelCount = 1;
+    inputParameters.sampleFormat = paFloat32;
+    inputParameters.suggestedLatency = deviceInfo->defaultLowInputLatency;
+    inputParameters.hostApiSpecificStreamInfo = nullptr;
+
+    // In case Alsa fails at the beginning, try several times
+    tryCount = 0;
+    do {
+        std::cout << "Trying to open stream " << ++tryCount << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         err = Pa_OpenStream(
             &stream,
@@ -55,9 +65,7 @@ bool USBADC::open() {
             paClipOff,
             &USBADC::paCallback,
             this);
-
-        if(err == paNoError) break;
-    }
+    } while (err != paNoError);
 
     err = Pa_SetStreamFinishedCallback(stream, &USBADC::paStreamFinished);
     if (err != paNoError) {
