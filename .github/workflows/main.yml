@@ -22,18 +22,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Download Assets
-        # You may pin to the exact commit or the version.
-        # uses: i3h/download-release-asset@6a9870c8f1c561f9e67550d6177c31c2b1c49fef
-        uses: i3h/download-release-asset@v1.3.2
-        with:
-          # 
-          owner: OWT-Repos
-          # 
-          repo: richi_gui
-          # 
-          tag: latest
-          # 
-          file: release.zip
-          # 
-          path: C:\Users\H\OWT
+      - uses: robinraju/release-downloader@v1.4
+        with: 
+          # The source repository path.
+          # Expected format {owner}/{repo}
+          # Default: ${{ github.repository }}
+          repository: ""
+
+          # A flag to set the download target as latest release
+          # The default value is 'false'
+          latest: true
+
+          # Download the attached zipball (*.zip)
+          zipBall: true
