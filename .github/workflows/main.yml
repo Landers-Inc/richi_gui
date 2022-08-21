@@ -28,7 +28,7 @@ jobs:
         uses: i3h/download-release-asset@v1.3.2
         with:
           # 
-          owner: chmunozpardo
+          owner: OWT-Repos
           # 
           repo: richi_gui
           # 
