@@ -22,6 +22,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Display the path
+        run: echo $PWD
+        shell: powershell
       - uses: robinraju/release-downloader@v1.4
         with: 
           # A flag to set the download target as latest release
