@@ -38,5 +38,6 @@ jobs:
           $WshShell = New-Object -comObject WScript.Shell
           $Shortcut = $WshShell.CreateShortcut("C:\Users\H\Desktop\OWT.lnk")
           $Shortcut.TargetPath = "C:\OWT\release\richi_gui.exe"
+          $Shortcut.WorkingDirectory = "C:\OWT\release\"
           $Shortcut.Save()
         shell: powershell
