@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       versionName:
-        description: 'Name of version  (ie 5.5.0)'
+        description: 'Version Name (i.e. 5.5.0)'
         required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -32,7 +32,7 @@ jobs:
         run: Remove-Item 'C:\OWT\release' -Recurse
         continue-on-error: true
       - name: Extract new release
-        run: 7z -e release.zip -o C:\OWT
+        run: 7z x release.zip -oC:\OWT -y
       - name: Create Shortcut
         run: |
           $WshShell = New-Object -comObject WScript.Shell
