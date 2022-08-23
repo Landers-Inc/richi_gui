@@ -28,12 +28,15 @@ jobs:
           latest: true
           # Download the attached zipball (*.zip)
           zipBall: true
-      - name: Extract some files
+      - name: Delete old version
+        run: Remove-Item 'C:\OWT\release' -Recurse
+        continue-on-error: true
+      - name: Extract new release
         run: 7z -e release.zip -o C:\OWT
       - name: Create Shortcut
         run: |
           $WshShell = New-Object -comObject WScript.Shell
           $Shortcut = $WshShell.CreateShortcut("C:\Users\H\Desktop\OWT.lnk")
-          $Shortcut.TargetPath = "C:\OWT\richi_gui.exe"
+          $Shortcut.TargetPath = "C:\OWT\release\richi_gui.exe"
           $Shortcut.Save()
         shell: powershell
