@@ -4,13 +4,12 @@ name: CI
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  release:
-    branches:
-    - 'win32_*'
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'Name of version  (ie 5.5.0)'
+        required: true
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -21,14 +20,20 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Display the path
-        run: echo $PWD
-        shell: powershell
-      - uses: robinraju/release-downloader@v1.4
+      - name: Download release
+        uses: robinraju/release-downloader@v1.4
         with: 
           # A flag to set the download target as latest release
           # The default value is 'false'
           latest: true
-
           # Download the attached zipball (*.zip)
           zipBall: true
+      - name: Extract some files
+        run: 7z -e release.zip -o C:\OWT
+      - name: Create Shortcut
+        run: |
+          $WshShell = New-Object -comObject WScript.Shell
+          $Shortcut = $WshShell.CreateShortcut("C:\Users\H\Desktop\OWT.lnk")
+          $Shortcut.TargetPath = "C:\OWT\richi_gui.exe"
+          $Shortcut.Save()
+        shell: powershell
